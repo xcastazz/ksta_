@@ -152,13 +152,13 @@ export function initScene(canvas, getActive) {
     shapes.forEach((m) => {
       const u = m.userData, h = vh * -u.depth, w = h * camera.aspect;
       let y = ((u.base + scrollF * 0.35 * u.sc) % 2 + 2) % 2 - 1;     // -1..1 wrapped
-      m.position.set(u.side * w * (mobile ? 0.95 : 0.86), y * h * 1.1, u.depth);
+      m.position.set(u.side * w * (mobile ? 1.08 : 0.86), y * h * 1.1, u.depth);
       m.rotation.x = cur.t * u.spin + scrollF * 0.8;
       m.rotation.y = cur.t * u.spin * 1.3;
-      m.scale.setScalar(u.sc * (1 + cur.kick * 0.3));
+      m.scale.setScalar(u.sc * (mobile ? 0.45 : 1) * (1 + cur.kick * 0.3));
     });
     wireMat.color.lerp(tmp.set(p.color), k);
-    wireMat.opacity = damp(wireMat.opacity, String(getActive()).startsWith('q') ? 0.15 : 0.4, k);
+    wireMat.opacity = damp(wireMat.opacity, String(getActive()).startsWith('q') ? 0.12 : mobile ? 0.22 : 0.4, k);
 
     renderer.render(scene, camera);
   });

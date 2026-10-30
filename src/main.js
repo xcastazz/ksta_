@@ -128,6 +128,15 @@ function onScroll() {
   ticking = false;
 }
 addEventListener('scroll', () => { if (!ticking) { requestAnimationFrame(onScroll); ticking = true; } }, { passive: true });
+// On phones the guided pill only shows when scrolling stops, so it never covers buttons while reading
+if (matchMedia('(max-width: 720px)').matches) {
+  let idle;
+  addEventListener('scroll', () => {
+    nextBtn.classList.add('scrolling');
+    clearTimeout(idle);
+    idle = setTimeout(() => nextBtn.classList.remove('scrolling'), 900);
+  }, { passive: true });
+}
 document.body.dataset.chapter = active;
 onScroll();
 

@@ -7,8 +7,14 @@ const app = document.getElementById('app');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 const STATUSES = [
-  ['nuevo', 'Nuevo'], ['contactado', 'Contactado'], ['cotizado', 'Cotizado'], ['cerrado', 'Cerrado'], ['perdido', 'Perdido'],
+  ['nuevo', 'Nuevo'], ['contactado', 'Contactado'], ['cotizado', 'Cotizado'], ['negociacion', 'En negociación'],
+  ['anticipo', 'Anticipo pagado'], ['desarrollo', 'En desarrollo'], ['revision', 'En revisión'], ['entregado', 'Entregado'],
+  ['cerrado', 'Finalizado'], ['pausado', 'Pausado'], ['perdido', 'Perdido'],
 ];
+// Stage groups used by metrics
+const SALES = ['nuevo', 'contactado', 'cotizado', 'negociacion'];          // still selling
+const WON = ['anticipo', 'desarrollo', 'revision', 'entregado', 'cerrado'];  // paid the deposit → it's a sale
+const INACTIVE = ['cerrado', 'perdido'];                                     // no follow-up needed
 const PRIORITIES = [['alta', 'Alta'], ['media', 'Media'], ['baja', 'Baja']];
 const statusLabel = (s) => (STATUSES.find(([k]) => k === s) || [, s])[1];
 const VIEWS = [
@@ -264,12 +270,13 @@ function renderAll(flashId) {
 function viewDashboard(el) {
   const count = (s) => leads.filter((l) => l.status === s).length;
   const sum = (arr, f) => arr.reduce((s, l) => s + f(l), 0);
-  const open = leads.filter((l) => !['cerrado', 'perdido'].includes(l.status));
-  const won = leads.filter((l) => l.status === 'cerrado');
+  const open = leads.filter((l) => SALES.includes(l.status));
+  const won = leads.filter((l) => WON.includes(l.status));
+  const inProgress = leads.filter((l) => ['anticipo', 'desarrollo', 'revision'].includes(l.status));
   const decided = won.length + count('perdido');
   const rate = decided ? Math.round((won.length / decided) * 100) : 0;
   const today = leads.filter((l) => new Date(l.created_at).toDateString() === new Date().toDateString()).length;
-  const late = leads.filter((l) => l.follow_up && l.follow_up <= todayISO() && !['cerrado', 'perdido'].includes(l.status));
+  const late = leads.filter((l) => l.follow_up && l.follow_up <= todayISO() && !INACTIVE.includes(l.status));
 
   // Leads per day, last 14 days (single series → one hue, no legend)
   const days = [...Array(14)].map((_, i) => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - 13 + i); return d; });
@@ -294,10 +301,11 @@ function viewDashboard(el) {
     <div class="a-stats">
       ${[
         ['Solicitudes', leads.length, `${today} hoy`, 'inbox'],
-        ['En curso', cop(sum(open, quoteOf)), `${open.length} oportunidades abiertas`, 'target'],
-        ['Vendido', cop(sum(won, quoteOf)), `${won.length} ventas cerradas`, 'check'],
+        ['En venta', cop(sum(open, quoteOf)), `${open.length} oportunidades abiertas`, 'target'],
+        ['Vendido', cop(sum(won, quoteOf)), `${won.length} clientes con anticipo`, 'check'],
+        ['En producción', inProgress.length, 'Anticipo, desarrollo o revisión', 'bolt'],
         ['Ingreso mensual', cop(sum(won, monthlyOf)), 'Mensualidades de clientes cerrados', 'calendar'],
-        ['Tasa de cierre', `${rate}%`, 'Cerradas sobre decididas', 'bolt'],
+        ['Tasa de cierre', `${rate}%`, 'Ventas sobre decididas', 'target'],
         ['Seguimientos', late.length, 'Para hoy o atrasados', 'bell'],
         ['Asesorías', upcoming().length, 'Próximas por Google Meet', 'teams'],
       ].map(([k, v, s, ic]) => `<div class="a-stat vision"><div class="a-stat-top"><span class="a-stat-icon">${icons[ic]}</span>${k}</div><b>${v}</b><small>${s}</small></div>`).join('')}
@@ -487,7 +495,7 @@ function viewBoard(el) {
   const rows = leads.filter((l) => !query || [l.name, l.business, l.phone, l.email, l.service].join(' ').toLowerCase().includes(query));
   el.innerHTML = `
     <div class="a-head"><div><h1>Tablero</h1><p class="muted">Arrastra las tarjetas para cambiar el estado de cada cliente.</p></div></div>
-    <div class="board">${STATUSES.map(([k, lab]) => {
+    <div class="board" style="--cols:${STATUSES.length}">${STATUSES.map(([k, lab]) => {
       const col = rows.filter((l) => l.status === k);
       return `<div class="col" data-col="${k}">
         <div class="col-head"><span class="st st-${k}">${lab}</span><small>${col.length} · ${cop(col.reduce((s, l) => s + quoteOf(l), 0))}</small></div>
@@ -523,7 +531,7 @@ function viewBoard(el) {
 // ===== Follow-ups =====
 function viewFollow(el) {
   const t = todayISO();
-  const active = leads.filter((l) => !['cerrado', 'perdido'].includes(l.status));
+  const active = leads.filter((l) => !INACTIVE.includes(l.status));
   const groups = [
     ['Atrasados', active.filter((l) => l.follow_up && l.follow_up < t), 'late'],
     ['Hoy', active.filter((l) => l.follow_up === t), 'today'],
@@ -725,9 +733,12 @@ function renderDetail() {
   const box = document.getElementById('detail');
   if (!box) return;
   const l = leads.find((x) => x.id === selectedId);
+  box.closest('.a-body')?.classList.toggle('has-sel', !!l);
+  if (l && matchMedia('(max-width: 900px)').matches) scrollTo({ top: 0 });
   if (!l) { box.innerHTML = `<div class="a-empty">${icons.inbox}<p>Selecciona una solicitud para ver el detalle.</p></div>`; return; }
 
   box.innerHTML = `
+    <button class="a-back" id="back">← Solicitudes</button>
     <div class="a-d-head">
       <span class="avatar lg">${esc((l.name || '?')[0].toUpperCase())}</span>
       <div><h2>${esc(l.name)}</h2><p class="muted">${esc(l.business || '')} · ${new Date(l.created_at).toLocaleString('es')}</p></div>
@@ -737,7 +748,8 @@ function renderDetail() {
       <a class="btn btn-ghost" href="mailto:${esc(l.email)}">${icons.mail} Email</a>
       <button class="btn btn-ghost" id="copy">${icons.file} Copiar resumen</button>
     </div>
-    <div class="a-d-status">${STATUSES.map(([k, lab]) => `<button class="${l.status === k ? 'on' : ''}" data-st="${k}">${lab}</button>`).join('')}</div>
+    <div class="a-d-status">${STATUSES.map(([k, lab], i) => `<button class="${l.status === k ? 'on' : ''} ${STATUSES.findIndex(([s]) => s === l.status) > i && !['pausado', 'perdido'].includes(k) ? 'past' : ''}" data-st="${k}">${lab}</button>`).join('')}</div>
+    <label class="a-d-status-m">Estado <select id="stSel">${STATUSES.map(([k, lab]) => `<option value="${k}" ${l.status === k ? 'selected' : ''}>${lab}</option>`).join('')}</select></label>
     <div class="a-d-grid">
       <div><span>WhatsApp</span><b>${esc(l.phone || '—')}</b></div>
       <div><span>Email</span><b>${esc(l.email)}</b></div>
@@ -756,7 +768,13 @@ function renderDetail() {
     <h3>Historial</h3>
     <div class="timeline-list" id="events"><p class="muted small">Cargando…</p></div>`;
 
-  box.querySelectorAll('[data-st]').forEach((b) => b.addEventListener('click', async () => {
+  const setStatus = async (st) => {
+    const from = l.status;
+    if (from === st) return;
+    if (await update(l.id, { status: st }, ['estado', `${statusLabel(from)} → ${statusLabel(st)}`])) { toast(`Marcada como ${statusLabel(st)}`); renderList(); renderDetail(); }
+  };
+  box.querySelector('#stSel').addEventListener('change', (e) => setStatus(e.target.value));
+  box.querySelectorAll('.a-d-status [data-st]').forEach((b) => b.addEventListener('click', async () => {
     const from = l.status, st = b.dataset.st;
     if (from === st) return;
     if (await update(l.id, { status: st }, ['estado', `${statusLabel(from)} → ${statusLabel(st)}`])) { toast(`Marcada como ${statusLabel(st)}`); renderList(); renderDetail(); }
@@ -764,6 +782,7 @@ function renderDetail() {
   box.querySelector('#prio').addEventListener('change', async (e) => { if (await update(l.id, { priority: e.target.value }, ['prioridad', `Prioridad: ${e.target.value}`])) { toast('Prioridad actualizada'); renderList(); } });
   box.querySelector('#fu').addEventListener('change', async (e) => { const v = e.target.value || null; if (await update(l.id, { follow_up: v }, ['seguimiento', v ? `Seguimiento para el ${v}` : 'Seguimiento quitado'])) { toast('Seguimiento guardado'); renderList(); } });
   box.querySelector('#waHello').addEventListener('click', () => { if (l.status === 'nuevo') update(l.id, { status: 'contactado' }, ['estado', 'Nuevo → Contactado (WhatsApp)']).then(() => renderList()); else logEvent(l.id, 'contacto', 'Escribió por WhatsApp'); });
+  box.querySelector('#back').addEventListener('click', () => { selectedId = null; renderList(); renderDetail(); });
   box.querySelector('#copy').addEventListener('click', async () => {
     await navigator.clipboard.writeText(`${l.name} · ${l.business || ''}\n${l.phone || ''} · ${l.email || ''}\n${l.service || ''}\n\n${l.message || ''}`);
     toast('Resumen copiado');
