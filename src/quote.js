@@ -1,6 +1,7 @@
 import { icons } from './icons.js';
 import { supabase } from './supabase.js';
 import { TEMPLATES } from './templates.js';
+import { MEETING } from './config.js';
 import { buildQuote, cop } from './pricing.js';
 import { CATS, CAT_ORDER, COMBO, findTier, tierPrice, priceHTML, fromValue } from './plans.js';
 
@@ -540,13 +541,79 @@ export function initQuote({ onStep }) {
         <div class="vision"><span>02</span><b>Revisamos tu plan</b><small>Validamos tus respuestas y armamos tu cotización.</small></div>
         <div class="vision"><span>03</span><b>La recibes</b><small>Por WhatsApp y correo, con el detalle en PDF.</small></div>
       </div>
-      <button class="btn" data-close>Volver al sitio</button>`, 1, 'done');
+      <section class="booking vision" id="booking">
+        <div class="bk-head"><span class="bk-logo">${icons.teams}</span><div><b>Agenda una asesoría gratis por Microsoft Teams</b><small>${MEETING.durationMin} minutos para resolver tus dudas y revisar tu plan con un asesor. Hora de Colombia.</small></div></div>
+        <div class="bk-days" id="bkDays"><p class="muted small">Cargando horarios…</p></div>
+        <div class="bk-hours" id="bkHours"></div>
+        <label class="bk-topic">¿Algo puntual que quieras revisar? <input id="bkTopic" maxlength="300" placeholder="Opcional" /></label>
+        <button class="btn" id="bkGo" disabled>${icons.teams} Agendar asesoría</button>
+      </section>
+      <button class="btn btn-ghost" data-close>Volver al sitio</button>`, 1, 'done');
+    setupBooking(lead);
     dots.querySelectorAll('span').forEach((d) => (d.className = 'done'));
     root.querySelector('.quote-nav').classList.add('gone'); root.classList.add('finished');
     onStep(99); // celebratory pose
   }
 
   stage.addEventListener('click', (e) => { if (e.target.closest('[data-close]')) close(); });
+
+  // ---------- Teams booking ----------
+  // Slot as an absolute instant in Colombia time (UTC-5, no DST)
+  const slotISO = (d, h) => `${d}T${String(h).padStart(2, '0')}:00:00-05:00`;
+  const coDate = (dt) => new Date(dt.getTime() - 5 * 3600e3).toISOString().slice(0, 10);
+  const prettyDay = (d) => new Date(d + 'T12:00:00-05:00').toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'America/Bogota' });
+  const prettyHour = (h) => `${((h + 11) % 12) + 1}:00 ${h < 12 ? 'a. m.' : 'p. m.'}`;
+
+  async function setupBooking(lead) {
+    const box = stage.querySelector('#booking');
+    if (!box) return;
+    const daysEl = box.querySelector('#bkDays'), hoursEl = box.querySelector('#bkHours'), btn = box.querySelector('#bkGo');
+    let taken = new Set();
+    try { const { data } = await supabase.rpc('booked_slots'); taken = new Set((data || []).map((t) => new Date(t).getTime())); } catch { /* show all slots */ }
+    const minTime = Date.now() + MEETING.minNoticeHours * 3600e3;
+    const days = [];
+    for (let i = 0, d = new Date(); days.length < MEETING.days && i < 30; i++, d = new Date(d.getTime() + 864e5)) {
+      const ds = coDate(d);
+      const dow = new Date(ds + 'T12:00:00-05:00').getUTCDay();
+      if (!MEETING.workDays.includes(dow)) continue;
+      const free = MEETING.hours.filter((h) => { const t = new Date(slotISO(ds, h)).getTime(); return t > minTime && !taken.has(t); });
+      if (free.length) days.push([ds, free]);
+    }
+    let day = null, hour = null;
+    if (!days.length) { daysEl.innerHTML = '<p class="muted small">No hay horarios disponibles por ahora. Un asesor te escribirá para coordinar.</p>'; btn.remove(); return; }
+    const drawHours = () => {
+      const free = (days.find(([d]) => d === day) || [, []])[1];
+      hoursEl.innerHTML = free.map((h) => `<button type="button" class="${h === hour ? 'on' : ''}" data-h="${h}">${prettyHour(h)}</button>`).join('');
+      hoursEl.querySelectorAll('[data-h]').forEach((b) => b.addEventListener('click', () => { hour = +b.dataset.h; drawHours(); btn.disabled = false; }));
+    };
+    daysEl.innerHTML = days.map(([d]) => `<button type="button" data-d="${d}">${prettyDay(d)}</button>`).join('');
+    daysEl.querySelectorAll('[data-d]').forEach((b) => b.addEventListener('click', () => {
+      day = b.dataset.d; hour = null; btn.disabled = true;
+      daysEl.querySelectorAll('[data-d]').forEach((x) => x.classList.toggle('on', x === b));
+      drawHours();
+    }));
+    daysEl.querySelector('[data-d]').click();
+
+    btn.addEventListener('click', async () => {
+      if (!day || hour == null) return;
+      btn.disabled = true; btn.textContent = 'Agendando…';
+      const { error } = await supabase.from('meetings').insert({
+        lead_id: lead.id, starts_at: slotISO(day, hour), duration_min: MEETING.durationMin,
+        name: lead.name, email: lead.email, phone: lead.phone, topic: box.querySelector('#bkTopic').value.trim() || null,
+      });
+      if (error) {
+        console.error(error);
+        toast(error.code === '23505' ? 'Ese horario acaba de ocuparse. Elige otro.' : 'No pudimos agendar. Intenta de nuevo.');
+        btn.disabled = false; btn.innerHTML = `${icons.teams} Agendar asesoría`;
+        if (error.code === '23505') setupBooking(lead);
+        return;
+      }
+      box.classList.add('booked');
+      box.innerHTML = `<div class="bk-done"><span class="bk-logo">${icons.teams}</span>
+        <div><b>¡Asesoría agendada!</b><p>${prettyDay(day)} a las ${prettyHour(hour)} (hora de Colombia) por Microsoft Teams. Te enviaremos el enlace de la reunión a <b>${esc(lead.email)}</b> y a tu WhatsApp.</p></div></div>`;
+      dispatchEvent(new Event('scene:kick'));
+    });
+  }
 
   // ---------- motion-graphics intro ----------
   const INTRO = [

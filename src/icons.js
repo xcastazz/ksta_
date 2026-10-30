@@ -37,7 +37,12 @@ import i_heart from '@phosphor-icons/core/assets/duotone/heart-duotone.svg?raw';
 import i_coffee from '@phosphor-icons/core/assets/duotone/coffee-duotone.svg?raw';
 import i_map_pin from '@phosphor-icons/core/assets/duotone/map-pin-duotone.svg?raw';
 
+import i_teams from '@phosphor-icons/core/assets/duotone/microsoft-teams-logo-duotone.svg?raw';
+import i_clock from '@phosphor-icons/core/assets/duotone/clock-duotone.svg?raw';
+
 const RAW = {
+  'microsoft-teams-logo': i_teams,
+  'clock': i_clock,
   'user-circle': i_user_circle,
   'heart': i_heart,
   'coffee': i_coffee,
@@ -112,6 +117,8 @@ export const icons = {
   target: ph('target'),
   bolt: ph('lightning'),
   images: ph('images'),
+  teams: ph('microsoft-teams-logo'),
+  clock: ph('clock'),
   user: ph('user-circle'),
   heart: ph('heart'),
   coffee: ph('coffee'),

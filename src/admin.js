@@ -12,10 +12,11 @@ const PRIORITIES = [['alta', 'Alta'], ['media', 'Media'], ['baja', 'Baja']];
 const statusLabel = (s) => (STATUSES.find(([k]) => k === s) || [, s])[1];
 const VIEWS = [
   ['dashboard', 'Inicio', 'grid'], ['solicitudes', 'Solicitudes', 'inbox'], ['tablero', 'Tablero', 'layers'],
-  ['seguimientos', 'Seguimientos', 'calendar'], ['ajustes', 'Ajustes', 'list'],
+  ['agenda', 'Agenda', 'teams'], ['seguimientos', 'Seguimientos', 'calendar'], ['ajustes', 'Ajustes', 'list'],
 ];
 
 let leads = [];
+let meetings = [];
 let view = 'dashboard';
 let filter = 'todos';
 let query = '';
@@ -36,7 +37,7 @@ async function boot() {
   booted = session.user.email;
   me = session.user;
   renderShell();
-  await loadLeads();
+  await Promise.all([loadLeads(), loadMeetings()]);
   subscribe();
 }
 
@@ -118,6 +119,12 @@ function updateNotifBtn() {
 }
 
 // ---------- Data ----------
+async function loadMeetings() {
+  const since = new Date(Date.now() - 30 * 864e5).toISOString();
+  const { data, error } = await supabase.from('meetings').select('*').gte('starts_at', since).order('starts_at');
+  if (!error) meetings = data;
+}
+
 async function loadLeads() {
   const { data, error } = await supabase.from('leads').select('*').order('created_at', { ascending: false }).limit(1000);
   if (error) { toast('Error cargando solicitudes'); console.error(error); return; }
@@ -138,6 +145,19 @@ function subscribe() {
       const i = leads.findIndex((l) => l.id === lead.id);
       if (i >= 0) leads[i] = lead;
       if (view !== 'solicitudes' || lead.id !== selectedId) renderAll();
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'meetings' }, async ({ eventType, new: m }) => {
+      await loadMeetings();
+      if (eventType === 'INSERT') {
+        unread++; updateBadge(); chime();
+        const when = fmtMeeting(m.starts_at);
+        toast(`Nueva asesoría: ${m.name} · ${when}`, true);
+        if ('Notification' in window && Notification.permission === 'granted') {
+          const n = new Notification('Nueva asesoría por Teams', { body: `${m.name} — ${when}`, icon: '/favicon.svg', tag: m.id });
+          n.onclick = () => { focus(); go('agenda'); };
+        }
+      }
+      if (view === 'agenda' || view === 'dashboard') renderAll();
     })
     .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'leads' }, ({ old }) => {
       leads = leads.filter((l) => l.id !== old.id);
@@ -236,7 +256,7 @@ function renderAll(flashId) {
   app.querySelectorAll('[data-view]').forEach((b) => b.classList.toggle('active', b.dataset.view === view));
   const el = document.getElementById('view');
   if (!el) return;
-  ({ dashboard: viewDashboard, solicitudes: viewLeads, tablero: viewBoard, seguimientos: viewFollow, ajustes: viewSettings })[view](el, flashId);
+  ({ dashboard: viewDashboard, solicitudes: viewLeads, tablero: viewBoard, agenda: viewAgenda, seguimientos: viewFollow, ajustes: viewSettings })[view](el, flashId);
 }
 
 // ===== Dashboard =====
@@ -278,6 +298,7 @@ function viewDashboard(el) {
         ['Ingreso mensual', cop(sum(won, monthlyOf)), 'Mensualidades de clientes cerrados', 'calendar'],
         ['Tasa de cierre', `${rate}%`, 'Cerradas sobre decididas', 'bolt'],
         ['Seguimientos', late.length, 'Para hoy o atrasados', 'bell'],
+        ['Asesorías', upcoming().length, 'Próximas por Teams', 'teams'],
       ].map(([k, v, s, ic]) => `<div class="a-stat vision"><div class="a-stat-top"><span class="a-stat-icon">${icons[ic]}</span>${k}</div><b>${v}</b><small>${s}</small></div>`).join('')}
     </div>
     <div class="a-dash">
@@ -291,12 +312,79 @@ function viewDashboard(el) {
       <section class="a-panel vision"><h3>Seguimientos pendientes</h3>
         ${late.length ? `<div class="mini-list">${late.slice(0, 6).map((l) => `<button data-open="${l.id}">${followTag(l)}<b>${esc(l.name)}</b><small>${esc(l.business || '')}</small></button>`).join('')}</div>` : '<p class="muted small">Nada pendiente. ¡Bien!</p>'}
       </section>
+      <section class="a-panel vision"><h3>Próximas asesorías</h3>
+        ${upcoming().length ? `<div class="mini-list">${upcoming().slice(0, 5).map((m) => `<button data-agenda="${m.id}"><span class="mt mt-${m.status}">${m.status}</span><b>${esc(m.name)}</b><small>${fmtMeeting(m.starts_at)}</small></button>`).join('')}</div>` : '<p class="muted small">No hay asesorías agendadas.</p>'}
+      </section>
       <section class="a-panel vision"><h3>Últimas solicitudes</h3>
         <div class="mini-list">${leads.slice(0, 6).map((l) => `<button data-open="${l.id}"><span class="st st-${esc(l.status)}">${statusLabel(l.status)}</span><b>${esc(l.name)}</b><small>${ago(l.created_at)}</small></button>`).join('') || '<p class="muted small">Aún no hay solicitudes.</p>'}</div>
       </section>
     </div>`;
   el.querySelector('#goNew').addEventListener('click', () => { filter = 'nuevo'; go('solicitudes'); });
   el.querySelectorAll('[data-open]').forEach((b) => b.addEventListener('click', () => go('solicitudes', b.dataset.open)));
+  el.querySelectorAll('[data-agenda]').forEach((b) => b.addEventListener('click', () => go('agenda')));
+}
+
+// ===== Agenda (Teams meetings) =====
+const MT_STATUS = [['pendiente', 'Pendiente'], ['confirmada', 'Confirmada'], ['realizada', 'Realizada'], ['cancelada', 'Cancelada']];
+const fmtMeeting = (iso) => new Date(iso).toLocaleString('es-CO', { weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Bogota' });
+const upcoming = () => meetings.filter((m) => new Date(m.starts_at).getTime() > Date.now() - 3600e3 && !['cancelada', 'realizada'].includes(m.status));
+const teamsNewLink = (m) => {
+  const start = new Date(m.starts_at), end = new Date(start.getTime() + (m.duration_min || 30) * 60e3);
+  const p = new URLSearchParams({ subject: `Asesoría KstaStudio_ · ${m.name}`, startTime: start.toISOString(), endTime: end.toISOString(), content: `Asesoría sobre tu plan con KstaStudio_.${m.topic ? ' Tema: ' + m.topic : ''}`, attendees: m.email || '' });
+  return `https://teams.microsoft.com/l/meeting/new?${p.toString().replace(/\+/g, '%20')}`;
+};
+const waMeeting = (m) => {
+  const msg = `¡Hola ${(m.name || '').split(' ')[0]}! 👋 Te escribe tu asesor de KstaStudio_. Tu asesoría por Microsoft Teams quedó confirmada para el ${fmtMeeting(m.starts_at)} (hora de Colombia).${m.teams_link ? `\n\nÚnete aquí: ${m.teams_link}` : '\n\nTe enviamos la invitación a tu correo.'}\n\n¡Nos vemos!`;
+  return `https://wa.me/${(m.phone || '').replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`;
+};
+
+async function updateMeeting(m, patch, msg) {
+  const { error } = await supabase.from('meetings').update(patch).eq('id', m.id);
+  if (error) { toast('No se pudo guardar'); console.error(error); return false; }
+  Object.assign(m, patch);
+  if (m.lead_id && msg) logEvent(m.lead_id, 'seguimiento', msg);
+  return true;
+}
+
+function viewAgenda(el) {
+  const now = Date.now();
+  const future = meetings.filter((m) => new Date(m.starts_at).getTime() > now - 3600e3);
+  const past = meetings.filter((m) => new Date(m.starts_at).getTime() <= now - 3600e3).reverse();
+  const byDay = {};
+  future.forEach((m) => { const k = new Date(m.starts_at).toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Bogota' }); (byDay[k] ||= []).push(m); });
+  const card = (m) => `
+    <article class="mtg vision ${m.status}" data-m="${m.id}">
+      <div class="mtg-time"><b>${new Date(m.starts_at).toLocaleTimeString('es-CO', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Bogota' })}</b><small>${m.duration_min} min</small></div>
+      <div class="mtg-main">
+        <div class="mtg-top"><b>${esc(m.name)}</b><span class="mt mt-${m.status}">${(MT_STATUS.find(([k]) => k === m.status) || [, m.status])[1]}</span></div>
+        <small>${esc(m.email || '')} · ${esc(m.phone || '')}</small>
+        ${m.topic ? `<p class="mtg-topic">“${esc(m.topic)}”</p>` : ''}
+        <div class="mtg-link"><input placeholder="Pega aquí el enlace de Teams" value="${esc(m.teams_link || '')}" data-link /><button class="btn btn-sm btn-ghost" data-save>Guardar</button></div>
+        <div class="mtg-actions">
+          <a class="btn btn-sm" href="${teamsNewLink(m)}" target="_blank" rel="noopener" data-teams>${icons.teams} Crear reunión en Teams</a>
+          <a class="btn btn-sm btn-ghost" href="${waMeeting(m)}" target="_blank" rel="noopener" data-wa>${icons.whatsapp} Enviar por WhatsApp</a>
+          ${m.teams_link ? `<a class="btn btn-sm btn-ghost" href="${esc(m.teams_link)}" target="_blank" rel="noopener">Unirme</a>` : ''}
+          ${m.lead_id ? `<button class="btn btn-sm btn-ghost" data-lead>Ver solicitud</button>` : ''}
+          <select data-st>${MT_STATUS.map(([k, lab]) => `<option value="${k}" ${m.status === k ? 'selected' : ''}>${lab}</option>`).join('')}</select>
+        </div>
+      </div>
+    </article>`;
+  el.innerHTML = `
+    <div class="a-head"><div><h1>Agenda</h1><p class="muted">Asesorías por Microsoft Teams que agendan tus clientes al terminar el cotizador. Hora de Colombia.</p></div></div>
+    ${Object.keys(byDay).length ? Object.entries(byDay).map(([d, arr]) => `<h3 class="day-h">${d}</h3><div class="mtgs">${arr.map(card).join('')}</div>`).join('') : `<div class="a-empty">${icons.teams}<p>No hay asesorías próximas.</p></div>`}
+    ${past.length ? `<details class="past"><summary>Asesorías pasadas (${past.length})</summary><div class="mtgs">${past.map(card).join('')}</div></details>` : ''}`;
+
+  el.querySelectorAll('[data-m]').forEach((art) => {
+    const m = meetings.find((x) => x.id === art.dataset.m);
+    art.querySelector('[data-save]').addEventListener('click', async () => {
+      const v = art.querySelector('[data-link]').value.trim() || null;
+      if (await updateMeeting(m, { teams_link: v, status: v && m.status === 'pendiente' ? 'confirmada' : m.status }, 'Enlace de Teams guardado')) { toast('Enlace guardado'); renderAll(); }
+    });
+    art.querySelector('[data-teams]').addEventListener('click', () => toast('Crea la reunión en Teams y pega aquí el enlace'));
+    art.querySelector('[data-wa]').addEventListener('click', () => { if (m.status === 'pendiente') updateMeeting(m, { status: 'confirmada' }, 'Asesoría confirmada por WhatsApp').then(renderAll); });
+    art.querySelector('[data-lead]')?.addEventListener('click', () => go('solicitudes', m.lead_id));
+    art.querySelector('[data-st]').addEventListener('change', async (e) => { if (await updateMeeting(m, { status: e.target.value }, `Asesoría: ${e.target.value}`)) { toast('Estado actualizado'); renderAll(); } });
+  });
 }
 
 // ===== Leads list + detail =====

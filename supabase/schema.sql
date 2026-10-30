@@ -70,3 +70,36 @@ do $$ begin
     alter publication supabase_realtime add table public.lead_events;
   end if;
 end $$;
+
+-- ===== Asesorías por Teams =====
+create table if not exists public.meetings (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  lead_id uuid references public.leads(id) on delete cascade,
+  starts_at timestamptz not null,
+  duration_min int not null default 30,
+  name text not null check (char_length(name) <= 100),
+  email text check (char_length(email) <= 150),
+  phone text check (char_length(phone) <= 30),
+  topic text check (char_length(topic) <= 300),
+  status text not null default 'pendiente',
+  teams_link text
+);
+create unique index if not exists meetings_slot_unique on public.meetings (starts_at) where status <> 'cancelada';
+alter table public.meetings enable row level security;
+drop policy if exists "anyone can book" on public.meetings;
+create policy "anyone can book" on public.meetings for insert to anon, authenticated with check (status = 'pendiente' and starts_at > now());
+drop policy if exists "admins manage meetings" on public.meetings;
+create policy "admins manage meetings" on public.meetings for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
+-- Public list of taken slots (no personal data)
+create or replace function public.booked_slots() returns setof timestamptz language sql stable security definer set search_path = public as $$
+  select starts_at from public.meetings where starts_at > now() and status <> 'cancelada';
+$$;
+grant execute on function public.booked_slots() to anon, authenticated;
+
+do $$ begin
+  if not exists (select 1 from pg_publication_tables where pubname='supabase_realtime' and tablename='meetings') then
+    alter publication supabase_realtime add table public.meetings;
+  end if;
+end $$;
