@@ -2,6 +2,7 @@ import { icons } from './icons.js';
 import { supabase } from './supabase.js';
 import { TEMPLATES } from './templates.js';
 import { buildQuote, cop } from './pricing.js';
+import { CATS, CAT_ORDER, COMBO, findTier, tierPrice, priceHTML, fromValue } from './plans.js';
 
 const SERVICES = {
   branding: { label: 'Branding e identidad', icon: 'brand', desc: 'Logo, colores, tipografías y todo lo que hace reconocible a tu marca.' },
@@ -11,13 +12,6 @@ const SERVICES = {
   print: { label: 'Publicidad física', icon: 'sign', desc: 'Letreros, pendones, vinilos y todo lo impreso, con nuestra aliada de impresión.' },
 };
 
-const PLANS = [
-  { id: 'solo-web', label: 'Plan Solo Página Web', desc: 'Ya tengo mi marca y solo necesito mi página web, sin más servicios.', icon: 'code', services: ['web'] },
-  { id: 'emprendimiento', label: 'Paquete Emprendimiento', desc: 'Estoy empezando y necesito lo esencial para salir al mercado con buena imagen.', icon: 'rocket', services: ['branding', 'web', 'marketing'] },
-  { id: 'presencia', label: 'Paquete Presencia Digital', desc: 'Ya tengo negocio y quiero verme profesional y vender más en internet.', icon: 'globe', services: ['branding', 'web', 'audiovisual', 'marketing'] },
-  { id: 'integral', label: 'Paquete Negocio Integral', desc: 'Quiero todo: marca, web, contenido, publicidad digital y física.', icon: 'building', services: ['branding', 'web', 'audiovisual', 'marketing', 'print'] },
-  { id: 'custom', label: 'Plan a mi medida', desc: 'Sé exactamente lo que necesito y quiero elegir servicio por servicio.', icon: 'sparkles', services: [] },
-];
 
 // Each option: [value, short explanation]
 const DETAILS = {
@@ -119,6 +113,8 @@ const TIMING = [['Lo antes posible', 'Priorizamos tu proyecto'], ['En 2–4 sema
 const BUDGET = [['Aún no lo sé', 'Te proponemos opciones'], ['Básico', 'Lo esencial'], ['Intermedio', 'Buen balance'], ['Completo / premium', 'Lo mejor para tu marca']];
 
 const INFO = {
+  cats: 'Puedes contratar una sola categoría o combinarlas. Al elegir 2 ahorras 10% y con las 3 ahorras 15% sobre el total.',
+  tiers: 'Cada plan es un punto de partida con lo que más recomendamos. En los siguientes pasos puedes ajustar todo y el precio final se calcula con tus respuestas.',
   plan: 'Los paquetes combinan servicios con mejor precio que contratarlos por separado. Si eliges “a mi medida”, armas tu plan servicio por servicio.',
   services: 'Cada servicio que marques añade unas preguntas cortas para entender exactamente lo que necesitas. Puedes cambiar lo que viene en tu paquete.',
   template: 'Partir de una plantilla profesional reduce tiempo y costo. La personalizamos con tu logo, colores, textos y fotos, y te mostramos una demo antes de construir la versión final.',
@@ -169,14 +165,14 @@ export function initQuote({ onStep }) {
   let state, steps, idx, busy = false;
 
   const reset = () => {
-    state = { plan: null, services: [], details: {}, template: null, business: {}, style: [], timing: null, budget: null, contact: {} };
+    state = { cats: [], tiers: {}, applied: '', services: [], details: {}, template: null, business: {}, style: [], timing: null, budget: null, contact: {} };
     idx = 0;
   };
 
   function buildSteps() {
     const svc = state.services.map((s) => `detail:${s}`);
     if (state.services.includes('web')) svc.splice(svc.indexOf('detail:web') + 1, 0, 'template');
-    steps = ['plan', 'services', ...svc, 'business', 'style', 'timing', 'contact', 'summary'];
+    steps = ['cats', 'tiers', 'services', ...svc, 'business', 'style', 'timing', 'contact', 'summary'];
   }
 
   // ---------- building blocks ----------
@@ -201,9 +197,27 @@ export function initQuote({ onStep }) {
     }).join('')}</div>`;
 
   const R = {
-    plan: () => head('// paso 1 · tu objetivo', '¿Qué estás buscando?', 'Elige el punto de partida que más se parezca a tu situación.') +
-      info('plan') + bigChoice('plan', PLANS, state.plan, false),
-    services: () => head('// servicios', 'Arma tu combinación.', state.plan === 'custom' ? 'Selecciona todo lo que necesites.' : 'Ya marcamos lo que incluye tu paquete. Agrega o quita lo que quieras.') +
+    cats: () => head('// paso 1 · qué necesitas', '¿En qué te ayudamos?', 'Elige una, dos o las tres. Combinando categorías ahorras.') + info('cats') + `
+      <div class="choices big cats">${CAT_ORDER.map((k, i) => {
+        const c = CATS[k], cheapest = c.tiers.map((t) => tierPrice(t)).sort((a, b) => fromValue(a) - fromValue(b))[0];
+        return `<button type="button" class="choice vision ${state.cats.includes(k) ? 'on' : ''}" data-name="cats" data-val="${k}" data-multi="1" style="--i:${i}">
+          <span class="icon">${icons[c.icon]}</span><b>${esc(c.label)}</b><small>${esc(c.desc)}</small><span class="from">desde <b>${priceHTML({ ...cheapest, monthly: cheapest.total ? 0 : cheapest.monthly }, cop)}</b></span><span class="tick corner">${icons.check}</span></button>`;
+      }).join('')}</div>
+      <div class="combo-meter vision" id="comboMeter">${comboMeter()}</div>`,
+    tiers: () => head('// tu plan', state.cats.length > 1 ? 'Elige un plan para cada categoría.' : 'Elige tu plan.', 'Cada plan ya trae lo recomendado. En los siguientes pasos puedes ajustarlo.') + info('tiers') +
+      state.cats.map((k) => `<div class="q-block"><h3 class="tier-head"><i>${icons[CATS[k].icon]}</i>${esc(CATS[k].label)}</h3>
+        <div class="choices tiers">${CATS[k].tiers.map((t, i) => { const tp = tierPrice(t); return `
+          <button type="button" class="choice vision tier ${state.tiers[k] === t.id ? 'on' : ''} ${t.featured ? 'feat' : ''}" data-name="tier:${k}" data-val="${t.id}" data-multi="0" style="--i:${i}">
+            <span class="tier-top"><b>${esc(t.name)}</b><span class="pill">${esc(t.tag)}</span></span>
+            <span class="tier-price">${priceHTML(tp, cop)}</span>
+            <ul>${t.items.map((x) => `<li>${icons.check}${esc(x)}</li>`).join('')}</ul>
+            <span class="tick corner">${icons.check}</span>
+          </button>`; }).join('')}
+          <button type="button" class="choice vision tier tier-custom ${state.tiers[k] === 'custom' ? 'on' : ''}" data-name="tier:${k}" data-val="custom" data-multi="0" style="--i:3">
+            <span class="tier-top"><b>A mi medida</b></span><small>Prefiero elegir yo cada cosa en las siguientes preguntas.</small><span class="tick corner">${icons.check}</span>
+          </button>
+        </div></div>`).join(''),
+    services: () => head('// servicios', 'Arma tu combinación.', 'Ya marcamos lo que incluye tu plan. Agrega o quita lo que quieras.') +
       info('services') + bigChoice('services', Object.entries(SERVICES).map(([id, s]) => ({ id, ...s })), state.services, true),
     detail: (svc) => head(`// ${SERVICES[svc].label.toLowerCase()}`, SERVICES[svc].label) + info(null, DETAILS[svc].intro) +
       DETAILS[svc].qs.map((d) => `<div class="q-block"><h3>${d.q}${d.type === 'multi' ? ' <span class="pill">varias</span>' : ''}</h3><p class="q-help">${d.help}</p>${choice(`d:${svc}:${d.key}`, d.opts, (state.details[svc] || {})[d.key] ?? (d.type === 'multi' ? [] : null), d.type === 'multi')}</div>`).join(''),
@@ -245,7 +259,29 @@ export function initQuote({ onStep }) {
       `<div class="summary vision">${summaryLines().map(([k, v]) => `<div><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('')}</div>`,
   };
 
-  const planLabel = () => PLANS.find((p) => p.id === state.plan)?.label || '';
+  const planLabel = () => state.cats.map((k) => (state.tiers[k] === 'custom' ? `${CATS[k].label} a medida` : findTier(state.tiers[k])?.tier.name || CATS[k].label)).join(' + ');
+  const planId = () => `cats-${Math.max(1, state.cats.length)}`;
+  function comboMeter() {
+    const n = state.cats.length, off = COMBO[n] || 0;
+    return `<div class="cm-steps">${[1, 2, 3].map((i) => `<span class="${n >= i ? 'on' : ''}">${i}</span>`).join('<i></i>')}</div>
+      <p>${n === 0 ? 'Elige al menos una categoría.' : n === 1 ? 'Agrega otra categoría y ahorra <b>10%</b>.' : n === 2 ? '¡Combo! Ahorras <b>10%</b>. Con las 3 ahorras <b>15%</b>.' : '¡Combo completo! Ahorras <b>15%</b> en todo.'}</p>
+      ${off ? `<span class="cm-badge">-${Math.round(off * 100)}%</span>` : ''}`;
+  }
+  // When leaving the plan step: chosen tiers → services + pre-filled answers
+  function applyTiers() {
+    const key = JSON.stringify(state.tiers);
+    if (key === state.applied) return;
+    state.applied = key;
+    const svc = new Set();
+    state.cats.forEach((k) => {
+      const t = state.tiers[k];
+      if (t === 'custom' || !t) return CATS[k].services.slice(0, k === 'publicidad' ? 2 : 1).forEach((s) => svc.add(s));
+      const { tier } = findTier(t);
+      tier.services.forEach((s) => svc.add(s));
+      Object.entries(tier.details).forEach(([s, d]) => { state.details[s] = structuredClone(d); });
+    });
+    state.services = ['branding', 'web', 'audiovisual', 'marketing', 'print'].filter((s) => svc.has(s));
+  }
   const templateLabel = () => (state.template === 'custom' ? 'Diseño personalizado' : TEMPLATES.find((t) => t.id === state.template)?.name || '');
 
   function summaryLines() {
@@ -273,7 +309,8 @@ export function initQuote({ onStep }) {
   function validate() {
     const s = steps[idx];
     const need = (ok, msg) => { if (!ok) toast(msg); return ok; };
-    if (s === 'plan') return need(state.plan, 'Elige una opción para continuar');
+    if (s === 'cats') return need(state.cats.length, 'Elige al menos una categoría');
+    if (s === 'tiers') return need(state.cats.every((k) => state.tiers[k]), 'Elige un plan para cada categoría');
     if (s === 'services') return need(state.services.length, 'Selecciona al menos un servicio');
     if (s === 'template') return need(state.template, 'Elige una plantilla o diseño personalizado');
     if (s.startsWith('detail:')) {
@@ -374,7 +411,8 @@ export function initQuote({ onStep }) {
     if (busy) return;
     if (dir > 0 && !validate()) { const p = stage.querySelector('.q-panel.on'); p?.classList.add('shake'); setTimeout(() => p?.classList.remove('shake'), 500); return; }
     if (dir > 0 && steps[idx] === 'summary') return submit();
-    if (steps[idx] === 'services' || steps[idx] === 'plan') buildSteps();
+    if (dir > 0 && steps[idx] === 'tiers') applyTiers();
+    if (['cats', 'tiers', 'services'].includes(steps[idx])) buildSteps();
     const n = idx + dir;
     if (n < 0 || n >= steps.length) return;
     idx = n;
@@ -416,10 +454,12 @@ export function initQuote({ onStep }) {
     const { name, val } = b.dataset, multi = b.dataset.multi === '1';
     const toggle = (arr) => (arr.includes(val) ? arr.filter((x) => x !== val) : [...arr, val]);
 
-    if (name === 'plan') {
-      state.plan = val;
-      state.services = [...PLANS.find((p) => p.id === val).services];
-    } else if (name === 'services') state.services = toggle(state.services);
+    if (name === 'cats') {
+      state.cats = CAT_ORDER.filter((k) => (k === val ? !state.cats.includes(k) : state.cats.includes(k)));
+      const m = stage.querySelector('#comboMeter');
+      if (m) { m.innerHTML = comboMeter(); m.classList.remove('pulse'); void m.offsetWidth; m.classList.add('pulse'); }
+    } else if (name.startsWith('tier:')) state.tiers[name.slice(5)] = val;
+    else if (name === 'services') state.services = toggle(state.services);
     else if (name === 'style') {
       if (!state.style.includes(val) && state.style.length >= 3) return toast('Máximo 3 estilos');
       state.style = toggle(state.style);
@@ -434,7 +474,7 @@ export function initQuote({ onStep }) {
     else b.parentElement.querySelectorAll('.choice').forEach((x) => x.classList.toggle('on', x === b));
     b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
     // Single choice → auto-advance to the next question (or next step)
-    if (!multi) setTimeout(() => (name === 'plan' ? go(1) : nextBlock()), 450);
+    if (!multi) setTimeout(nextBlock, 450);
   });
 
   stage.addEventListener('input', (e) => {
@@ -464,12 +504,12 @@ export function initQuote({ onStep }) {
     busy = true;
     next.disabled = true; next.textContent = 'Calculando tu cotización…';
     const text = summaryLines().map(([k, v]) => `• ${k}: ${v}`).join('\n');
-    const quote = buildQuote({ plan: state.plan, services: state.services, details: state.details, template: state.template, timing: state.timing });
+    const quote = buildQuote({ plan: planId(), services: state.services, details: state.details, template: state.template, timing: state.timing });
     const lead = {
       id: crypto.randomUUID(), created_at: new Date().toISOString(),
       name: state.contact.name, email: state.contact.email, phone: state.contact.phone,
       business: state.business.name, service: planLabel(), message: text, template: templateLabel() || null,
-      details: { plan: state.plan, services: state.services, details: state.details, template: state.template, business: state.business, style: state.style, timing: state.timing, budget: state.budget, notes: state.contact.notes },
+      details: { plan: planId(), cats: state.cats, tiers: state.tiers, services: state.services, details: state.details, template: state.template, business: state.business, style: state.style, timing: state.timing, budget: state.budget, notes: state.contact.notes },
       quote, quote_total: quote.total,
     };
     try {
@@ -495,7 +535,7 @@ export function initQuote({ onStep }) {
       <div class="done-price vision">
         <span class="mono">Inversión total</span>
         <b class="done-total" data-total="${q.total}">$0</b>
-        ${q.discount ? `<span class="done-save">Ahorras ${cop(q.discount)} con tu paquete</span>` : ''}
+        ${q.discount ? `<span class="done-save">Ahorras ${cop(q.discount)} con tu combo</span>` : ''}
         ${q.monthly ? `<small>+ ${cop(q.monthly)} /mes en servicios mensuales</small>` : ''}
         <small>Anticipo para iniciar: <b>${cop(q.deposit)}</b> · Precios sin IVA</small>
       </div>
@@ -527,7 +567,7 @@ export function initQuote({ onStep }) {
 
   // ---------- motion-graphics intro ----------
   const INTRO = [
-    { icon: 'target', sats: ['code', 'rocket', 'building'], t: 'Elige tu objetivo', d: 'Un paquete listo o tu plan a la medida, servicio por servicio.' },
+    { icon: 'target', sats: ['code', 'rocket', 'building'], t: 'Elige qué necesitas', d: 'Web, diseño, publicidad… o las tres. Combinando ahorras hasta 15%.' },
     { icon: 'list', sats: ['brand', 'code', 'video'], t: 'Responde preguntas rápidas', d: 'Solo sobre lo que elegiste. Cada paso te explica para qué sirve.' },
     { icon: 'palette', sats: ['images', 'code', 'sparkles'], t: 'Define tu estilo', d: 'Mira plantillas web reales y cuéntanos cómo quieres que se sienta tu marca.' },
     { icon: 'handshake', sats: ['whatsapp', 'chat', 'calendar'], t: 'Un asesor te contacta', d: 'Te escribimos por WhatsApp con tu cotización personalizada. Sin compromiso.' },
@@ -597,12 +637,11 @@ export function initQuote({ onStep }) {
   // ---------- open / close ----------
   function open(preset) {
     reset();
-    if (preset) {
-      const p = PLANS.find((x) => x.label === preset || x.id === preset);
-      if (p) { state.plan = p.id; state.services = [...p.services]; }
-    }
+    if (preset === 'combo') state.cats = [...CAT_ORDER];
+    else if (CATS[preset]) state.cats = [preset];
+    else if (findTier(preset)) { const { cat } = findTier(preset); state.cats = [cat]; state.tiers[cat] = preset; }
     buildSteps();
-    if (state.plan) idx = 1;
+    if (state.cats.length) idx = 1;
     stage.innerHTML = '';
     root.querySelector('.quote-nav').classList.remove('gone'); root.classList.remove('finished');
     next.disabled = false; busy = false;

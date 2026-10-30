@@ -1,4 +1,6 @@
-import { services, packages } from './data.js';
+import { services } from './data.js';
+import { CATS, CAT_ORDER, COMBO, tierPrice, priceHTML } from './plans.js';
+import { cop } from './pricing.js';
 import { icons } from './icons.js';
 import { initQuote } from './quote.js';
 import { initShowcase } from './showcase.js';
@@ -12,15 +14,39 @@ document.getElementById('services').innerHTML = services.map((s, i) => `
     <ul>${s.items.map((it) => `<li>${it}</li>`).join('')}</ul>
   </article>`).join('');
 
-document.getElementById('packages').innerHTML = packages.map((p, i) => `
-  <article class="package glass reveal ${p.featured ? 'featured' : ''}" style="--d:${i * 120}ms">
-    <div class="package-top"><div class="icon">${icons[p.icon]}</div><span class="tag">${p.tag}</span></div>
-    <h3>${p.pkg || `Paquete ${p.name}`}</h3>
-    <p class="muted">${p.desc}</p>
-    <ul>${p.items.map((it) => `<li>${icons.check}${it}</li>`).join('')}</ul>
-    <a href="#contacto" class="btn ${p.featured ? '' : 'btn-ghost'}" data-pkg="${p.pkg || `Paquete ${p.name}`}">Cotizar paquete</a>
-  </article>`).join('');
-
+// Plans by category (tabs) + combo
+const PLAN_TABS = [...CAT_ORDER, 'combo'];
+const pkgEl = document.getElementById('packages');
+function renderPlans(active = 'web') {
+  const tabs = `<div class="plan-tabs vision" role="tablist">${PLAN_TABS.map((k) => `<button role="tab" class="${k === active ? 'on' : ''}" data-tab="${k}">${k === 'combo' ? `${icons.sparkles}Combo · ahorra hasta 15%` : `${icons[CATS[k].icon]}${CATS[k].label}`}</button>`).join('')}</div>`;
+  let body;
+  if (active === 'combo') {
+    const mid = CAT_ORDER.map((k) => CATS[k].tiers.find((t) => t.featured));
+    const sum = mid.reduce((s, t) => s + tierPrice(t).total, 0);
+    body = `<div class="combo-grid">
+      ${[[2, 'Combo Dúo', 'Elige 2 categorías', 'Por ejemplo: web + diseño de marca.'], [3, 'Combo Total', 'Las 3 categorías', 'Web, marca y publicidad trabajando juntas.']].map(([n, name, sub, ex], i) => `
+        <article class="package glass reveal ${n === 3 ? 'featured' : ''}" style="--d:${i * 120}ms">
+          <div class="package-top"><div class="icon">${icons[n === 3 ? 'sparkles' : 'layers']}</div><span class="tag">-${COMBO[n] * 100}%</span></div>
+          <h3>${name}</h3><p class="muted">${sub}. ${ex}</p>
+          ${n === 3 ? `<p class="combo-example">Ej: ${mid.map((t) => t.name).join(' + ')}<br><s>${cop(sum)}</s> <b>${cop(sum * (1 - COMBO[3]))}</b></p>` : ''}
+          <a href="#contacto" class="btn ${n === 3 ? '' : 'btn-ghost'}" data-pkg="combo">Armar mi combo</a>
+        </article>`).join('')}
+    </div>`;
+  } else {
+    body = `<p class="plan-cat-desc muted">${CATS[active].desc}</p><div class="packages-grid">${CATS[active].tiers.map((t, i) => { const p = tierPrice(t); return `
+      <article class="package glass reveal ${t.featured ? 'featured' : ''}" style="--d:${i * 120}ms">
+        <div class="package-top"><div class="icon">${icons[CATS[active].icon]}</div><span class="tag">${t.tag}</span></div>
+        <h3>${t.name}</h3>
+        <p class="price">${priceHTML(p, cop)}</p>
+        <ul>${t.items.map((it) => `<li>${icons.check}${it}</li>`).join('')}</ul>
+        <a href="#contacto" class="btn ${t.featured ? '' : 'btn-ghost'}" data-pkg="${t.id}">Cotizar ${t.name}</a>
+      </article>`; }).join('')}</div>`;
+  }
+  pkgEl.innerHTML = tabs + `<div class="plan-body">${body}</div>`;
+  pkgEl.querySelectorAll('.reveal').forEach((el) => requestAnimationFrame(() => el.classList.add('in')));
+  pkgEl.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => renderPlans(b.dataset.tab)));
+}
+renderPlans();
 document.querySelectorAll('[data-icon]').forEach((el) => { el.innerHTML = icons[el.dataset.icon]; });
 // Guided quote wizard: every "Cotizar" button opens it
 let quoteStep = -1;
