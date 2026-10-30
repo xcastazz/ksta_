@@ -98,7 +98,9 @@ export function quotePDF(lead) {
   doc.setFont('helvetica', 'bold'); doc.setFontSize(18); doc.setTextColor(255, 255, 255);
   doc.text(cop(q.total), W - M - 14, y + 30, { align: 'right' });
   y += 58;
-  if (q.monthly) row('Servicios mensuales', cop(q.monthly) + ' /mes', true, PURPLE);
+  if (q.maintenance) row(`Mantenimiento mensual (${Math.round(q.maintenanceRate * 100)}%)`, cop(q.maintenance) + ' /mes', false, PURPLE);
+  if (q.services) row('Servicios mensuales', cop(q.services) + ' /mes', false, PURPLE);
+  if (q.monthly) row('Total mensual', cop(q.monthly) + ' /mes', true, PURPLE);
   row(`Anticipo para iniciar (${Math.round(PRICES.anticipo * 100)}%)`, cop(q.deposit), true);
 
   // ---- Terms
@@ -111,6 +113,7 @@ export function quotePDF(lead) {
     `Valores en pesos colombianos (COP), no incluyen IVA. Cotización válida por ${PRICES.vigenciaDias} días.`,
     `Forma de pago: ${Math.round(PRICES.anticipo * 100)}% de anticipo para iniciar y el saldo contra entrega.`,
     'Incluye hasta 2 rondas de ajustes por pieza. Cambios adicionales se cotizan aparte.',
+    `Mantenimiento mensual (${Math.round(PRICES.mantenimiento * 100)}% del valor total): soporte, actualizaciones, copias de seguridad y ajustes menores.`,
     'La pauta publicitaria (lo que se paga a Meta por los anuncios) no está incluida en estos valores.',
     'Impresión y producción física sujetas a medidas y materiales finales.',
   ];

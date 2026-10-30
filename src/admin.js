@@ -310,7 +310,9 @@ function bindQuote(l) {
         <div><span>Descuento <input type="number" min="0" max="100" value="${Math.round(q.discountRate * 100)}" id="aqDisc" />%</span><b class="ok">- ${cop(q.discount)}</b></div>
         ${q.rush ? `<div><span>Urgencia (+${Math.round(q.rushRate * 100)}%)</span><b>+ ${cop(q.rush)}</b></div>` : ''}
         <div class="aq-total"><span>Total</span><b>${cop(q.total)}</b></div>
-        ${q.monthly ? `<div><span>Mensual</span><b>${cop(q.monthly)} /mes</b></div>` : ''}
+        ${q.maintenance ? `<div><span>Mantenimiento (${Math.round(q.maintenanceRate * 100)}%)</span><b>${cop(q.maintenance)} /mes</b></div>` : ''}
+        ${q.services ? `<div><span>Servicios mensuales</span><b>${cop(q.services)} /mes</b></div>` : ''}
+        ${q.monthly ? `<div><span>Total mensual</span><b>${cop(q.monthly)} /mes</b></div>` : ''}
         <div><span>Anticipo</span><b>${cop(q.deposit)}</b></div>
       </div>
       <div class="aq-actions">

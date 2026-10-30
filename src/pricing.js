@@ -68,6 +68,7 @@ export const PRICES = {
   // Descuento por paquete (sobre los servicios de pago único)
   descuentos: { 'cats-1': 0, 'cats-2': 0.05, 'cats-3': 0.08, 'solo-web': 0, emprendimiento: 0.10, presencia: 0.12, integral: 0.15, custom: 0 },
   urgencia: { 'Lo antes posible': 0.10 }, // recargo
+  mantenimiento: 0.17, // mensualidad de mantenimiento = 17% del valor total
   anticipo: 0.5,
   vigenciaDias: 15,
 };
@@ -123,5 +124,7 @@ export function totals(q) {
   const discount = Math.round(once * discountRate);
   const rush = Math.round((once - discount) * rushRate);
   const total = once - discount + rush;
-  return { ...q, subtotal: once, discountRate, discount, rushRate, rush, total, monthly, deposit: Math.round(total * PRICES.anticipo) };
+  const maintenanceRate = q.maintenanceRate ?? PRICES.mantenimiento;
+  const maintenance = Math.round((total * maintenanceRate) / 1000) * 1000;
+  return { ...q, subtotal: once, discountRate, discount, rushRate, rush, total, maintenanceRate, maintenance, services: monthly, monthly: monthly + maintenance, deposit: Math.round(total * PRICES.anticipo) };
 }
