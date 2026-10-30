@@ -143,6 +143,10 @@ export function initQuote({ onStep }) {
         <button class="quote-close" id="qClose" aria-label="Cerrar">✕</button>
       </div>
       <div class="quote-stage" id="qStage"></div>
+      <div class="q-arrows">
+        <button type="button" id="qUp" aria-label="Pregunta anterior">↑</button>
+        <button type="button" id="qDown" aria-label="Siguiente pregunta">↓</button>
+      </div>
       <div class="quote-nav">
         <button class="btn btn-ghost" id="qBack">← Atrás</button>
         <span class="seg mono" id="qCount"></span>
@@ -304,16 +308,64 @@ export function initQuote({ onStep }) {
     return panel;
   }
 
+  // ---------- focus mode: one question at a time inside each step ----------
+  let blocks = [], bIdx = 0, panelEl = null;
+
+  function setBlock(i, scroll = true) {
+    if (!blocks.length) return;
+    bIdx = Math.max(0, Math.min(blocks.length - 1, i));
+    blocks.forEach((b, j) => {
+      b.classList.toggle('is-focus', j === bIdx);
+      b.classList.toggle('is-past', j < bIdx);
+    });
+    const cur = blocks[bIdx];
+    cur.classList.remove('focus-in'); void cur.offsetWidth; cur.classList.add('focus-in');
+    panelEl.classList.toggle('head-dim', bIdx > 0);
+    if (scroll) {
+      const top = cur.offsetTop - stage.clientHeight / 2 + Math.min(cur.offsetHeight, stage.clientHeight * 0.7) / 2;
+      stage.scrollTo({ top: bIdx === 0 ? 0 : top, behavior: 'smooth' });
+    }
+    const input = cur.querySelector('input, textarea');
+    if (input && matchMedia('(hover: hover)').matches) setTimeout(() => input.focus({ preventScroll: true }), 350);
+    updateNav();
+  }
+
+  function updateNav() {
+    const lastBlock = bIdx >= blocks.length - 1;
+    back.style.visibility = idx || bIdx ? 'visible' : 'hidden';
+    back.textContent = bIdx > 0 ? '↑ Anterior' : '← Paso anterior';
+    next.innerHTML = !lastBlock ? 'Siguiente ↓' : steps[idx] === 'summary' ? `Enviar solicitud ${icons.send}` : 'Continuar →';
+    $('#qUp').disabled = !idx && !bIdx;
+    $('#qDown').disabled = steps[idx] === 'summary' && lastBlock;
+  }
+
   function render(dir = 1) {
     const [name, arg] = steps[idx].split(':');
-    const panel = swap(R[name](arg), dir);
+    panelEl = swap(R[name](arg), dir);
+    blocks = [...panelEl.querySelectorAll(':scope > .choices, .q-block, :scope > .tpl-grid, .fields > label, :scope > .summary')];
+    blocks.forEach((b) => b.classList.add('q-focus'));
+    panelEl.classList.toggle('focus-mode', blocks.length > 1);
     dots.innerHTML = steps.map((_, i) => `<span class="${i < idx ? 'done' : i === idx ? 'cur' : ''}"></span>`).join('');
     count.textContent = `Paso ${idx + 1} de ${steps.length}`;
-    back.style.visibility = idx ? 'visible' : 'hidden';
-    next.innerHTML = steps[idx] === 'summary' ? `Enviar solicitud ${icons.send}` : 'Continuar →';
     onStep(idx);
-    const first = panel.querySelector('input');
-    if (first && matchMedia('(hover: hover)').matches) setTimeout(() => first.focus({ preventScroll: true }), 500);
+    setTimeout(() => setBlock(dir < 0 ? blocks.length - 1 : 0), dir < 0 ? 350 : 0);
+    if (dir >= 0) setBlock(0, false);
+  }
+
+  // Move one question; at the edges, move one whole step
+  function nextBlock() {
+    if (bIdx < blocks.length - 1) {
+      if (!blockAnswered(blocks[bIdx])) { shakeBlock(); return toast('Responde esta pregunta para seguir'); }
+      return setBlock(bIdx + 1);
+    }
+    go(1);
+  }
+  function prevBlock() { if (bIdx > 0) setBlock(bIdx - 1); else go(-1); }
+  function shakeBlock() { const b = blocks[bIdx]; b?.classList.add('shake'); setTimeout(() => b?.classList.remove('shake'), 500); }
+  function blockAnswered(b) {
+    const group = b.querySelector('.choice');
+    if (!group || b.querySelector('[data-name="style"]')) return true;
+    return !!b.querySelector('.choice.on');
   }
 
   function go(dir) {
@@ -379,7 +431,8 @@ export function initQuote({ onStep }) {
     if (multi) b.classList.toggle('on');
     else b.parentElement.querySelectorAll('.choice').forEach((x) => x.classList.toggle('on', x === b));
     b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
-    if (name === 'plan') setTimeout(() => go(1), 420);
+    // Single choice → auto-advance to the next question (or next step)
+    if (!multi) setTimeout(() => (name === 'plan' ? go(1) : nextBlock()), 450);
   });
 
   stage.addEventListener('input', (e) => {
@@ -389,12 +442,19 @@ export function initQuote({ onStep }) {
     state[group][key] = e.target.value.trim();
   });
 
-  back.addEventListener('click', () => go(-1));
-  next.addEventListener('click', () => go(1));
+  back.addEventListener('click', prevBlock);
+  next.addEventListener('click', nextBlock);
+  $('#qUp').addEventListener('click', prevBlock);
+  $('#qDown').addEventListener('click', nextBlock);
+  // Clicking a dimmed question brings it into focus
+  stage.addEventListener('pointerdown', (e) => {
+    const b = e.target.closest('.q-focus');
+    if (b && !b.classList.contains('is-focus')) { const i = blocks.indexOf(b); if (i >= 0) setBlock(i); }
+  });
   $('#qClose').addEventListener('click', close);
   root.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') return modal.classList.contains('open') ? closePreview() : close();
-    if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); go(1); }
+    if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); nextBlock(); }
   });
 
   // ---------- submit: the sale closes here ----------
@@ -432,7 +492,7 @@ export function initQuote({ onStep }) {
       </div>
       <button class="btn" data-close>Volver al sitio</button>`, 1, 'done');
     dots.querySelectorAll('span').forEach((d) => (d.className = 'done'));
-    root.querySelector('.quote-nav').classList.add('gone');
+    root.querySelector('.quote-nav').classList.add('gone'); root.classList.add('finished');
     onStep(99); // celebratory pose
   }
   stage.addEventListener('click', (e) => { if (e.target.closest('[data-close]')) close(); });
@@ -447,7 +507,7 @@ export function initQuote({ onStep }) {
     buildSteps();
     if (state.plan) idx = 1;
     stage.innerHTML = '';
-    root.querySelector('.quote-nav').classList.remove('gone');
+    root.querySelector('.quote-nav').classList.remove('gone'); root.classList.remove('finished');
     next.disabled = false; busy = false;
     document.body.classList.add('quote-open');
     root.classList.add('open');
