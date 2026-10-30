@@ -526,43 +526,26 @@ export function initQuote({ onStep }) {
 
   function showDone(lead) {
     const first = esc(state.contact.name.split(' ')[0]);
-    const q = lead.quote;
     swap(`
       <div class="done-badge">${icons.check}</div>
-      <p class="eyebrow">// cotización generada</p>
+      <p class="eyebrow">// solicitud recibida</p>
       <h2>¡Listo, ${first}!</h2>
-      <p class="q-sub">Esta es la inversión estimada para tu <b>${esc(planLabel())}</b>. Un asesor te contactará muy pronto a tu WhatsApp <b>${esc(state.contact.phone)}</b> para confirmar detalles y arrancar.</p>
-      <div class="done-price vision">
-        <span class="mono">Inversión total</span>
-        <b class="done-total" data-total="${q.total}">$0</b>
-        ${q.discount ? `<span class="done-save">Ahorras ${cop(q.discount)} con tu combo</span>` : ''}
-        ${q.monthly ? `<small>+ ${cop(q.monthly)} /mes en servicios mensuales</small>` : ''}
-        <small>Anticipo para iniciar: <b>${cop(q.deposit)}</b> · Precios sin IVA</small>
-      </div>
-      <div class="done-actions">
-        <button class="btn btn-lg" data-pdf>${icons.file} Descargar mi cotización (PDF)</button>
-        <button class="btn btn-ghost" data-close>Volver al sitio</button>
+      <p class="q-sub">Recibimos tu solicitud de <b>${esc(planLabel())}</b>. Tu cotización personalizada será enviada a tu WhatsApp y a tu correo apenas nuestros asesores sean notificados.</p>
+      <div class="done-send vision">
+        <div><span class="ds-icon">${icons.whatsapp}</span><span><small>WhatsApp</small><b>${esc(state.contact.phone)}</b></span></div>
+        <div><span class="ds-icon">${icons.mail}</span><span><small>Correo electrónico</small><b>${esc(state.contact.email)}</b></span></div>
       </div>
       <div class="done-steps">
-        <div class="vision"><span>01</span><b>Revisamos tu plan</b><small>Un asesor valida tus respuestas.</small></div>
-        <div class="vision"><span>02</span><b>Te escribimos</b><small>Por WhatsApp, en horario hábil.</small></div>
-        <div class="vision"><span>03</span><b>Arrancamos</b><small>${state.template && state.template !== 'custom' ? 'Con una demo de tu plantilla.' : 'Con el anticipo, empezamos.'}</small></div>
-      </div>`, 1, 'done');
+        <div class="vision"><span>01</span><b>Te notificamos</b><small>Un asesor recibe tu solicitud al instante.</small></div>
+        <div class="vision"><span>02</span><b>Revisamos tu plan</b><small>Validamos tus respuestas y armamos tu cotización.</small></div>
+        <div class="vision"><span>03</span><b>La recibes</b><small>Por WhatsApp y correo, con el detalle en PDF.</small></div>
+      </div>
+      <button class="btn" data-close>Volver al sitio</button>`, 1, 'done');
     dots.querySelectorAll('span').forEach((d) => (d.className = 'done'));
     root.querySelector('.quote-nav').classList.add('gone'); root.classList.add('finished');
     onStep(99); // celebratory pose
-
-    // Count-up animation for the total
-    const el = stage.querySelector('.done-total'), target = q.total, t0 = performance.now();
-    const tick = (t) => { const k = Math.min(1, (t - t0) / 1600); el.textContent = cop(target * (1 - Math.pow(1 - k, 4))); if (k < 1) requestAnimationFrame(tick); };
-    setTimeout(() => requestAnimationFrame(tick), 500);
-
-    stage.querySelector('[data-pdf]').addEventListener('click', async (e) => {
-      const b = e.currentTarget; b.disabled = true;
-      const { downloadQuote } = await import('./pdf.js');
-      downloadQuote(lead); b.disabled = false;
-    });
   }
+
   stage.addEventListener('click', (e) => { if (e.target.closest('[data-close]')) close(); });
 
   // ---------- motion-graphics intro ----------
