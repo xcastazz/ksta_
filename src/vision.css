@@ -420,3 +420,9 @@
 .bk-done { display: flex; gap: .9rem; align-items: flex-start; }
 .bk-done b { font-size: 1.05rem; } .bk-done p { color: var(--muted); font-size: .9rem; margin-top: .2rem; } .bk-done p b { color: var(--text); font-size: inherit; }
 .booking.booked { border-color: rgba(123,131,235,.55); animation: pop .6s var(--spring); }
+
+/* Founder photo */
+.about-avatar { width: 200px; height: 200px; }
+.about-avatar .about-photo { width: 168px; height: 168px; padding: 0; overflow: hidden; display: block; position: relative; border-radius: 44px; }
+.about-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 20%; transform: scale(1.04); transition: transform .8s var(--ease); }
+.about-card:hover .about-photo img { transform: scale(1.1); }
