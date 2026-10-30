@@ -712,3 +712,45 @@
 .pl-amount input { width: 100%; }
 .pl-grid > * { min-width: 0; }
 
+
+/* Planner: request the suggested plan directly */
+.pl-ctas { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.pl-link { font: inherit; font-size: .85rem; color: var(--muted); background: none; border: 0; text-decoration: underline; cursor: pointer; }
+.pl-link:hover { color: var(--text); }
+.pl-order { display: grid; gap: 1.2rem; padding-top: 1.2rem; border-top: 1px solid rgba(255,255,255,.1); animation: rise .6s var(--ease) both; }
+.pl-order h4 { font-size: 1.05rem; margin-bottom: .6rem; }
+.pl-detail { display: grid; gap: .6rem; }
+.pl-dt { padding: .8rem 1rem; border-radius: 16px; background: rgba(255,255,255,.04); }
+.pl-dt > b { display: flex; align-items: center; gap: .5rem; margin-bottom: .4rem; }
+.pl-dt > b svg { width: 20px; height: 20px; color: var(--violet); }
+.pl-dt ul { list-style: none; display: grid; gap: .25rem; }
+.pl-dt li { display: flex; gap: .4rem; font-size: .84rem; color: var(--muted); }
+.pl-dt li svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: .2em; color: #86efac; }
+.pl-bill { display: grid; gap: .35rem; padding: .9rem 1rem; border-radius: 16px; background: rgba(0,0,0,.2); border: 1px solid rgba(255,255,255,.08); }
+.pl-bill > div { display: flex; justify-content: space-between; gap: .8rem; font-size: .88rem; }
+.pl-bill span { color: var(--muted); }
+.pl-bill .tot { padding: .5rem .7rem; margin: .2rem -.3rem; border-radius: 12px; background: linear-gradient(150deg, #8b5cf6, #6d28d9); }
+.pl-bill .tot span { color: #e9d5ff; } .pl-bill .tot b { font-size: 1.1rem; }
+.pl-form { display: grid; gap: .8rem; }
+.pl-fields { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
+.pl-fields label { display: grid; gap: .35rem; font-size: .8rem; color: var(--muted); }
+.pl-fields input { font: inherit; font-size: .95rem; color: var(--text); background: rgba(0,0,0,.25); border: 1px solid rgba(255,255,255,.14); border-radius: 14px; padding: .8rem .95rem; outline: none; transition: border-color .3s, box-shadow .3s; }
+.pl-fields input:focus { border-color: var(--purple); box-shadow: 0 0 0 4px rgba(139,92,246,.2); }
+.pl-legal { font-size: .74rem; }
+.pl-form .btn { justify-self: start; }
+.pl-err { color: #fca5a5; font-size: .85rem; min-height: 1em; }
+.pl-done { display: grid; justify-items: center; text-align: center; gap: .6rem; padding: .5rem 0; }
+.pl-done-badge { width: 64px; height: 64px; padding: 17px; border-radius: 50%; color: #fff; background: linear-gradient(135deg, var(--purple), #e879f9); box-shadow: 0 0 0 10px rgba(168,85,247,.15), 0 20px 50px -10px rgba(168,85,247,.9); animation: badge .9s var(--spring) both; }
+.pl-done h4 { font-size: 1.2rem; }
+.pl-done p b { color: var(--text); }
+#plBooking .booking { width: 100%; margin-top: 0; }
+@media (max-width: 720px) {
+  .pl-fields { grid-template-columns: 1fr; }
+  .pl-form .btn, .pl-ctas .btn { width: 100%; justify-content: center; }
+  .pl-ctas { justify-content: center; }
+}
+
+/* Never let an icon fill its button (site-wide) */
+.btn svg, .btn .ph { width: 18px !important; height: 18px !important; flex-shrink: 0; }
+.btn-lg svg, .btn-lg .ph { width: 20px !important; height: 20px !important; }
+
