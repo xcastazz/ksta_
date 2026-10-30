@@ -11,6 +11,7 @@ const SERVICES = {
 };
 
 const PLANS = [
+  { id: 'solo-web', label: 'Plan Solo Página Web', desc: 'Ya tengo mi marca y solo necesito mi página web, sin más servicios.', icon: 'code', services: ['web'] },
   { id: 'emprendimiento', label: 'Paquete Emprendimiento', desc: 'Estoy empezando y necesito lo esencial para salir al mercado con buena imagen.', icon: 'rocket', services: ['branding', 'web', 'marketing'] },
   { id: 'presencia', label: 'Paquete Presencia Digital', desc: 'Ya tengo negocio y quiero verme profesional y vender más en internet.', icon: 'globe', services: ['branding', 'web', 'audiovisual', 'marketing'] },
   { id: 'integral', label: 'Paquete Negocio Integral', desc: 'Quiero todo: marca, web, contenido, publicidad digital y física.', icon: 'building', services: ['branding', 'web', 'audiovisual', 'marketing', 'print'] },
@@ -499,7 +500,7 @@ export function initQuote({ onStep }) {
 
   // ---------- motion-graphics intro ----------
   const INTRO = [
-    { icon: 'target', sats: ['rocket', 'globe', 'building'], t: 'Elige tu objetivo', d: 'Un paquete listo o tu plan a la medida, servicio por servicio.' },
+    { icon: 'target', sats: ['code', 'rocket', 'building'], t: 'Elige tu objetivo', d: 'Un paquete listo o tu plan a la medida, servicio por servicio.' },
     { icon: 'list', sats: ['brand', 'code', 'video'], t: 'Responde preguntas rápidas', d: 'Solo sobre lo que elegiste. Cada paso te explica para qué sirve.' },
     { icon: 'palette', sats: ['images', 'code', 'sparkles'], t: 'Define tu estilo', d: 'Mira plantillas web reales y cuéntanos cómo quieres que se sienta tu marca.' },
     { icon: 'handshake', sats: ['whatsapp', 'chat', 'calendar'], t: 'Un asesor te contacta', d: 'Te escribimos por WhatsApp con tu cotización personalizada. Sin compromiso.' },

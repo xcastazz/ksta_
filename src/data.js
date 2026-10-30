@@ -23,6 +23,11 @@ export const services = [
 
 export const packages = [
   {
+    name: 'Solo Página Web', pkg: 'Plan Solo Página Web', icon: 'code', tag: 'Solo web',
+    desc: 'Ya tienes tu marca y solo necesitas tu página.',
+    items: ['Landing, web corporativa, catálogo o tienda', 'Diseño a partir de plantilla o personalizado', 'Adaptada a celular', 'Botón de WhatsApp y formularios', 'Publicación en tu dominio'],
+  },
+  {
     name: 'Emprendimiento', icon: 'rocket', tag: 'Para empezar',
     desc: 'Para quien está arrancando su negocio.',
     items: ['Logo e identidad visual básica', 'Tarjetas de presentación', 'Piezas para redes sociales', 'Landing page'],

@@ -290,3 +290,7 @@
   .mg { width: 170px; height: 170px; } .mg-core { width: 86px; height: 86px; padding: 20px; } .mg-num { font-size: 8rem; }
   .intro-stage { height: 46vh; }
 }
+
+/* 4 plans */
+.packages { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+

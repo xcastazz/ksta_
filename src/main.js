@@ -15,10 +15,10 @@ document.getElementById('services').innerHTML = services.map((s, i) => `
 document.getElementById('packages').innerHTML = packages.map((p, i) => `
   <article class="package glass reveal ${p.featured ? 'featured' : ''}" style="--d:${i * 120}ms">
     <div class="package-top"><div class="icon">${icons[p.icon]}</div><span class="tag">${p.tag}</span></div>
-    <h3>Paquete ${p.name}</h3>
+    <h3>${p.pkg || `Paquete ${p.name}`}</h3>
     <p class="muted">${p.desc}</p>
     <ul>${p.items.map((it) => `<li>${icons.check}${it}</li>`).join('')}</ul>
-    <a href="#contacto" class="btn ${p.featured ? '' : 'btn-ghost'}" data-pkg="Paquete ${p.name}">Cotizar paquete</a>
+    <a href="#contacto" class="btn ${p.featured ? '' : 'btn-ghost'}" data-pkg="${p.pkg || `Paquete ${p.name}`}">Cotizar paquete</a>
   </article>`).join('');
 
 document.querySelectorAll('[data-icon]').forEach((el) => { el.innerHTML = icons[el.dataset.icon]; });
