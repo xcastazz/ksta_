@@ -1,4 +1,4 @@
-// Proyectos reales de Ksta_ (se muestran en vivo en la sección Proyectos)
+// Proyectos reales de KstaStudio_ (se muestran en vivo en la sección Proyectos)
 export const PROJECTS = [
   {
     name: 'IV Bags',

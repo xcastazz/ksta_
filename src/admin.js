@@ -34,7 +34,7 @@ function renderLogin(error = '', signedIn = false) {
   app.innerHTML = `
     <div class="login-wrap">
       <form class="login vision" id="loginForm">
-        <a href="/" class="logo">Ksta<span class="cursor">_</span></a>
+        <a href="/" class="logo">KstaStudio<span class="cursor">_</span></a>
         <p class="eyebrow">// panel de asesores</p>
         <h1>Inicia sesión</h1>
         <p class="muted">Te enviaremos un enlace mágico a tu correo. Sin contraseñas.</p>
@@ -153,9 +153,9 @@ async function update(id, patch) {
 function notify(lead) {
   toast(`Nueva solicitud: ${lead.name} · ${lead.service || ''}`, true);
   chime();
-  document.title = `(${unread}) Panel · Ksta_`;
+  document.title = `(${unread}) Panel · KstaStudio_`;
   if ('Notification' in window && Notification.permission === 'granted') {
-    const n = new Notification('Nueva cotización en Ksta_', { body: `${lead.name} — ${lead.business || ''}\n${lead.service || ''}`, icon: '/favicon.svg', tag: lead.id });
+    const n = new Notification('Nueva cotización en KstaStudio_', { body: `${lead.name} — ${lead.business || ''}\n${lead.service || ''}`, icon: '/favicon.svg', tag: lead.id });
     n.onclick = () => { focus(); selectedId = lead.id; renderAll(); };
   }
 }
@@ -178,7 +178,7 @@ function updateBadge() {
   const b = document.getElementById('badge');
   if (!b) return;
   b.hidden = !unread; b.textContent = unread;
-  if (!unread) document.title = 'Panel · Ksta_';
+  if (!unread) document.title = 'Panel · KstaStudio_';
 }
 
 function toast(msg, highlight = false) {
@@ -246,7 +246,7 @@ function renderList(flashId) {
 
 function waLink(lead) {
   const phone = (lead.phone || '').replace(/\D/g, '');
-  const msg = `¡Hola ${lead.name.split(' ')[0]}! 👋 Te escribe tu asesor de Ksta_. Recibimos tu solicitud del ${lead.service || 'plan'} para ${lead.business || 'tu negocio'} y ya estamos preparando tu cotización.`;
+  const msg = `¡Hola ${lead.name.split(' ')[0]}! 👋 Te escribe tu asesor de KstaStudio_. Recibimos tu solicitud del ${lead.service || 'plan'} para ${lead.business || 'tu negocio'} y ya estamos preparando tu cotización.`;
   return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
 }
 
@@ -347,7 +347,7 @@ function bindQuote(l) {
 
 function waQuoteLink(l, q) {
   const phone = (l.phone || '').replace(/\D/g, '');
-  const msg = `¡Hola ${(l.name || '').split(' ')[0]}! 👋 Te escribe tu asesor de Ksta_.\n\nYa tenemos lista tu cotización para *${l.business || 'tu negocio'}* (${l.service || 'plan'}):\n\n💜 *Total: ${cop(q.total)}*${q.monthly ? `\n🔁 Mensual: ${cop(q.monthly)}` : ''}\n✅ Anticipo para iniciar: ${cop(q.deposit)}\n\nTe adjunto el PDF con el detalle. ¿Te parece si lo revisamos juntos?`;
+  const msg = `¡Hola ${(l.name || '').split(' ')[0]}! 👋 Te escribe tu asesor de KstaStudio_.\n\nYa tenemos lista tu cotización para *${l.business || 'tu negocio'}* (${l.service || 'plan'}):\n\n💜 *Total: ${cop(q.total)}*${q.monthly ? `\n🔁 Mensual: ${cop(q.monthly)}` : ''}\n✅ Anticipo para iniciar: ${cop(q.deposit)}\n\nTe adjunto el PDF con el detalle. ¿Te parece si lo revisamos juntos?`;
   return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
 }
 

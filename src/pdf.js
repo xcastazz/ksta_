@@ -29,8 +29,8 @@ export function quotePDF(lead) {
   doc.setFillColor(168, 85, 247); doc.circle(W - 150, 120, 34, 'F');
   doc.setFillColor(232, 121, 249); doc.circle(W - 95, 150, 8, 'F');
   doc.setFont('courier', 'bold'); doc.setFontSize(30); doc.setTextColor(255, 255, 255);
-  doc.text('Ksta', M, 70);
-  doc.setTextColor(192, 132, 252); doc.text('_', M + doc.getTextWidth('Ksta'), 70);
+  doc.text('KstaStudio', M, 70);
+  doc.setTextColor(192, 132, 252); doc.text('_', M + doc.getTextWidth('KstaStudio'), 70);
   doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(200, 190, 225);
   doc.text('Estudio creativo · Branding · Web · Audiovisual · Publicidad', M, 90);
   doc.setFont('helvetica', 'bold'); doc.setFontSize(22); doc.setTextColor(255, 255, 255);
@@ -120,12 +120,12 @@ export function quotePDF(lead) {
   function footer() {
     doc.setDrawColor(...LINE); doc.line(M, H - 60, W - M, H - 60);
     doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(...MUTED);
-    doc.text('Ksta_ · Jerónimo Castañeda Velásquez · Hecho en Colombia', M, H - 42);
+    doc.text('KstaStudio_ · Jerónimo Castañeda Velásquez · Hecho en Colombia', M, H - 42);
     doc.text('ksta.jc-casta00.workers.dev', W - M, H - 42, { align: 'right' });
   }
   return doc;
 }
 
 export function downloadQuote(lead) {
-  quotePDF(lead).save(`Cotizacion-${quoteNumber(lead)}-${(lead.business || lead.name || 'Ksta').replace(/[^\w-]+/g, '_')}.pdf`);
+  quotePDF(lead).save(`Cotizacion-${quoteNumber(lead)}-${(lead.business || lead.name || 'KstaStudio').replace(/[^\w-]+/g, '_')}.pdf`);
 }

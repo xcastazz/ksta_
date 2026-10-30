@@ -125,7 +125,7 @@ const INFO = {
   business: 'Con esto entendemos tu mercado y tu competencia para proponerte algo que de verdad funcione para tu negocio.',
   style: 'El estilo guía todas las decisiones de diseño: colores, tipografías, fotos y tono. No te preocupes por acertar; es un punto de partida.',
   timing: 'Los tiempos y el presupuesto nos ayudan a armar una propuesta realista. Es solo una referencia, no un compromiso.',
-  contact: 'Un asesor de Ksta_ te escribirá por WhatsApp con tu cotización personalizada. No compartimos tus datos con nadie.',
+  contact: 'Un asesor de KstaStudio_ te escribirá por WhatsApp con tu cotización personalizada. No compartimos tus datos con nadie.',
   summary: 'Revisa que todo esté bien. Puedes volver atrás para cambiar cualquier respuesta antes de enviar.',
 };
 
@@ -140,7 +140,7 @@ export function initQuote({ onStep }) {
   root.innerHTML = `
     <div class="quote-window vision">
       <div class="quote-top">
-        <span class="logo">Ksta<span class="cursor">_</span> <small class="mono muted">cotizador</small></span>
+        <span class="logo">KstaStudio<span class="cursor">_</span> <small class="mono muted">cotizador</small></span>
         <div class="quote-dots" id="qDots"></div>
         <button class="quote-close" id="qClose" aria-label="Cerrar">✕</button>
       </div>

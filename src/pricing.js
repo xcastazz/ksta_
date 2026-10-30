@@ -1,5 +1,5 @@
 // =========================================================
-//  LISTA DE PRECIOS Ksta_ (COP, sin IVA)
+//  LISTA DE PRECIOS KstaStudio_ (COP, sin IVA)
 //  Edita aquí los valores: todo el sitio y los PDF se recalculan solos.
 // =========================================================
 export const PRICES = {
