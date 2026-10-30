@@ -32,8 +32,16 @@ import i_squares_four from '@phosphor-icons/core/assets/duotone/squares-four-duo
 import i_target from '@phosphor-icons/core/assets/duotone/target-duotone.svg?raw';
 import i_lightning from '@phosphor-icons/core/assets/duotone/lightning-duotone.svg?raw';
 import i_images from '@phosphor-icons/core/assets/duotone/images-duotone.svg?raw';
+import i_user_circle from '@phosphor-icons/core/assets/duotone/user-circle-duotone.svg?raw';
+import i_heart from '@phosphor-icons/core/assets/duotone/heart-duotone.svg?raw';
+import i_coffee from '@phosphor-icons/core/assets/duotone/coffee-duotone.svg?raw';
+import i_map_pin from '@phosphor-icons/core/assets/duotone/map-pin-duotone.svg?raw';
 
 const RAW = {
+  'user-circle': i_user_circle,
+  'heart': i_heart,
+  'coffee': i_coffee,
+  'map-pin': i_map_pin,
   'pen-nib': i_pen_nib,
   'browsers': i_browsers,
   'video-camera': i_video_camera,
@@ -104,4 +112,8 @@ export const icons = {
   target: ph('target'),
   bolt: ph('lightning'),
   images: ph('images'),
+  user: ph('user-circle'),
+  heart: ph('heart'),
+  coffee: ph('coffee'),
+  pin: ph('map-pin'),
 };
