@@ -66,7 +66,7 @@ export const PRICES = {
     },
   },
   // Descuento por paquete (sobre los servicios de pago único)
-  descuentos: { 'cats-1': 0, 'cats-2': 0.10, 'cats-3': 0.15, 'solo-web': 0, emprendimiento: 0.10, presencia: 0.12, integral: 0.15, custom: 0 },
+  descuentos: { 'cats-1': 0, 'cats-2': 0.05, 'cats-3': 0.08, 'solo-web': 0, emprendimiento: 0.10, presencia: 0.12, integral: 0.15, custom: 0 },
   urgencia: { 'Lo antes posible': 0.10 }, // recargo
   anticipo: 0.5,
   vigenciaDias: 15,

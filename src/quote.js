@@ -113,7 +113,7 @@ const TIMING = [['Lo antes posible', 'Priorizamos tu proyecto'], ['En 2–4 sema
 const BUDGET = [['Aún no lo sé', 'Te proponemos opciones'], ['Básico', 'Lo esencial'], ['Intermedio', 'Buen balance'], ['Completo / premium', 'Lo mejor para tu marca']];
 
 const INFO = {
-  cats: 'Puedes contratar una sola categoría o combinarlas. Al elegir 2 ahorras 10% y con las 3 ahorras 15% sobre el total.',
+  cats: 'Puedes contratar una sola categoría o combinarlas. Al elegir 2 ahorras 5% y con las 3 ahorras 8% sobre el total.',
   tiers: 'Cada plan es un punto de partida con lo que más recomendamos. En los siguientes pasos puedes ajustar todo y el precio final se calcula con tus respuestas.',
   plan: 'Los paquetes combinan servicios con mejor precio que contratarlos por separado. Si eliges “a mi medida”, armas tu plan servicio por servicio.',
   services: 'Cada servicio que marques añade unas preguntas cortas para entender exactamente lo que necesitas. Puedes cambiar lo que viene en tu paquete.',
@@ -264,7 +264,7 @@ export function initQuote({ onStep }) {
   function comboMeter() {
     const n = state.cats.length, off = COMBO[n] || 0;
     return `<div class="cm-steps">${[1, 2, 3].map((i) => `<span class="${n >= i ? 'on' : ''}">${i}</span>`).join('<i></i>')}</div>
-      <p>${n === 0 ? 'Elige al menos una categoría.' : n === 1 ? 'Agrega otra categoría y ahorra <b>10%</b>.' : n === 2 ? '¡Combo! Ahorras <b>10%</b>. Con las 3 ahorras <b>15%</b>.' : '¡Combo completo! Ahorras <b>15%</b> en todo.'}</p>
+      <p>${n === 0 ? 'Elige al menos una categoría.' : n === 1 ? 'Agrega otra categoría y ahorra <b>5%</b>.' : n === 2 ? '¡Combo! Ahorras <b>5%</b>. Con las 3 ahorras <b>8%</b>.' : '¡Combo completo! Ahorras <b>8%</b> en todo.'}</p>
       ${off ? `<span class="cm-badge">-${Math.round(off * 100)}%</span>` : ''}`;
   }
   // When leaving the plan step: chosen tiers → services + pre-filled answers
@@ -567,7 +567,7 @@ export function initQuote({ onStep }) {
 
   // ---------- motion-graphics intro ----------
   const INTRO = [
-    { icon: 'target', sats: ['code', 'rocket', 'building'], t: 'Elige qué necesitas', d: 'Web, diseño, publicidad… o las tres. Combinando ahorras hasta 15%.' },
+    { icon: 'target', sats: ['code', 'rocket', 'building'], t: 'Elige qué necesitas', d: 'Web, diseño, publicidad… o las tres. Combinando ahorras hasta 8%.' },
     { icon: 'list', sats: ['brand', 'code', 'video'], t: 'Responde preguntas rápidas', d: 'Solo sobre lo que elegiste. Cada paso te explica para qué sirve.' },
     { icon: 'palette', sats: ['images', 'code', 'sparkles'], t: 'Define tu estilo', d: 'Mira plantillas web reales y cuéntanos cómo quieres que se sienta tu marca.' },
     { icon: 'handshake', sats: ['whatsapp', 'chat', 'calendar'], t: 'Un asesor te contacta', d: 'Te escribimos por WhatsApp con tu cotización personalizada. Sin compromiso.' },

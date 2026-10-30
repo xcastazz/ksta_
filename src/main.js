@@ -18,7 +18,7 @@ document.getElementById('services').innerHTML = services.map((s, i) => `
 const PLAN_TABS = [...CAT_ORDER, 'combo'];
 const pkgEl = document.getElementById('packages');
 function renderPlans(active = 'web') {
-  const tabs = `<div class="plan-tabs vision" role="tablist">${PLAN_TABS.map((k) => `<button role="tab" class="${k === active ? 'on' : ''}" data-tab="${k}">${k === 'combo' ? `${icons.sparkles}Combo · ahorra hasta 15%` : `${icons[CATS[k].icon]}${CATS[k].label}`}</button>`).join('')}</div>`;
+  const tabs = `<div class="plan-tabs vision" role="tablist">${PLAN_TABS.map((k) => `<button role="tab" class="${k === active ? 'on' : ''}" data-tab="${k}">${k === 'combo' ? `${icons.sparkles}Combo · ahorra hasta 8%` : `${icons[CATS[k].icon]}${CATS[k].label}`}</button>`).join('')}</div>`;
   let body;
   if (active === 'combo') {
     const mid = CAT_ORDER.map((k) => CATS[k].tiers.find((t) => t.featured));
