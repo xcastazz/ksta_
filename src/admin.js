@@ -114,6 +114,8 @@ function renderShell() {
   updateNotifBtn();
 }
 
+addEventListener('keydown', (e) => { if (e.key === 'Escape' && view === 'solicitudes' && selectedId) { selectedId = null; renderAll(); } });
+
 function go(v, id) {
   view = v;
   if (id) selectedId = id;
@@ -484,7 +486,7 @@ function renderList(flashId) {
   list.innerHTML = rows.length ? rows.map((l) => `
     <button class="a-row ${l.id === selectedId ? 'sel' : ''} ${l.id === flashId ? 'flash' : ''}" data-id="${l.id}">
       <span class="avatar">${esc((l.name || '?')[0].toUpperCase())}</span>
-      <span class="a-row-main"><b>${esc(l.name)} ${l.priority === 'alta' ? prio('alta') : ''}</b><small>${esc(l.business || '—')} · ${esc(l.service || '')}</small></span>
+      <span class="a-row-main"><b>${esc(l.name)} ${l.priority === 'alta' ? prio('alta') : ''}</b><small>${esc(l.business || 'Sin negocio')}</small><small class="a-row-plan">${esc(l.service || '')}</small></span>
       <span class="a-row-side"><span class="st st-${esc(l.status)}">${esc(statusLabel(l.status))}</span><small>${meetings.some((m) => m.lead_id === l.id && m.status !== 'cancelada') ? `<span class="fu teams-tag">${icons.teams}Asesoría</span>` : ''}${followTag(l)}${l.quote_total ? cop(l.quote_total) + ' · ' : ''}${ago(l.created_at)}</small></span>
     </button>`).join('') : `<div class="a-empty small">${icons.inbox}<p>No hay solicitudes aquí.</p></div>`;
   list.querySelectorAll('.a-row').forEach((r) => r.addEventListener('click', () => { selectedId = r.dataset.id; renderList(); renderDetail(); }));
@@ -734,11 +736,12 @@ function renderDetail() {
   if (!box) return;
   const l = leads.find((x) => x.id === selectedId);
   box.closest('.a-body')?.classList.toggle('has-sel', !!l);
-  if (l && matchMedia('(max-width: 900px)').matches) scrollTo({ top: 0 });
+  document.getElementById('view')?.classList.toggle('lead-open', !!l);
+  if (l) scrollTo({ top: 0, behavior: 'smooth' });
   if (!l) { box.innerHTML = `<div class="a-empty">${icons.inbox}<p>Selecciona una solicitud para ver el detalle.</p></div>`; return; }
 
   box.innerHTML = `
-    <button class="a-back" id="back">← Solicitudes</button>
+    <button class="a-back" id="back">← Volver a solicitudes</button>
     <div class="a-d-head">
       <span class="avatar lg">${esc((l.name || '?')[0].toUpperCase())}</span>
       <div><h2>${esc(l.name)}</h2><p class="muted">${esc(l.business || '')} · ${new Date(l.created_at).toLocaleString('es')}</p></div>
@@ -756,17 +759,23 @@ function renderDetail() {
       <div><span>Prioridad</span><select id="prio">${PRIORITIES.map(([k, lab]) => `<option value="${k}" ${(l.priority || 'media') === k ? 'selected' : ''}>${lab}</option>`).join('')}</select></div>
       <div><span>Próximo seguimiento</span><input type="date" id="fu" value="${esc(l.follow_up || '')}" /></div>
     </div>
-    ${meetings.some((m) => m.lead_id === l.id) ? `<h3>Asesoría agendada</h3><div class="mtgs" id="leadMeetings">${meetings.filter((m) => m.lead_id === l.id).map(meetingHTML).join('')}</div>` : ''}
+    <div class="a-d-cols">
+    <div class="a-d-col">
     <h3>Cotización</h3>
     <div class="a-quote" id="aQuote"></div>
+    <h3>Notas internas</h3>
+    <textarea id="notes" rows="4" placeholder="Ej: le envié la cotización el martes, quiere demo…">${esc(l.notes || '')}</textarea>
+    <div class="a-d-foot"><button class="btn btn-sm" id="saveNotes">Guardar notas</button><button class="btn btn-sm btn-ghost danger" id="del">${icons.trash} Eliminar</button></div>
+    </div>
+    <div class="a-d-col">
+    ${meetings.some((m) => m.lead_id === l.id) ? `<h3>Asesoría agendada</h3><div class="mtgs" id="leadMeetings">${meetings.filter((m) => m.lead_id === l.id).map(meetingHTML).join('')}</div>` : ''}
     <h3>Respuestas del cotizador</h3>
     <div class="a-cards">${answersHTML(l)}</div>
     ${l.template && l.details?.template && l.details.template !== 'custom' ? `<a class="a-d-tpl" href="/templates/${esc(l.details.template)}/index.html" target="_blank" rel="noopener">Ver plantilla elegida (${esc(l.template)}) ↗</a>` : ''}
-    <h3>Notas internas</h3>
-    <textarea id="notes" rows="3" placeholder="Ej: le envié la cotización el martes, quiere demo…">${esc(l.notes || '')}</textarea>
-    <div class="a-d-foot"><button class="btn btn-sm" id="saveNotes">Guardar notas</button><button class="btn btn-sm btn-ghost danger" id="del">${icons.trash} Eliminar</button></div>
     <h3>Historial</h3>
-    <div class="timeline-list" id="events"><p class="muted small">Cargando…</p></div>`;
+    <div class="timeline-list" id="events"><p class="muted small">Cargando…</p></div>
+    </div>
+    </div>`;
 
   const setStatus = async (st) => {
     const from = l.status;

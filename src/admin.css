@@ -362,3 +362,26 @@ body.admin { min-height: 100vh; }
   .login { padding: 1.6rem; }
   .login input { font-size: 16px; }
 }
+
+/* ===== Solicitudes: list of clients → separate client page ===== */
+.a-body { grid-template-columns: 1fr !important; }
+.a-body:not(.has-sel) .a-detail { display: none !important; }
+.a-body.has-sel .a-list { display: none !important; }
+.lead-open > .a-head, .lead-open > .a-seg { display: none !important; }
+.a-list { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); max-height: none !important; padding-right: 0 !important; gap: .8rem !important; }
+.a-row { align-items: flex-start; padding: 1.1rem 1.2rem !important; border-radius: 22px !important; min-height: 112px; }
+.a-row:hover { transform: translateY(-3px) !important; }
+.a-row .avatar { width: 44px; height: 44px; font-size: 1.05rem; }
+.a-row-main { gap: .15rem; }
+.a-row-main b { font-size: 1.02rem !important; }
+.a-row-plan { color: var(--violet) !important; font-size: .78rem !important; white-space: normal !important; }
+.a-detail { position: static !important; max-height: none !important; padding: 1.8rem !important; animation: rise .45s var(--ease) both; }
+.a-back { display: inline-flex !important; align-self: start; font: inherit; font-size: .88rem; font-weight: 600; color: var(--violet); background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 999px; padding: .5rem 1rem; cursor: pointer; justify-self: start; transition: background .25s; }
+.a-back:hover { background: rgba(255,255,255,.12); }
+.a-d-head h2 { font-size: 2rem !important; }
+.a-d-cols { display: grid; grid-template-columns: 1.15fr 1fr; gap: 1.6rem; align-items: start; margin-top: .4rem; }
+.a-d-col { display: grid; gap: 1rem; align-content: start; min-width: 0; }
+.a-d-col > h3 { margin-top: .4rem; }
+.a-d-col .a-cards { grid-template-columns: 1fr 1fr; }
+@media (max-width: 1200px) { .a-d-cols { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .a-d-col .a-cards { grid-template-columns: 1fr; } .a-detail { padding: 1rem !important; } .a-d-head h2 { font-size: 1.4rem !important; } }
