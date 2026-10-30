@@ -249,12 +249,45 @@ function waLink(lead) {
   return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
 }
 
+// ---------- Structured answers (grouped cards with chips) ----------
+const SVC = {
+  branding: ['Branding e identidad', 'brand'], web: ['Web y software', 'code'], audiovisual: ['Fotografía y video', 'video'],
+  marketing: ['Marketing digital', 'megaphone'], print: ['Publicidad física', 'sign'],
+};
+const KEY_LABELS = {
+  logo: 'Logo actual', piezas: 'Piezas', tipo: 'Tipo de sitio', funciones: 'Funciones', dominio: 'Dominio', demo: 'Demo con plantilla',
+  contenido: 'Contenido', frecuencia: 'Frecuencia', acciones: 'Acciones', pauta: 'Presupuesto en anuncios', impresos: 'Material',
+};
+const chips = (v) => (Array.isArray(v) ? v : [v]).filter(Boolean).map((x) => `<span class="chip">${esc(x)}</span>`).join('');
+const field = (label, value, asChips = false) => (value && (!Array.isArray(value) || value.length))
+  ? `<div class="a-f"><span>${esc(label)}</span>${asChips || Array.isArray(value) ? `<div class="chips">${chips(value)}</div>` : `<b>${esc(value)}</b>`}</div>` : '';
+const card = (title, icon, body) => body.trim() ? `<section class="a-card"><h4><i>${icons[icon]}</i>${esc(title)}</h4><div class="a-card-body">${body}</div></section>` : '';
+
+function answersHTML(l) {
+  const d = l.details;
+  if (!d) { // older submissions: fall back to the plain summary
+    return `<div class="a-card"><div class="a-card-body">${(l.message || '').split('\n').filter(Boolean)
+      .map((s) => { const t = s.replace(/^•\s*/, ''); const i = t.indexOf(':'); return field(t.slice(0, i), t.slice(i + 1).trim()); }).join('')}</div></div>`;
+  }
+  const b = d.business || {};
+  let html = card('Plan', 'sparkles',
+    field('Paquete', l.service) + field('Servicios', (d.services || []).map((s) => SVC[s]?.[0] || s)) + field('Plantilla web', l.template));
+  for (const s of d.services || []) {
+    const ans = (d.details || {})[s] || {};
+    html += card(SVC[s]?.[0] || s, SVC[s]?.[1] || 'layers', Object.entries(ans).map(([k, v]) => field(KEY_LABELS[k] || k, v)).join(''));
+  }
+  html += card('Negocio', 'building',
+    field('Nombre', b.name) + field('Sector', b.sector) + field('Ciudad', b.city) + field('Redes / web', b.link) + field('Cliente ideal', b.audience));
+  html += card('Estilo y referencias', 'brand', field('Estilo', d.style) + field('Colores / referencias', b.refs));
+  html += card('Tiempos y presupuesto', 'file', field('Para cuándo', d.timing, true) + field('Presupuesto', d.budget, true));
+  if (d.notes) html += card('Notas del cliente', 'mail', `<p class="a-note">${esc(d.notes)}</p>`);
+  return html;
+}
+
 function renderDetail() {
   const box = document.getElementById('detail');
   const l = leads.find((x) => x.id === selectedId);
   if (!l) { box.innerHTML = `<div class="a-empty">${icons.inbox}<p>Selecciona una solicitud para ver el detalle.</p></div>`; return; }
-  const lines = (l.message || '').split('\n').map((s) => s.replace(/^•\s*/, '')).filter(Boolean)
-    .map((s) => { const i = s.indexOf(':'); return i > 0 ? [s.slice(0, i), s.slice(i + 1).trim()] : ['', s]; });
 
   box.innerHTML = `
     <div class="a-d-head">
@@ -273,7 +306,7 @@ function renderDetail() {
       <div><span>Plantilla</span><b>${esc(l.template || '—')}</b></div>
     </div>
     <h3>Respuestas del cotizador</h3>
-    <div class="a-d-lines">${lines.map(([k, v]) => `<div><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('')}</div>
+    <div class="a-cards">${answersHTML(l)}</div>
     ${l.template && l.details?.template && l.details.template !== 'custom' ? `<a class="a-d-tpl" href="/templates/${esc(l.details.template)}/index.html" target="_blank" rel="noopener">Ver plantilla elegida (${esc(l.template)}) ↗</a>` : ''}
     <h3>Notas internas</h3>
     <textarea id="notes" rows="4" placeholder="Ej: le envié la cotización el martes, quiere demo…">${esc(l.notes || '')}</textarea>

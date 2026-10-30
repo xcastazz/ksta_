@@ -85,6 +85,17 @@ body.admin { min-height: 100vh; }
 .a-d-grid b, .a-d-lines b { font-weight: 500; font-size: .9rem; word-break: break-word; }
 .a-detail h3 { font-size: 1rem; margin-top: .4rem; }
 .a-d-lines { display: grid; gap: .4rem; }
+.a-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: .8rem; }
+.a-card { padding: 1rem 1.1rem; border-radius: 20px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); }
+.a-card h4 { display: flex; align-items: center; gap: .55rem; font-size: .9rem; font-weight: 600; margin-bottom: .8rem; letter-spacing: -.01em; }
+.a-card h4 i { width: 26px; height: 26px; padding: 6px; border-radius: 50%; background: rgba(168,118,255,.25); color: #e9d5ff; display: block; }
+.a-card-body { display: grid; gap: .7rem; }
+.a-f { display: grid; gap: .3rem; }
+.a-f > span { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.a-f > b { font-weight: 500; font-size: .92rem; }
+.chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+.chip { font-size: .8rem; padding: .25rem .65rem; border-radius: 999px; background: rgba(168,118,255,.18); border: 1px solid rgba(192,132,252,.25); color: #f3e8ff; }
+.a-note { font-size: .9rem; color: var(--text); white-space: pre-wrap; }
 .a-d-tpl { color: var(--violet); font-size: .88rem; text-decoration: underline; }
 .a-detail textarea { font: inherit; font-size: .9rem; color: var(--text); background: rgba(0,0,0,.22); border: 1px solid rgba(255,255,255,.12); border-radius: 16px; padding: .8rem 1rem; outline: none; resize: vertical; }
 .a-d-foot { display: flex; justify-content: space-between; gap: .6rem; }

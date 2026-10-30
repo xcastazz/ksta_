@@ -254,7 +254,7 @@ main { width: min(1200px, calc(100% - 40px)); margin: 0 auto; }
 
 /* ---------- Quote wizard ---------- */
 body.quote-open { overflow: hidden; }
-body.quote-open .rail, body.quote-open .next, body.quote-open .nav { opacity: 0; pointer-events: none; }
+body.quote-open .dock, body.quote-open .rail, body.quote-open .next, body.quote-open .nav { opacity: 0; pointer-events: none; }
 body.quote-open main, body.quote-open .footer { filter: blur(14px); opacity: .25; transform: scale(.94); }
 main, .footer { transition: filter .9s var(--ease), opacity .9s var(--ease), transform .9s var(--ease); }
 .rail, .nav { transition: opacity .5s var(--ease), all .6s var(--ease); }
