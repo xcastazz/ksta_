@@ -17,7 +17,7 @@ alter table public.leads enable row level security;
 -- El público solo puede INSERTAR (no leer, editar ni borrar)
 create policy "public can insert leads"
   on public.leads for insert
-  to anon
+  to anon, authenticated -- también si el navegador tiene sesión de admin
   with check (true);
 
 -- ===== Panel de administración =====
