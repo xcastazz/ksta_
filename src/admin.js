@@ -1,6 +1,7 @@
 import { supabase } from './supabase.js';
 import { icons } from './icons.js';
 import { buildQuote, totals, cop } from './pricing.js';
+import { TEAMS_LINK } from './config.js';
 
 const app = document.getElementById('app');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -289,7 +290,7 @@ function viewDashboard(el) {
 
   el.innerHTML = `
     <div class="a-head"><div><h1>Inicio</h1><p class="muted">Resumen de tu negocio en tiempo real.</p></div>
-      <button class="btn btn-sm" id="goNew">${icons.inbox} Ver nuevas (${count('nuevo')})</button></div>
+      <div class="a-head-btns"><button class="btn btn-sm btn-ghost" id="goAgenda">${icons.teams} Agenda (${upcoming().length})</button><button class="btn btn-sm" id="goNew">${icons.inbox} Ver nuevas (${count('nuevo')})</button></div></div>
     <div class="a-stats">
       ${[
         ['Solicitudes', leads.length, `${today} hoy`, 'inbox'],
@@ -320,6 +321,7 @@ function viewDashboard(el) {
       </section>
     </div>`;
   el.querySelector('#goNew').addEventListener('click', () => { filter = 'nuevo'; go('solicitudes'); });
+  el.querySelector('#goAgenda').addEventListener('click', () => go('agenda'));
   el.querySelectorAll('[data-open]').forEach((b) => b.addEventListener('click', () => go('solicitudes', b.dataset.open)));
   el.querySelectorAll('[data-agenda]').forEach((b) => b.addEventListener('click', () => go('agenda')));
 }
@@ -338,6 +340,78 @@ const waMeeting = (m) => {
   return `https://wa.me/${(m.phone || '').replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`;
 };
 
+const genLink = (m) => TEAMS_LINK || `https://meet.jit.si/KstaStudio-${m.id.slice(0, 8)}`;
+const linkKind = () => (TEAMS_LINK ? 'Microsoft Teams' : 'Jitsi Meet');
+const mailMeeting = (m) => {
+  const subject = `Tu asesoría con KstaStudio_ · ${fmtMeeting(m.starts_at)}`;
+  const body = `Hola ${(m.name || '').split(' ')[0]},\n\nTu asesoría con KstaStudio_ quedó confirmada:\n\n📅 ${fmtMeeting(m.starts_at)} (hora de Colombia)\n⏱ ${m.duration_min} minutos\n🔗 Enlace: ${m.teams_link || '(te lo enviaremos pronto)'}\n\nTe adjuntamos la invitación para tu calendario.\n\n¡Nos vemos!\nJerónimo Castañeda Velásquez\nKstaStudio_`;
+  return `mailto:${encodeURIComponent(m.email || '')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+};
+function downloadICS(m) {
+  const t = (d) => new Date(d).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const end = new Date(new Date(m.starts_at).getTime() + (m.duration_min || 30) * 60e3);
+  const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//KstaStudio_//Agenda//ES', 'METHOD:REQUEST', 'BEGIN:VEVENT',
+    `UID:${m.id}@kstastudio`, `DTSTAMP:${t(Date.now())}`, `DTSTART:${t(m.starts_at)}`, `DTEND:${t(end)}`,
+    `SUMMARY:Asesoría KstaStudio_ · ${m.name}`, `DESCRIPTION:Asesoría sobre tu plan con KstaStudio_.${m.teams_link ? '\\nEnlace: ' + m.teams_link : ''}`,
+    `LOCATION:${m.teams_link || 'Videollamada'}`, m.email ? `ATTENDEE;CN=${m.name}:mailto:${m.email}` : '', 'END:VEVENT', 'END:VCALENDAR'].filter(Boolean).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
+  a.download = `asesoria-${(m.name || 'cliente').replace(/\W+/g, '_')}.ics`;
+  a.click();
+}
+
+// Renders the action block for one meeting (used in Agenda and in the lead detail)
+function meetingHTML(m) {
+  return `
+    <article class="mtg vision ${m.status}" data-m="${m.id}">
+      <div class="mtg-time"><b>${new Date(m.starts_at).toLocaleTimeString('es-CO', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Bogota' })}</b><small>${new Date(m.starts_at).toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'America/Bogota' })}</small><small>${m.duration_min} min</small></div>
+      <div class="mtg-main">
+        <div class="mtg-top"><b>${esc(m.name)}</b><span class="mt mt-${m.status}">${(MT_STATUS.find(([k]) => k === m.status) || [, m.status])[1]}</span></div>
+        <small>${esc(m.email || '')} · ${esc(m.phone || '')}</small>
+        ${m.topic ? `<p class="mtg-topic">“${esc(m.topic)}”</p>` : ''}
+        ${m.teams_link
+          ? `<div class="mtg-ready">${icons.check}<span>Reunión lista</span><a href="${esc(m.teams_link)}" target="_blank" rel="noopener">${esc(m.teams_link)}</a></div>`
+          : `<button class="btn mtg-gen" data-gen>${icons.teams} Generar reunión</button>`}
+        <div class="mtg-actions">
+          ${m.teams_link ? `
+            <a class="btn btn-sm" href="${waMeeting(m)}" target="_blank" rel="noopener" data-wa>${icons.whatsapp} Enviar por WhatsApp</a>
+            <a class="btn btn-sm" href="${mailMeeting(m)}" data-mail>${icons.mail} Enviar por correo</a>
+            <button class="btn btn-sm btn-ghost" data-ics>${icons.calendar} Invitación .ics</button>
+            <button class="btn btn-sm btn-ghost" data-copy>Copiar enlace</button>
+            <a class="btn btn-sm btn-ghost" href="${esc(m.teams_link)}" target="_blank" rel="noopener">Unirme</a>` : ''}
+          ${m.lead_id && view !== 'solicitudes' ? `<button class="btn btn-sm btn-ghost" data-lead>Ver solicitud</button>` : ''}
+          <select data-st>${MT_STATUS.map(([k, lab]) => `<option value="${k}" ${m.status === k ? 'selected' : ''}>${lab}</option>`).join('')}</select>
+        </div>
+        <details class="mtg-more"><summary>Usar otro enlace</summary>
+          <div class="mtg-link"><input placeholder="Pega un enlace de Teams, Meet o Zoom" value="${esc(m.teams_link || '')}" data-link /><button class="btn btn-sm btn-ghost" data-save>Guardar</button></div>
+          <a class="small" href="${teamsNewLink(m)}" target="_blank" rel="noopener">Crear una reunión nueva en Teams ↗</a>
+        </details>
+      </div>
+    </article>`;
+}
+
+function bindMeetings(root, rerender) {
+  root.querySelectorAll('[data-m]').forEach((art) => {
+    const m = meetings.find((x) => x.id === art.dataset.m);
+    if (!m) return;
+    const q = (s) => art.querySelector(s);
+    q('[data-gen]')?.addEventListener('click', async () => {
+      const link = genLink(m);
+      if (await updateMeeting(m, { teams_link: link, status: m.status === 'pendiente' ? 'confirmada' : m.status }, `Reunión generada (${linkKind()})`)) { toast(`Reunión generada en ${linkKind()}. Ya puedes enviarla.`); rerender(); }
+    });
+    q('[data-save]').addEventListener('click', async () => {
+      const v = q('[data-link]').value.trim() || null;
+      if (await updateMeeting(m, { teams_link: v, status: v && m.status === 'pendiente' ? 'confirmada' : m.status }, 'Enlace de reunión actualizado')) { toast('Enlace guardado'); rerender(); }
+    });
+    q('[data-wa]')?.addEventListener('click', () => logEvent(m.lead_id, 'envio', 'Envió el enlace de la asesoría por WhatsApp'));
+    q('[data-mail]')?.addEventListener('click', () => { downloadICS(m); toast('Adjunta la invitación .ics en el correo'); logEvent(m.lead_id, 'envio', 'Envió el enlace de la asesoría por correo'); });
+    q('[data-ics]')?.addEventListener('click', () => downloadICS(m));
+    q('[data-copy]')?.addEventListener('click', async () => { await navigator.clipboard.writeText(m.teams_link); toast('Enlace copiado'); });
+    q('[data-lead]')?.addEventListener('click', () => go('solicitudes', m.lead_id));
+    q('[data-st]').addEventListener('change', async (e) => { if (await updateMeeting(m, { status: e.target.value }, `Asesoría: ${e.target.value}`)) { toast('Estado actualizado'); rerender(); } });
+  });
+}
+
 async function updateMeeting(m, patch, msg) {
   const { error } = await supabase.from('meetings').update(patch).eq('id', m.id);
   if (error) { toast('No se pudo guardar'); console.error(error); return false; }
@@ -352,39 +426,13 @@ function viewAgenda(el) {
   const past = meetings.filter((m) => new Date(m.starts_at).getTime() <= now - 3600e3).reverse();
   const byDay = {};
   future.forEach((m) => { const k = new Date(m.starts_at).toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Bogota' }); (byDay[k] ||= []).push(m); });
-  const card = (m) => `
-    <article class="mtg vision ${m.status}" data-m="${m.id}">
-      <div class="mtg-time"><b>${new Date(m.starts_at).toLocaleTimeString('es-CO', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Bogota' })}</b><small>${m.duration_min} min</small></div>
-      <div class="mtg-main">
-        <div class="mtg-top"><b>${esc(m.name)}</b><span class="mt mt-${m.status}">${(MT_STATUS.find(([k]) => k === m.status) || [, m.status])[1]}</span></div>
-        <small>${esc(m.email || '')} · ${esc(m.phone || '')}</small>
-        ${m.topic ? `<p class="mtg-topic">“${esc(m.topic)}”</p>` : ''}
-        <div class="mtg-link"><input placeholder="Pega aquí el enlace de Teams" value="${esc(m.teams_link || '')}" data-link /><button class="btn btn-sm btn-ghost" data-save>Guardar</button></div>
-        <div class="mtg-actions">
-          <a class="btn btn-sm" href="${teamsNewLink(m)}" target="_blank" rel="noopener" data-teams>${icons.teams} Crear reunión en Teams</a>
-          <a class="btn btn-sm btn-ghost" href="${waMeeting(m)}" target="_blank" rel="noopener" data-wa>${icons.whatsapp} Enviar por WhatsApp</a>
-          ${m.teams_link ? `<a class="btn btn-sm btn-ghost" href="${esc(m.teams_link)}" target="_blank" rel="noopener">Unirme</a>` : ''}
-          ${m.lead_id ? `<button class="btn btn-sm btn-ghost" data-lead>Ver solicitud</button>` : ''}
-          <select data-st>${MT_STATUS.map(([k, lab]) => `<option value="${k}" ${m.status === k ? 'selected' : ''}>${lab}</option>`).join('')}</select>
-        </div>
-      </div>
-    </article>`;
+  const card = meetingHTML;
   el.innerHTML = `
     <div class="a-head"><div><h1>Agenda</h1><p class="muted">Asesorías por Microsoft Teams que agendan tus clientes al terminar el cotizador. Hora de Colombia.</p></div></div>
     ${Object.keys(byDay).length ? Object.entries(byDay).map(([d, arr]) => `<h3 class="day-h">${d}</h3><div class="mtgs">${arr.map(card).join('')}</div>`).join('') : `<div class="a-empty">${icons.teams}<p>No hay asesorías próximas.</p></div>`}
     ${past.length ? `<details class="past"><summary>Asesorías pasadas (${past.length})</summary><div class="mtgs">${past.map(card).join('')}</div></details>` : ''}`;
 
-  el.querySelectorAll('[data-m]').forEach((art) => {
-    const m = meetings.find((x) => x.id === art.dataset.m);
-    art.querySelector('[data-save]').addEventListener('click', async () => {
-      const v = art.querySelector('[data-link]').value.trim() || null;
-      if (await updateMeeting(m, { teams_link: v, status: v && m.status === 'pendiente' ? 'confirmada' : m.status }, 'Enlace de Teams guardado')) { toast('Enlace guardado'); renderAll(); }
-    });
-    art.querySelector('[data-teams]').addEventListener('click', () => toast('Crea la reunión en Teams y pega aquí el enlace'));
-    art.querySelector('[data-wa]').addEventListener('click', () => { if (m.status === 'pendiente') updateMeeting(m, { status: 'confirmada' }, 'Asesoría confirmada por WhatsApp').then(renderAll); });
-    art.querySelector('[data-lead]')?.addEventListener('click', () => go('solicitudes', m.lead_id));
-    art.querySelector('[data-st]').addEventListener('change', async (e) => { if (await updateMeeting(m, { status: e.target.value }, `Asesoría: ${e.target.value}`)) { toast('Estado actualizado'); renderAll(); } });
-  });
+  bindMeetings(el, renderAll);
 }
 
 // ===== Leads list + detail =====
@@ -414,7 +462,7 @@ function renderList(flashId) {
     <button class="a-row ${l.id === selectedId ? 'sel' : ''} ${l.id === flashId ? 'flash' : ''}" data-id="${l.id}">
       <span class="avatar">${esc((l.name || '?')[0].toUpperCase())}</span>
       <span class="a-row-main"><b>${esc(l.name)} ${l.priority === 'alta' ? prio('alta') : ''}</b><small>${esc(l.business || '—')} · ${esc(l.service || '')}</small></span>
-      <span class="a-row-side"><span class="st st-${esc(l.status)}">${esc(statusLabel(l.status))}</span><small>${followTag(l)}${l.quote_total ? cop(l.quote_total) + ' · ' : ''}${ago(l.created_at)}</small></span>
+      <span class="a-row-side"><span class="st st-${esc(l.status)}">${esc(statusLabel(l.status))}</span><small>${meetings.some((m) => m.lead_id === l.id && m.status !== 'cancelada') ? `<span class="fu teams-tag">${icons.teams}Asesoría</span>` : ''}${followTag(l)}${l.quote_total ? cop(l.quote_total) + ' · ' : ''}${ago(l.created_at)}</small></span>
     </button>`).join('') : `<div class="a-empty small">${icons.inbox}<p>No hay solicitudes aquí.</p></div>`;
   list.querySelectorAll('.a-row').forEach((r) => r.addEventListener('click', () => { selectedId = r.dataset.id; renderList(); renderDetail(); }));
 }
@@ -681,6 +729,7 @@ function renderDetail() {
       <div><span>Prioridad</span><select id="prio">${PRIORITIES.map(([k, lab]) => `<option value="${k}" ${(l.priority || 'media') === k ? 'selected' : ''}>${lab}</option>`).join('')}</select></div>
       <div><span>Próximo seguimiento</span><input type="date" id="fu" value="${esc(l.follow_up || '')}" /></div>
     </div>
+    ${meetings.some((m) => m.lead_id === l.id) ? `<h3>Asesoría agendada</h3><div class="mtgs" id="leadMeetings">${meetings.filter((m) => m.lead_id === l.id).map(meetingHTML).join('')}</div>` : ''}
     <h3>Cotización</h3>
     <div class="a-quote" id="aQuote"></div>
     <h3>Respuestas del cotizador</h3>
@@ -705,6 +754,7 @@ function renderDetail() {
     toast('Resumen copiado');
   });
   bindQuote(l);
+  const lm = box.querySelector('#leadMeetings'); if (lm) bindMeetings(lm, renderDetail);
   box.querySelector('#saveNotes').addEventListener('click', async () => {
     if (await update(l.id, { notes: box.querySelector('#notes').value }, ['nota', 'Actualizó las notas internas'])) toast('Notas guardadas');
   });

@@ -259,3 +259,16 @@ body.admin { min-height: 100vh; }
 .mt-cancelada { background: rgba(239,68,68,.2); color: #fecaca; }
 .past { margin-top: 1rem; } .past summary { cursor: pointer; color: var(--muted); font-size: .88rem; margin-bottom: .6rem; }
 @media (max-width: 640px) { .mtg { grid-template-columns: 1fr; } }
+
+/* Meeting: generate + send */
+.mtg-gen { justify-self: start; background: linear-gradient(150deg, #7b83eb, #4b53bc) !important; box-shadow: 0 10px 26px -10px rgba(91,95,199,.9) !important; }
+.mtg-ready { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; font-size: .82rem; padding: .55rem .8rem; border-radius: 14px; background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.3); }
+.mtg-ready svg { width: 16px; height: 16px; color: #86efac; }
+.mtg-ready span { color: #bbf7d0; font-weight: 600; }
+.mtg-ready a { color: var(--text); text-decoration: underline; word-break: break-all; font-size: .78rem; }
+.mtg-more summary { cursor: pointer; font-size: .78rem; color: var(--muted); }
+.mtg-more[open] { display: grid; gap: .4rem; }
+.mtg-more a.small { color: var(--violet); }
+.mtg-time small + small { margin-top: .1rem; }
+.teams-tag { color: #c7d2fe !important; }
+.a-head-btns { display: flex; gap: .5rem; flex-wrap: wrap; }

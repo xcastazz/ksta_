@@ -9,3 +9,7 @@ export const MEETING = {
   durationMin: 30,
   minNoticeHours: 3,                     // anticipación mínima
 };
+
+// Enlace de tu reunión personal de Microsoft Teams (crea una reunión en Teams > Calendario > "Reunirse ahora" o
+// una reunión recurrente, copia su enlace y pégalo aquí). Si lo dejas vacío, el panel genera una sala de Jitsi Meet.
+export const TEAMS_LINK = '';
