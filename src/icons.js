@@ -1,28 +1,107 @@
-const svg = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+// Phosphor Icons (duotone) — https://phosphoricons.com · MIT
+import i_pen_nib from '@phosphor-icons/core/assets/duotone/pen-nib-duotone.svg?raw';
+import i_browsers from '@phosphor-icons/core/assets/duotone/browsers-duotone.svg?raw';
+import i_video_camera from '@phosphor-icons/core/assets/duotone/video-camera-duotone.svg?raw';
+import i_megaphone from '@phosphor-icons/core/assets/duotone/megaphone-duotone.svg?raw';
+import i_storefront from '@phosphor-icons/core/assets/duotone/storefront-duotone.svg?raw';
+import i_rocket_launch from '@phosphor-icons/core/assets/duotone/rocket-launch-duotone.svg?raw';
+import i_globe_hemisphere_west from '@phosphor-icons/core/assets/duotone/globe-hemisphere-west-duotone.svg?raw';
+import i_buildings from '@phosphor-icons/core/assets/duotone/buildings-duotone.svg?raw';
+import i_magnifying_glass from '@phosphor-icons/core/assets/duotone/magnifying-glass-duotone.svg?raw';
+import i_file_text from '@phosphor-icons/core/assets/duotone/file-text-duotone.svg?raw';
+import i_sparkle from '@phosphor-icons/core/assets/duotone/sparkle-duotone.svg?raw';
+import i_paper_plane_tilt from '@phosphor-icons/core/assets/duotone/paper-plane-tilt-duotone.svg?raw';
+import i_check from '@phosphor-icons/core/assets/duotone/check-duotone.svg?raw';
+import i_arrow_down from '@phosphor-icons/core/assets/duotone/arrow-down-duotone.svg?raw';
+import i_whatsapp_logo from '@phosphor-icons/core/assets/duotone/whatsapp-logo-duotone.svg?raw';
+import i_instagram_logo from '@phosphor-icons/core/assets/duotone/instagram-logo-duotone.svg?raw';
+import i_envelope_simple from '@phosphor-icons/core/assets/duotone/envelope-simple-duotone.svg?raw';
+import i_house from '@phosphor-icons/core/assets/duotone/house-duotone.svg?raw';
+import i_stack from '@phosphor-icons/core/assets/duotone/stack-duotone.svg?raw';
+import i_bell_ringing from '@phosphor-icons/core/assets/duotone/bell-ringing-duotone.svg?raw';
+import i_sign_out from '@phosphor-icons/core/assets/duotone/sign-out-duotone.svg?raw';
+import i_tray from '@phosphor-icons/core/assets/duotone/tray-duotone.svg?raw';
+import i_trash from '@phosphor-icons/core/assets/duotone/trash-duotone.svg?raw';
+import i_monitor from '@phosphor-icons/core/assets/duotone/monitor-duotone.svg?raw';
+import i_palette from '@phosphor-icons/core/assets/duotone/palette-duotone.svg?raw';
+import i_list_checks from '@phosphor-icons/core/assets/duotone/list-checks-duotone.svg?raw';
+import i_handshake from '@phosphor-icons/core/assets/duotone/handshake-duotone.svg?raw';
+import i_chat_circle_dots from '@phosphor-icons/core/assets/duotone/chat-circle-dots-duotone.svg?raw';
+import i_calendar_check from '@phosphor-icons/core/assets/duotone/calendar-check-duotone.svg?raw';
+import i_squares_four from '@phosphor-icons/core/assets/duotone/squares-four-duotone.svg?raw';
+import i_target from '@phosphor-icons/core/assets/duotone/target-duotone.svg?raw';
+import i_lightning from '@phosphor-icons/core/assets/duotone/lightning-duotone.svg?raw';
+import i_images from '@phosphor-icons/core/assets/duotone/images-duotone.svg?raw';
+
+const RAW = {
+  'pen-nib': i_pen_nib,
+  'browsers': i_browsers,
+  'video-camera': i_video_camera,
+  'megaphone': i_megaphone,
+  'storefront': i_storefront,
+  'rocket-launch': i_rocket_launch,
+  'globe-hemisphere-west': i_globe_hemisphere_west,
+  'buildings': i_buildings,
+  'magnifying-glass': i_magnifying_glass,
+  'file-text': i_file_text,
+  'sparkle': i_sparkle,
+  'paper-plane-tilt': i_paper_plane_tilt,
+  'check': i_check,
+  'arrow-down': i_arrow_down,
+  'whatsapp-logo': i_whatsapp_logo,
+  'instagram-logo': i_instagram_logo,
+  'envelope-simple': i_envelope_simple,
+  'house': i_house,
+  'stack': i_stack,
+  'bell-ringing': i_bell_ringing,
+  'sign-out': i_sign_out,
+  'tray': i_tray,
+  'trash': i_trash,
+  'monitor': i_monitor,
+  'palette': i_palette,
+  'list-checks': i_list_checks,
+  'handshake': i_handshake,
+  'chat-circle-dots': i_chat_circle_dots,
+  'calendar-check': i_calendar_check,
+  'squares-four': i_squares_four,
+  'target': i_target,
+  'lightning': i_lightning,
+  'images': i_images,
+};
+const ph = (name) => RAW[name].replace('<svg ', '<svg aria-hidden="true" class="ph" ');
 
 export const icons = {
-  brand: svg('<path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/>'),
-  code: svg('<rect x="2" y="3" width="20" height="18" rx="3"/><path d="M2 8h20"/><path d="M9 13l-2 2 2 2"/><path d="M15 13l2 2-2 2"/>'),
-  video: svg('<rect x="2" y="6" width="14" height="12" rx="3"/><path d="M16 10.5l5-3v9l-5-3"/><circle cx="7" cy="12" r="1.5"/>'),
-  megaphone: svg('<path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/>'),
-  sign: svg('<rect x="3" y="3" width="18" height="11" rx="2"/><path d="M8 14v7"/><path d="M16 14v7"/><path d="M7 7h6"/><path d="M7 10h10"/>'),
-  rocket: svg('<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>'),
-  globe: svg('<circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>'),
-  building: svg('<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M8 10h.01M16 10h.01M12 10h.01M8 14h.01M16 14h.01M12 14h.01"/>'),
-  monitor: svg('<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>'),
-  home: svg('<path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'),
-  layers: svg('<path d="M12 2l10 5-10 5L2 7l10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>'),
-  bell: svg('<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>'),
-  logout: svg('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>'),
-  inbox: svg('<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>'),
-  trash: svg('<path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>'),
-  search: svg('<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/>'),
-  file: svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/>'),
-  sparkles: svg('<path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2z"/><path d="M19 3v4M17 5h4"/>'),
-  send: svg('<path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/>'),
-  check: svg('<path d="M20 6L9 17l-5-5"/>'),
-  arrow: svg('<path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/>'),
-  whatsapp: svg('<path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.5A8.4 8.4 0 1 1 21 11.5z"/>'),
-  instagram: svg('<rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/>'),
-  mail: svg('<rect x="2" y="4" width="20" height="16" rx="3"/><path d="M22 7l-10 6L2 7"/>'),
+  brand: ph('pen-nib'),
+  code: ph('browsers'),
+  video: ph('video-camera'),
+  megaphone: ph('megaphone'),
+  sign: ph('storefront'),
+  rocket: ph('rocket-launch'),
+  globe: ph('globe-hemisphere-west'),
+  building: ph('buildings'),
+  search: ph('magnifying-glass'),
+  file: ph('file-text'),
+  sparkles: ph('sparkle'),
+  send: ph('paper-plane-tilt'),
+  check: ph('check'),
+  arrow: ph('arrow-down'),
+  whatsapp: ph('whatsapp-logo'),
+  instagram: ph('instagram-logo'),
+  mail: ph('envelope-simple'),
+  home: ph('house'),
+  layers: ph('stack'),
+  bell: ph('bell-ringing'),
+  logout: ph('sign-out'),
+  inbox: ph('tray'),
+  trash: ph('trash'),
+  monitor: ph('monitor'),
+  palette: ph('palette'),
+  list: ph('list-checks'),
+  handshake: ph('handshake'),
+  chat: ph('chat-circle-dots'),
+  calendar: ph('calendar-check'),
+  grid: ph('squares-four'),
+  target: ph('target'),
+  bolt: ph('lightning'),
+  images: ph('images'),
 };

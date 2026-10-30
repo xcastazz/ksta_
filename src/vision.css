@@ -200,3 +200,93 @@
 /* Tighter rhythm: less dead space between sections */
 .statement { padding: 8rem 0; min-height: 0; }
 .section { min-height: 0; padding: 7rem 0; }
+
+/* ---------- Phosphor duotone icons ---------- */
+.ph { width: 100%; height: 100%; display: block; }
+.ph path[opacity] { fill: #d8b4fe; opacity: .45; }
+.icon, .service .icon, .package .icon, .step .icon, .choices.big .choice .icon, .tpl-custom .icon, .quote-cta-icon {
+  padding: 12px; border-radius: 18px; color: #fff;
+  background: radial-gradient(120% 120% at 30% 15%, rgba(255,255,255,.35), transparent 45%), linear-gradient(150deg, #a876ff, #6d28d9 70%);
+  border: 1px solid rgba(255,255,255,.28);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -6px 14px rgba(40, 10, 90, .45), 0 14px 30px -12px rgba(124, 58, 237, .9);
+}
+.icon .ph path[opacity] { fill: #fff; opacity: .3; }
+.dock-icon .ph path[opacity], .a-rail .ph path[opacity] { opacity: .25; }
+.choice .tick .ph path[opacity] { opacity: 0; }
+
+/* ---------- Quote intro (motion graphics) ---------- */
+.quote.intro .quote-nav, .quote.intro .q-arrows { opacity: 0; pointer-events: none; }
+.quote.intro .quote-dots { visibility: hidden; }
+.q-intro { display: grid; justify-items: center; text-align: center; padding-top: 1rem !important; max-width: 900px !important; }
+.intro-stories { display: flex; gap: 6px; width: min(520px, 100%); }
+.intro-stories span { flex: 1; height: 3px; border-radius: 3px; background: rgba(255,255,255,.14); overflow: hidden; }
+.intro-stories i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--violet), #e879f9); }
+.intro-stories .done i { width: 100%; }
+.intro-stories .run i { animation: story var(--dur, 3s) linear forwards; }
+@keyframes story { to { width: 100%; } }
+.intro-eyebrow { margin-top: 1.2rem; }
+
+.intro-stage { position: relative; width: 100%; height: min(440px, 52vh); margin-top: .4rem; perspective: 1200px; }
+.intro-scene { position: absolute; inset: 0; display: grid; justify-items: center; align-content: center; gap: .6rem; opacity: 0; pointer-events: none;
+  transform: translateZ(-300px) rotateX(18deg); filter: blur(14px); transition: opacity .8s var(--ease), transform 1s var(--ease), filter .8s var(--ease); }
+.intro-scene.past { transform: translateZ(260px) rotateX(-14deg); }
+.intro-scene.on { opacity: 1; transform: none; filter: none; pointer-events: auto; }
+
+.mg { position: relative; width: 220px; height: 220px; display: grid; place-items: center; margin-bottom: .6rem; }
+.mg-num { position: absolute; font-size: 11rem; font-weight: 800; letter-spacing: -.08em; line-height: 1; color: transparent; -webkit-text-stroke: 1px rgba(192,132,252,.22); transform: translateY(6%) scale(1.25); z-index: -1; }
+.intro-scene.on .mg-num { animation: numIn 1.2s var(--ease) both; }
+@keyframes numIn { from { opacity: 0; transform: translateY(30%) scale(1.6); } }
+.mg-ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.mg-ring circle { fill: none; stroke: rgba(192,132,252,.5); stroke-width: 1; stroke-dasharray: 4 7; transform-origin: center; }
+.mg-ring .r2 { stroke: rgba(255,255,255,.18); stroke-dasharray: 120 320; stroke-width: 2; stroke-linecap: round; }
+.intro-scene.on .mg-ring circle { animation: ringDraw 1.4s var(--ease) both, spin 18s linear infinite; }
+.intro-scene.on .mg-ring .r2 { animation: ringDraw 1.4s var(--ease) both, spin 4s linear infinite reverse; }
+@keyframes ringDraw { from { stroke-dashoffset: 600; opacity: 0; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+.mg-core { width: 108px; height: 108px; padding: 26px; border-radius: 32px; color: #fff;
+  background: radial-gradient(120% 120% at 30% 15%, rgba(255,255,255,.45), transparent 45%), linear-gradient(150deg, #b48aff, #6d28d9 70%);
+  border: 1px solid rgba(255,255,255,.35);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -10px 24px rgba(40,10,90,.5), 0 30px 70px -20px rgba(139,92,246,1), 0 0 0 12px rgba(168,85,247,.08); }
+.mg-core .ph path[opacity] { fill: #fff; opacity: .3; }
+.intro-scene.on .mg-core { animation: coreIn 1.1s var(--spring) .15s both, bob 3s ease-in-out 1.2s infinite; }
+@keyframes coreIn { from { opacity: 0; transform: scale(.3) rotate(-40deg) translateZ(-200px); } }
+@keyframes bob { 50% { transform: translateY(-8px) rotate(3deg); } }
+.mg-sat { position: absolute; inset: 0; transform: rotate(var(--a)); }
+.mg-sat span { position: absolute; top: -6px; left: 50%; width: 46px; height: 46px; margin-left: -23px; padding: 11px; border-radius: 15px; color: #fff; transform: rotate(calc(-1 * var(--a)));
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); backdrop-filter: blur(16px); box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 10px 24px -10px rgba(0,0,0,.6); }
+.intro-scene.on .mg-sat { animation: orbitIn 1.2s var(--ease) both, orbit 14s linear 1.2s infinite; }
+.intro-scene.on .mg-sat:nth-of-type(2) { animation-delay: .35s, 1.2s; } .intro-scene.on .mg-sat:nth-of-type(3) { animation-delay: .5s, 1.2s; } .intro-scene.on .mg-sat:nth-of-type(4) { animation-delay: .65s, 1.2s; }
+.intro-scene.on .mg-sat span { animation: counter 14s linear 1.2s infinite; }
+@keyframes orbitIn { from { opacity: 0; transform: rotate(calc(var(--a) - 90deg)) scale(.4); } }
+@keyframes orbit { from { transform: rotate(var(--a)); } to { transform: rotate(calc(var(--a) + 360deg)); } }
+@keyframes counter { from { transform: rotate(calc(-1 * var(--a))); } to { transform: rotate(calc(-1 * var(--a) - 360deg)); } }
+.mg-spark { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #f0abfc; box-shadow: 0 0 12px #e879f9; opacity: 0; }
+.s1 { top: 18%; left: 8%; } .s2 { bottom: 14%; right: 4%; } .s3 { top: 6%; right: 22%; }
+.intro-scene.on .mg-spark { animation: spark 2.4s ease-in-out infinite; } .intro-scene.on .s2 { animation-delay: .8s; } .intro-scene.on .s3 { animation-delay: 1.5s; }
+@keyframes spark { 0%, 100% { opacity: 0; transform: scale(.4); } 50% { opacity: 1; transform: scale(1.2); } }
+
+.mg-title { font-size: clamp(1.9rem, 4.2vw, 3rem) !important; margin: .2rem 0 0 !important; }
+.mg-title span { display: inline-block; }
+.intro-scene.on .mg-title span { animation: wordUp .9s var(--ease) both; animation-delay: calc(.35s + var(--w) * 70ms); }
+@keyframes wordUp { from { opacity: 0; transform: translateY(70%) rotateX(-60deg); filter: blur(6px); } }
+.mg-desc { color: var(--muted); font-size: 1.05rem; max-width: 460px; }
+.intro-scene.on .mg-desc { animation: wordUp 1s var(--ease) .65s both; }
+
+.intro-track { display: flex; align-items: center; justify-content: center; gap: .3rem; margin-top: 1rem; flex-wrap: wrap; }
+.intro-track button { display: flex; align-items: center; gap: .5rem; font: inherit; font-size: .78rem; color: var(--muted); background: transparent; border: 0; cursor: pointer; padding: .35rem .6rem .35rem .35rem; border-radius: 999px; transition: all .5s var(--ease); }
+.intro-track button b { width: 28px; height: 28px; padding: 6px; border-radius: 50%; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); color: var(--muted); transition: all .5s var(--spring); }
+.intro-track button.done b { background: rgba(168,118,255,.3); color: #fff; }
+.intro-track button.on { color: #fff; background: rgba(255,255,255,.08); }
+.intro-track button.on b { background: #fff; color: #5b21b6; transform: scale(1.1); }
+.intro-link { width: 26px; height: 2px; border-radius: 2px; background: rgba(255,255,255,.12); position: relative; overflow: hidden; }
+.intro-link::after { content: ''; position: absolute; inset: 0; background: var(--violet); transform: scaleX(0); transform-origin: left; transition: transform .8s var(--ease); }
+.intro-link.on::after { transform: scaleX(1); }
+.intro-actions { display: flex; gap: .8rem; align-items: center; margin-top: 1.4rem; }
+.intro-actions [data-start] { transition: transform .5s var(--spring), box-shadow .5s; }
+.q-intro.last .intro-actions [data-start] { animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 10px rgba(168,85,247,.18), 0 14px 40px -8px rgba(168,85,247,.9); } }
+@media (max-width: 720px) {
+  .intro-track span { display: none; } .intro-track button { padding: .35rem; }
+  .mg { width: 170px; height: 170px; } .mg-core { width: 86px; height: 86px; padding: 20px; } .mg-num { font-size: 8rem; }
+  .intro-stage { height: 46vh; }
+}

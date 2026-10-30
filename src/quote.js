@@ -497,6 +497,75 @@ export function initQuote({ onStep }) {
   }
   stage.addEventListener('click', (e) => { if (e.target.closest('[data-close]')) close(); });
 
+  // ---------- motion-graphics intro ----------
+  const INTRO = [
+    { icon: 'target', sats: ['rocket', 'globe', 'building'], t: 'Elige tu objetivo', d: 'Un paquete listo o tu plan a la medida, servicio por servicio.' },
+    { icon: 'list', sats: ['brand', 'code', 'video'], t: 'Responde preguntas rápidas', d: 'Solo sobre lo que elegiste. Cada paso te explica para qué sirve.' },
+    { icon: 'palette', sats: ['images', 'code', 'sparkles'], t: 'Define tu estilo', d: 'Mira plantillas web reales y cuéntanos cómo quieres que se sienta tu marca.' },
+    { icon: 'handshake', sats: ['whatsapp', 'chat', 'calendar'], t: 'Un asesor te contacta', d: 'Te escribimos por WhatsApp con tu cotización personalizada. Sin compromiso.' },
+  ];
+  const SCENE_MS = 3200;
+  let introTimer = null, introIdx = 0;
+
+  function playIntro() {
+    root.classList.add('intro');
+    const panel = swap(`
+      <div class="intro-stories">${INTRO.map(() => '<span><i></i></span>').join('')}</div>
+      <p class="eyebrow intro-eyebrow">// así funciona · toma 2 minutos</p>
+      <div class="intro-stage">${INTRO.map((s, i) => `
+        <div class="intro-scene" data-i="${i}">
+          <div class="mg">
+            <span class="mg-num">0${i + 1}</span>
+            <svg class="mg-ring" viewBox="0 0 200 200"><circle cx="100" cy="100" r="92" /><circle class="r2" cx="100" cy="100" r="70" /></svg>
+            <div class="mg-core">${icons[s.icon]}</div>
+            ${s.sats.map((k, j) => `<div class="mg-sat" style="--a:${j * 120}deg"><span>${icons[k] || icons.sparkles}</span></div>`).join('')}
+            <span class="mg-spark s1"></span><span class="mg-spark s2"></span><span class="mg-spark s3"></span>
+          </div>
+          <h2 class="mg-title">${s.t.split(' ').map((w, j) => `<span style="--w:${j}">${w}</span>`).join(' ')}</h2>
+          <p class="mg-desc">${s.d}</p>
+        </div>`).join('')}
+      </div>
+      <div class="intro-track">${INTRO.map((s, i) => `<button type="button" data-scene="${i}"><b>${icons[s.icon]}</b><span>${s.t}</span></button>`).join('<i class="intro-link"></i>')}</div>
+      <div class="intro-actions">
+        <button type="button" class="btn btn-ghost btn-sm" data-skip>Saltar intro</button>
+        <button type="button" class="btn btn-lg" data-start>Empezar ahora →</button>
+      </div>`, 1, 'q-intro');
+    panel.querySelector('[data-skip]').addEventListener('click', endIntro);
+    panel.querySelector('[data-start]').addEventListener('click', endIntro);
+    panel.querySelectorAll('[data-scene]').forEach((b) => b.addEventListener('click', () => scene(+b.dataset.scene)));
+    dots.innerHTML = '';
+    count.textContent = '';
+    onStep(0);
+    scene(0);
+  }
+
+  function scene(i) {
+    clearTimeout(introTimer);
+    introIdx = i;
+    const p = stage.querySelector('.q-intro');
+    if (!p) return;
+    p.querySelectorAll('.intro-scene').forEach((s, j) => {
+      s.classList.toggle('on', j === i);
+      s.classList.toggle('past', j < i);
+    });
+    p.querySelectorAll('.intro-stories span').forEach((s, j) => {
+      s.className = j < i ? 'done' : j === i ? 'run' : '';
+      s.style.setProperty('--dur', `${SCENE_MS}ms`);
+    });
+    p.querySelectorAll('.intro-track button').forEach((b, j) => { b.classList.toggle('on', j === i); b.classList.toggle('done', j < i); });
+    p.querySelectorAll('.intro-link').forEach((l, j) => l.classList.toggle('on', j < i));
+    p.classList.toggle('last', i === INTRO.length - 1);
+    dispatchEvent(new Event('scene:kick'));
+    onStep(i);
+    if (i < INTRO.length - 1) introTimer = setTimeout(() => scene(i + 1), SCENE_MS);
+  }
+
+  function endIntro() {
+    clearTimeout(introTimer);
+    root.classList.remove('intro');
+    render(1);
+  }
+
   // ---------- open / close ----------
   function open(preset) {
     reset();
@@ -511,10 +580,11 @@ export function initQuote({ onStep }) {
     next.disabled = false; busy = false;
     document.body.classList.add('quote-open');
     root.classList.add('open');
-    render(1);
+    playIntro();
   }
 
   function close() {
+    clearTimeout(introTimer); root.classList.remove('intro');
     closePreview();
     root.classList.remove('open');
     document.body.classList.remove('quote-open');

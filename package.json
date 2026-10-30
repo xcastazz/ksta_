@@ -10,6 +10,7 @@
     "deploy": "vite build && wrangler deploy"
   },
   "dependencies": {
+    "@phosphor-icons/core": "^2.1.1",
     "@supabase/supabase-js": "^2.118.0",
     "three": "^0.186.1"
   },
