@@ -1,6 +1,7 @@
 import { services, packages } from './data.js';
 import { icons } from './icons.js';
-import { supabase } from './supabase.js';
+import { initQuote } from './quote.js';
+import { WHATSAPP_NUMBER } from './config.js';
 
 // Render services & packages
 document.getElementById('services').innerHTML = services.map((s, i) => `
@@ -20,9 +21,16 @@ document.getElementById('packages').innerHTML = packages.map((p, i) => `
   </article>`).join('');
 
 document.querySelectorAll('[data-icon]').forEach((el) => { el.innerHTML = icons[el.dataset.icon]; });
-document.querySelectorAll('[data-pkg]').forEach((a) =>
-  a.addEventListener('click', () => { document.querySelector('select[name=service]').value = a.dataset.pkg; })
-);
+// Guided quote wizard: every "Cotizar" button opens it
+let quoteStep = -1;
+const quote = initQuote({ onStep: (i) => { quoteStep = i; dispatchEvent(new Event('scene:kick')); } });
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('[data-quote], [data-pkg]');
+  if (!t) return;
+  e.preventDefault();
+  nav.classList.remove('open');
+  quote.open(t.dataset.pkg);
+});
 
 // Reveal on scroll
 const io = new IntersectionObserver((entries) => {
@@ -93,7 +101,7 @@ document.body.dataset.chapter = active;
 onScroll();
 
 // 3D scene (lazy so the page paints first)
-import('./scene.js').then(({ initScene }) => initScene(document.getElementById('scene3d'), () => active));
+import('./scene.js').then(({ initScene }) => initScene(document.getElementById('scene3d'), () => (quoteStep >= 0 ? `q${quoteStep}` : active)));
 
 // 3D tilt + glare on cards
 if (matchMedia('(hover: hover)').matches) {
@@ -116,26 +124,7 @@ const burger = document.getElementById('burger');
 burger.addEventListener('click', () => nav.classList.toggle('open'));
 document.querySelectorAll('.nav-links a').forEach((a) => a.addEventListener('click', () => nav.classList.remove('open')));
 
-// Form -> Supabase
-const form = document.getElementById('quoteForm');
-const status = document.getElementById('formStatus');
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const data = Object.fromEntries(new FormData(form));
-  if (data.website) return; // honeypot
-  delete data.website;
-  const btn = form.querySelector('button');
-  btn.disabled = true; status.textContent = 'Enviando…'; status.className = 'form-status';
-  try {
-    if (!supabase) throw new Error('Supabase no configurado');
-    const { error } = await supabase.from('leads').insert(data);
-    if (error) throw error;
-    form.reset();
-    status.textContent = '¡Listo! Te contactaremos muy pronto.'; status.classList.add('ok');
-  } catch (err) {
-    console.error(err);
-    status.textContent = 'No se pudo enviar. Escríbenos por WhatsApp.'; status.classList.add('err');
-  } finally { btn.disabled = false; }
-});
+// Use the configured WhatsApp number everywhere
+document.querySelectorAll('a[href^="https://wa.me/"]').forEach((a) => { a.href = `https://wa.me/${WHATSAPP_NUMBER}`; });
 
 document.getElementById('year').textContent = new Date().getFullYear();

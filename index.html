@@ -30,7 +30,7 @@
       <a href="#plantillas">Plantillas</a>
       <a href="#paquetes">Paquetes</a>
       <a href="#proceso">Proceso</a>
-      <a href="#contacto" class="btn btn-sm">Cotizar</a>
+      <a href="#contacto" class="btn btn-sm" data-quote>Cotizar</a>
     </nav>
     <button class="burger" id="burger" aria-label="Abrir menú"><span></span><span></span></button>
   </header>
@@ -55,7 +55,7 @@
       </h1>
       <p class="hero-sub reveal">Branding, web, video, campañas y publicidad física. Todo lo que tu negocio necesita para verse profesional, en un solo lugar.</p>
       <div class="hero-cta reveal">
-        <a href="#contacto" class="btn">Empezar proyecto</a>
+        <a href="#contacto" class="btn" data-quote>Empezar proyecto</a>
         <a href="#manifiesto" class="btn btn-ghost">Hacer el recorrido <i data-icon="arrow"></i></a>
       </div>
     </section>
@@ -140,34 +140,18 @@
           <a class="glass reveal" href="mailto:hola@ksta.com"><i data-icon="mail"></i>hola@ksta.com</a>
         </div>
       </div>
-      <form class="form glass-strong reveal" id="quoteForm">
-        <div class="row">
-          <label>Nombre<input name="name" required maxlength="100" /></label>
-          <label>Email<input name="email" type="email" required maxlength="150" /></label>
-        </div>
-        <div class="row">
-          <label>Teléfono / WhatsApp<input name="phone" maxlength="30" /></label>
-          <label>Negocio<input name="business" maxlength="120" /></label>
-        </div>
-        <label>¿Qué te interesa?
-          <select name="service" required>
-            <option value="">Selecciona…</option>
-            <option>Branding e identidad visual</option>
-            <option>Desarrollo web y software</option>
-            <option>Producción audiovisual</option>
-            <option>Publicidad y marketing digital</option>
-            <option>Publicidad física e impresos</option>
-            <option>Paquete Emprendimiento</option>
-            <option>Paquete Presencia Digital</option>
-            <option>Paquete Negocio Integral</option>
-            <option>Demo con plantilla</option>
-          </select>
-        </label>
-        <label>Cuéntanos más<textarea name="message" rows="4" maxlength="2000"></textarea></label>
-        <input name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
-        <button class="btn" type="submit">Enviar solicitud <i data-icon="send"></i></button>
-        <p class="form-status" id="formStatus" role="status"></p>
-      </form>
+      <div class="quote-cta glass-strong reveal">
+        <div class="quote-cta-icon icon" data-icon="sparkles"></div>
+        <p class="eyebrow">// cotizador guiado</p>
+        <h3>Arma tu plan en 2 minutos.</h3>
+        <p class="muted">Responde unas preguntas rápidas sobre tu negocio y lo que necesitas. Al final te llevamos a WhatsApp con tu resumen listo para enviarte la cotización.</p>
+        <ul class="quote-cta-list">
+          <li><i data-icon="check"></i>Elige un paquete o arma el tuyo</li>
+          <li><i data-icon="check"></i>Cuéntanos tu estilo y tus tiempos</li>
+          <li><i data-icon="check"></i>Recibe tu cotización por WhatsApp</li>
+        </ul>
+        <button class="btn btn-lg" data-quote>Empezar cotización <i data-icon="arrow"></i></button>
+      </div>
     </section>
   </main>
 

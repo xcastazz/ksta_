@@ -12,6 +12,20 @@ const POSES = {
   contacto:   { x: -0.55,y: -0.35,z: 0,  s: 0.85, shape: 2, color: 0xa855f7, spread: 0.6, orbit: 0.1 },
 };
 
+// Quote wizard poses: the object dances around the panel, changing shape each step
+const QUIZ = [
+  { x: 0.72,  y: 0.35,  z: -1, s: 0.75, shape: 3, color: 0xa855f7, spread: 0.9, orbit: 0.5 },
+  { x: -0.72, y: -0.3,  z: -1, s: 0.7,  shape: 2, color: 0xc084fc, spread: 1.1, orbit: 0.7 },
+  { x: 0.7,   y: -0.35, z: -2, s: 0.8,  shape: 1, color: 0xe879f9, spread: 1.4, orbit: 0.4 },
+  { x: -0.7,  y: 0.35,  z: -1, s: 0.7,  shape: 0, color: 0x8b5cf6, spread: 1,   orbit: 0.9 },
+];
+const DONE = { x: 0, y: 0.15, z: -2, s: 1.3, shape: 0, color: 0xc084fc, spread: 2.6, orbit: 1.4 };
+const poseFor = (key) => {
+  if (POSES[key]) return POSES[key];
+  const n = Number(key.slice(1));
+  return n >= 20 ? DONE : QUIZ[n % QUIZ.length];
+};
+
 export function initScene(canvas, getActive) {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const mobile = matchMedia('(max-width: 720px)').matches;
@@ -97,13 +111,14 @@ export function initScene(canvas, getActive) {
   const cur = { x: POSES.inicio.x, y: 0, z: 0, s: 1, spread: 1, orbit: 0.15, spin: 0 };
   const col = new THREE.Color(0xc4a5ff), tmpCol = new THREE.Color();
   let lastScroll = scrollY;
+  addEventListener('scene:kick', () => { cur.spin += 0.35; });
   const clock = new THREE.Clock();
   const damp = (a, b, k) => a + (b - a) * k;
 
   renderer.setAnimationLoop(() => {
     const dt = Math.min(clock.getDelta(), 0.05);
     const t = reduced ? 0 : clock.elapsedTime;
-    const p = POSES[getActive()] || POSES.inicio;
+    const p = poseFor(getActive());
     const k = 1 - Math.pow(0.02, dt); // frame-rate independent ease
 
     // Scroll velocity gives a little "kick" spin during transitions

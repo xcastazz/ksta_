@@ -8,7 +8,8 @@ create table if not exists public.leads (
   business text check (char_length(business) <= 120),
   service text not null,
   message text check (char_length(message) <= 2000),
-  status text not null default 'nuevo'
+  status text not null default 'nuevo',
+  details jsonb -- respuestas completas del cotizador guiado
 );
 
 alter table public.leads enable row level security;
