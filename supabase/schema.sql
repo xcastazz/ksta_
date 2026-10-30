@@ -7,7 +7,7 @@ create table if not exists public.leads (
   phone text check (char_length(phone) <= 30),
   business text check (char_length(business) <= 120),
   service text not null,
-  message text check (char_length(message) <= 2000),
+  message text check (char_length(message) <= 20000),
   status text not null default 'nuevo',
   details jsonb -- respuestas completas del cotizador guiado
 );
