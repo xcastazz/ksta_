@@ -308,6 +308,7 @@ function bindQuote(l) {
       <div class="aq-totals">
         <div><span>Subtotal</span><b>${cop(q.subtotal)}</b></div>
         <div><span>Descuento <input type="number" min="0" max="100" value="${Math.round(q.discountRate * 100)}" id="aqDisc" />%</span><b class="ok">- ${cop(q.discount)}</b></div>
+        ${q.combo ? `<div><span>Gestión integral combo (+${Math.round(q.comboRate * 100)}%)</span><b>+ ${cop(q.combo)}</b></div>` : ''}
         ${q.rush ? `<div><span>Urgencia (+${Math.round(q.rushRate * 100)}%)</span><b>+ ${cop(q.rush)}</b></div>` : ''}
         <div class="aq-total"><span>Total</span><b>${cop(q.total)}</b></div>
         ${q.maintenance ? `<div><span>Mantenimiento (${Math.round(q.maintenanceRate * 100)}%)</span><b>${cop(q.maintenance)} /mes</b></div>` : ''}

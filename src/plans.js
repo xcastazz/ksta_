@@ -57,7 +57,7 @@ export const CATS = {
 };
 
 export const CAT_ORDER = ['web', 'diseno', 'publicidad'];
-export const COMBO = { 1: 0, 2: 0.05, 3: 0.08 }; // descuento por cantidad de categorías
+export const COMBO = { 1: 0, 2: 0.15, 3: 0.25 }; // recargo de gestión integral // descuento por cantidad de categorías
 
 export const findTier = (id) => {
   for (const [cat, c] of Object.entries(CATS)) {

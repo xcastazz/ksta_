@@ -113,7 +113,7 @@ const TIMING = [['Lo antes posible', 'Priorizamos tu proyecto'], ['En 2–4 sema
 const BUDGET = [['Aún no lo sé', 'Te proponemos opciones'], ['Básico', 'Lo esencial'], ['Intermedio', 'Buen balance'], ['Completo / premium', 'Lo mejor para tu marca']];
 
 const INFO = {
-  cats: 'Puedes contratar una sola categoría o combinarlas. Al elegir 2 ahorras 5% y con las 3 ahorras 8% sobre el total.',
+  cats: 'Puedes contratar una sola categoría o combinarlas. Los combos son nuestra experiencia premium: un asesor dedicado coordina tu web, tu marca y tu publicidad para que todo hable el mismo idioma, con prioridad en la entrega. Incluyen un cargo de gestión integral (+15% con 2 categorías, +25% con las 3).',
   tiers: 'Cada plan es un punto de partida con lo que más recomendamos. En los siguientes pasos puedes ajustar todo y el precio final se calcula con tus respuestas.',
   plan: 'Los paquetes combinan servicios con mejor precio que contratarlos por separado. Si eliges “a mi medida”, armas tu plan servicio por servicio.',
   services: 'Cada servicio que marques añade unas preguntas cortas para entender exactamente lo que necesitas. Puedes cambiar lo que viene en tu paquete.',
@@ -197,7 +197,7 @@ export function initQuote({ onStep }) {
     }).join('')}</div>`;
 
   const R = {
-    cats: () => head('// paso 1 · qué necesitas', '¿En qué te ayudamos?', 'Elige una, dos o las tres. Combinando categorías ahorras.') + info('cats') + `
+    cats: () => head('// paso 1 · qué necesitas', '¿En qué te ayudamos?', 'Elige una, dos o las tres. Los combos incluyen gestión integral premium.') + info('cats') + `
       <div class="choices big cats">${CAT_ORDER.map((k, i) => {
         const c = CATS[k], cheapest = c.tiers.map((t) => tierPrice(t)).sort((a, b) => fromValue(a) - fromValue(b))[0];
         return `<button type="button" class="choice vision ${state.cats.includes(k) ? 'on' : ''}" data-name="cats" data-val="${k}" data-multi="1" style="--i:${i}">
@@ -264,8 +264,8 @@ export function initQuote({ onStep }) {
   function comboMeter() {
     const n = state.cats.length, off = COMBO[n] || 0;
     return `<div class="cm-steps">${[1, 2, 3].map((i) => `<span class="${n >= i ? 'on' : ''}">${i}</span>`).join('<i></i>')}</div>
-      <p>${n === 0 ? 'Elige al menos una categoría.' : n === 1 ? 'Agrega otra categoría y ahorra <b>5%</b>.' : n === 2 ? '¡Combo! Ahorras <b>5%</b>. Con las 3 ahorras <b>8%</b>.' : '¡Combo completo! Ahorras <b>8%</b> en todo.'}</p>
-      ${off ? `<span class="cm-badge">-${Math.round(off * 100)}%</span>` : ''}`;
+      <p>${n === 0 ? 'Elige al menos una categoría.' : n === 1 ? 'Agrega otra categoría para un <b>Combo Premium</b> con asesor dedicado.' : n === 2 ? '<b>Combo Dúo Premium:</b> asesor dedicado y coordinación integral (+15%).' : '<b>Combo Total Premium:</b> todo tu negocio con un solo equipo, prioridad máxima (+25%).'}</p>
+      ${off ? `<span class="cm-badge">Premium</span>` : ''}`;
   }
   // When leaving the plan step: chosen tiers → services + pre-filled answers
   function applyTiers() {
@@ -550,7 +550,7 @@ export function initQuote({ onStep }) {
 
   // ---------- motion-graphics intro ----------
   const INTRO = [
-    { icon: 'target', sats: ['code', 'rocket', 'building'], t: 'Elige qué necesitas', d: 'Web, diseño, publicidad… o las tres. Combinando ahorras hasta 8%.' },
+    { icon: 'target', sats: ['code', 'rocket', 'building'], t: 'Elige qué necesitas', d: 'Web, diseño, publicidad… o las tres. O llévate un combo premium con todo integrado.' },
     { icon: 'list', sats: ['brand', 'code', 'video'], t: 'Responde preguntas rápidas', d: 'Solo sobre lo que elegiste. Cada paso te explica para qué sirve.' },
     { icon: 'palette', sats: ['images', 'code', 'sparkles'], t: 'Define tu estilo', d: 'Mira plantillas web reales y cuéntanos cómo quieres que se sienta tu marca.' },
     { icon: 'handshake', sats: ['whatsapp', 'chat', 'calendar'], t: 'Un asesor te contacta', d: 'Te escribimos por WhatsApp con tu cotización personalizada. Sin compromiso.' },

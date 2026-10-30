@@ -90,6 +90,7 @@ export function quotePDF(lead) {
   y += 4;
   row('Subtotal', cop(q.subtotal));
   if (q.discount) row(`Descuento paquete (${Math.round(q.discountRate * 100)}%)`, '- ' + cop(q.discount), false, [22, 140, 80]);
+  if (q.combo) row(`Gestión integral de combo (+${Math.round(q.comboRate * 100)}%)`, '+ ' + cop(q.combo));
   if (q.rush) row(`Entrega prioritaria (+${Math.round(q.rushRate * 100)}%)`, '+ ' + cop(q.rush));
   y += 4;
   doc.setFillColor(...PURPLE); doc.roundedRect(tx - 14, y - 4, W - M - tx + 14, 44, 10, 10, 'F');

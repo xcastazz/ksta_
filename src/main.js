@@ -18,17 +18,17 @@ document.getElementById('services').innerHTML = services.map((s, i) => `
 const PLAN_TABS = [...CAT_ORDER, 'combo'];
 const pkgEl = document.getElementById('packages');
 function renderPlans(active = 'web') {
-  const tabs = `<div class="plan-tabs vision" role="tablist">${PLAN_TABS.map((k) => `<button role="tab" class="${k === active ? 'on' : ''}" data-tab="${k}">${k === 'combo' ? `${icons.sparkles}Combo · ahorra hasta 8%` : `${icons[CATS[k].icon]}${CATS[k].label}`}</button>`).join('')}</div>`;
+  const tabs = `<div class="plan-tabs vision" role="tablist">${PLAN_TABS.map((k) => `<button role="tab" class="${k === active ? 'on' : ''}" data-tab="${k}">${k === 'combo' ? `${icons.sparkles}Combos Premium` : `${icons[CATS[k].icon]}${CATS[k].label}`}</button>`).join('')}</div>`;
   let body;
   if (active === 'combo') {
     const mid = CAT_ORDER.map((k) => CATS[k].tiers.find((t) => t.featured));
     const sum = mid.reduce((s, t) => s + tierPrice(t).total, 0);
     body = `<div class="combo-grid">
-      ${[[2, 'Combo Dúo', 'Elige 2 categorías', 'Por ejemplo: web + diseño de marca.'], [3, 'Combo Total', 'Las 3 categorías', 'Web, marca y publicidad trabajando juntas.']].map(([n, name, sub, ex], i) => `
+      ${[[2, 'Combo Dúo Premium', 'Elige 2 categorías', 'Asesor dedicado y coordinación integral entre ambas.'], [3, 'Combo Total Premium', 'Las 3 categorías', 'Web, marca y publicidad con un solo equipo y prioridad máxima.']].map(([n, name, sub, ex], i) => `
         <article class="package glass reveal ${n === 3 ? 'featured' : ''}" style="--d:${i * 120}ms">
-          <div class="package-top"><div class="icon">${icons[n === 3 ? 'sparkles' : 'layers']}</div><span class="tag">-${COMBO[n] * 100}%</span></div>
+          <div class="package-top"><div class="icon">${icons[n === 3 ? 'sparkles' : 'layers']}</div><span class="tag">Premium</span></div>
           <h3>${name}</h3><p class="muted">${sub}. ${ex}</p>
-          ${n === 3 ? `<p class="combo-example">Ej: ${mid.map((t) => t.name).join(' + ')}<br><s>${cop(sum)}</s> <b>${cop(sum * (1 - COMBO[3]))}</b></p>` : ''}
+          ${n === 3 ? `<p class="combo-example">Ej: ${mid.map((t) => t.name).join(' + ')}<br><b>${cop(sum * (1 + COMBO[3]))}</b> con gestión integral</p>` : ''}
           <a href="#contacto" class="btn ${n === 3 ? '' : 'btn-ghost'}" data-pkg="combo">Armar mi combo</a>
         </article>`).join('')}
     </div>`;
