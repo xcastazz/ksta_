@@ -2,6 +2,7 @@ import { supabase } from './supabase.js';
 import { icons } from './icons.js';
 import { buildQuote, totals, cop } from './pricing.js';
 import { MEET_LINK } from './config.js';
+import { buildDevPrompt, devPromptFilename } from './devprompt.js';
 
 const app = document.getElementById('app');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -779,6 +780,12 @@ function renderDetail() {
     <div class="a-d-foot"><button class="btn btn-sm" id="saveNotes">Guardar notas</button><button class="btn btn-sm btn-ghost danger" id="del">${icons.trash} Eliminar</button></div>
     </div>
     <div class="a-d-col">
+    <h3>Prompt para desarrollar</h3>
+    <section class="a-prompt">
+      <div class="ap-head"><span class="ap-ic">${icons.code}</span><div><b>Brief listo para Claude Code</b><small>Contexto del cliente, alcance, stack Supabase + Cloudflare, legal y plan de trabajo.</small></div></div>
+      <div class="ap-actions"><button class="btn btn-sm" id="apCopy">${icons.file} Copiar prompt</button><button class="btn btn-sm btn-ghost" id="apDl">Descargar .md</button></div>
+      <details class="ap-prev"><summary>Ver el prompt</summary><pre id="apText"></pre></details>
+    </section>
     ${meetings.some((m) => m.lead_id === l.id) ? `<h3>Asesoría agendada</h3><div class="mtgs" id="leadMeetings">${meetings.filter((m) => m.lead_id === l.id).map(meetingHTML).join('')}</div>` : ''}
     <h3>Respuestas del cotizador</h3>
     <div class="a-cards">${answersHTML(l)}</div>
@@ -808,6 +815,17 @@ function renderDetail() {
     toast('Resumen copiado');
   });
   bindQuote(l);
+  const prompt = buildDevPrompt(l);
+  box.querySelector('#apText').textContent = prompt;
+  box.querySelector('#apCopy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(prompt); toast('Prompt copiado: pégalo en Claude Code'); logEvent(l.id, 'nota', 'Copió el prompt de desarrollo'); }
+    catch { toast('No se pudo copiar; usa Descargar .md'); }
+  });
+  box.querySelector('#apDl').addEventListener('click', () => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([prompt], { type: 'text/markdown;charset=utf-8' }));
+    a.download = devPromptFilename(l); a.click();
+  });
   const lm = box.querySelector('#leadMeetings'); if (lm) bindMeetings(lm, renderDetail);
   box.querySelector('#saveNotes').addEventListener('click', async () => {
     if (await update(l.id, { notes: box.querySelector('#notes').value }, ['nota', 'Actualizó las notas internas'])) toast('Notas guardadas');

@@ -418,3 +418,13 @@ body.admin { min-height: 100vh; }
 .st-edge-revision { --edge: #eab308; } .st-edge-entregado { --edge: #22c55e; } .st-edge-cerrado { --edge: #f4f0ff; }
 .st-edge-pausado { --edge: #94a3b8; } .st-edge-perdido { --edge: #ef4444; }
 @media (max-width: 900px) { .a-list { grid-template-columns: 1fr !important; } .lc-total b { font-size: 1.2rem; } }
+
+/* Dev prompt */
+.a-prompt { display: grid; gap: .8rem; padding: 1.1rem; border-radius: 22px; background: linear-gradient(150deg, rgba(14,165,233,.12), rgba(124,58,237,.1)); border: 1px solid rgba(125,211,252,.25); }
+.ap-head { display: flex; gap: .8rem; align-items: center; }
+.ap-head b { font-size: .98rem; } .ap-head small { display: block; color: var(--muted); font-size: .8rem; }
+.ap-ic { width: 42px; height: 42px; padding: 10px; border-radius: 14px; flex-shrink: 0; color: #fff; background: linear-gradient(150deg, #38bdf8, #6d28d9); box-shadow: inset 0 1px 0 rgba(255,255,255,.4); }
+.ap-ic .ph path[opacity] { fill: #fff; opacity: .3; }
+.ap-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+.ap-prev summary { cursor: pointer; font-size: .82rem; color: var(--muted); }
+.ap-prev pre { margin-top: .6rem; max-height: 360px; overflow: auto; white-space: pre-wrap; word-break: break-word; font-family: var(--mono); font-size: .74rem; line-height: 1.55; padding: 1rem; border-radius: 14px; background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.08); color: #e2e8f0; }
