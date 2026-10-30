@@ -329,3 +329,13 @@
   .about-card { position: static; }
   .about-values { grid-template-columns: 1fr; }
 }
+
+/* ---------- Auto quote result ---------- */
+.done-price { display: grid; justify-items: center; gap: .35rem; padding: 1.6rem 2.4rem; margin-top: 1.4rem; border-radius: 28px; min-width: min(420px, 100%); }
+.done-price .mono { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
+.done-total { font-size: clamp(2.6rem, 6vw, 3.8rem); font-weight: 800; letter-spacing: -.05em; line-height: 1; background: linear-gradient(100deg, #fff, #d8b4fe); -webkit-background-clip: text; background-clip: text; color: transparent; font-variant-numeric: tabular-nums; }
+.done-save { font-size: .8rem; font-weight: 600; color: #86efac; background: rgba(34,197,94,.14); border: 1px solid rgba(34,197,94,.3); padding: .25rem .8rem; border-radius: 999px; }
+.done-price small { color: var(--muted); font-size: .82rem; }
+.done-price small b { color: var(--text); }
+.done-actions { display: flex; gap: .8rem; flex-wrap: wrap; justify-content: center; margin-top: 1.2rem; }
+.done-actions .btn svg { width: 20px; height: 20px; }

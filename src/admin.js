@@ -1,5 +1,6 @@
 import { supabase } from './supabase.js';
 import { icons } from './icons.js';
+import { buildQuote, totals, cop } from './pricing.js';
 
 const app = document.getElementById('app');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -238,7 +239,7 @@ function renderList(flashId) {
     <button class="a-row ${l.id === selectedId ? 'sel' : ''} ${l.id === flashId ? 'flash' : ''}" data-id="${l.id}">
       <span class="avatar">${esc((l.name || '?')[0].toUpperCase())}</span>
       <span class="a-row-main"><b>${esc(l.name)}</b><small>${esc(l.business || '—')} · ${esc(l.service || '')}</small></span>
-      <span class="a-row-side"><span class="st st-${esc(l.status)}">${esc(statusLabel(l.status))}</span><small>${ago(l.created_at)}</small></span>
+      <span class="a-row-side"><span class="st st-${esc(l.status)}">${esc(statusLabel(l.status))}</span><small>${l.quote_total ? cop(l.quote_total) + ' · ' : ''}${ago(l.created_at)}</small></span>
     </button>`).join('') : `<div class="a-empty small">${icons.inbox}<p>No hay solicitudes aquí todavía.</p></div>`;
   list.querySelectorAll('.a-row').forEach((r) => r.addEventListener('click', () => { selectedId = r.dataset.id; renderList(); renderDetail(); }));
 }
@@ -284,6 +285,72 @@ function answersHTML(l) {
   return html;
 }
 
+// ---------- Quote editor (auto-priced, editable, PDF + WhatsApp) ----------
+function ensureQuote(l) {
+  if (l.quote?.items) return l.quote;
+  if (!l.details) return null;
+  return buildQuote({ plan: l.details.plan, services: l.details.services, details: l.details.details, template: l.details.template, timing: l.details.timing });
+}
+
+function bindQuote(l) {
+  const box = document.getElementById('aQuote');
+  let q = ensureQuote(l);
+  if (!q) { box.innerHTML = '<p class="muted">Esta solicitud no tiene datos suficientes para cotizar automáticamente.</p>'; return; }
+  q = totals(q);
+  const draw = () => {
+    box.innerHTML = `
+      <div class="aq-lines">${q.items.map((it, i) => `
+        <div class="aq-line"><span><small>${esc(it.group)}</small>${esc(it.concept)}${it.monthly ? ' <em>/mes</em>' : ''}</span>
+          <input type="number" min="0" step="10000" value="${it.price}" data-i="${i}" aria-label="Precio" />
+          <button class="aq-del" data-del="${i}" title="Quitar">✕</button></div>`).join('')}
+        <button class="aq-add" id="aqAdd">+ Agregar concepto</button>
+      </div>
+      <div class="aq-totals">
+        <div><span>Subtotal</span><b>${cop(q.subtotal)}</b></div>
+        <div><span>Descuento <input type="number" min="0" max="100" value="${Math.round(q.discountRate * 100)}" id="aqDisc" />%</span><b class="ok">- ${cop(q.discount)}</b></div>
+        ${q.rush ? `<div><span>Urgencia (+${Math.round(q.rushRate * 100)}%)</span><b>+ ${cop(q.rush)}</b></div>` : ''}
+        <div class="aq-total"><span>Total</span><b>${cop(q.total)}</b></div>
+        ${q.monthly ? `<div><span>Mensual</span><b>${cop(q.monthly)} /mes</b></div>` : ''}
+        <div><span>Anticipo</span><b>${cop(q.deposit)}</b></div>
+      </div>
+      <div class="aq-actions">
+        <button class="btn btn-sm" id="aqPdf">${icons.file} Descargar PDF</button>
+        <a class="btn btn-sm btn-ghost" id="aqWa" target="_blank" rel="noopener">${icons.whatsapp} Enviar por WhatsApp</a>
+        <button class="btn btn-sm btn-ghost" id="aqSave">Guardar cambios</button>
+        <button class="btn btn-sm btn-ghost" id="aqReset" title="Recalcular con la lista de precios">↻ Recalcular</button>
+      </div>`;
+    box.querySelector('#aqWa').href = waQuoteLink(l, q);
+    box.querySelectorAll('input[data-i]').forEach((inp) => inp.addEventListener('change', () => { q.items[+inp.dataset.i].price = Math.max(0, Number(inp.value) || 0); q = totals(q); draw(); }));
+    box.querySelectorAll('[data-del]').forEach((b) => b.addEventListener('click', () => { q.items.splice(+b.dataset.del, 1); q = totals(q); draw(); }));
+    box.querySelector('#aqDisc').addEventListener('change', (e) => { q.discountRate = Math.min(100, Math.max(0, Number(e.target.value) || 0)) / 100; q = totals(q); draw(); });
+    box.querySelector('#aqAdd').addEventListener('click', () => {
+      const concept = prompt('Concepto:'); if (!concept) return;
+      const price = Number(prompt('Valor (COP):', '0')) || 0;
+      q.items.push({ group: 'Adicionales', concept, price, monthly: false }); q = totals(q); draw();
+    });
+    box.querySelector('#aqReset').addEventListener('click', () => { l.quote = null; q = totals(ensureQuote(l)); draw(); toast('Recalculado con la lista de precios'); });
+    box.querySelector('#aqSave').addEventListener('click', async () => { if (await update(l.id, { quote: q, quote_total: q.total })) toast('Cotización guardada'); });
+    box.querySelector('#aqPdf').addEventListener('click', async () => {
+      const { downloadQuote } = await import('./pdf.js');
+      downloadQuote({ ...l, quote: q });
+    });
+    box.querySelector('#aqWa').addEventListener('click', async () => {
+      await update(l.id, { quote: q, quote_total: q.total, status: l.status === 'nuevo' || l.status === 'contactado' ? 'cotizado' : l.status });
+      const { downloadQuote } = await import('./pdf.js');
+      downloadQuote({ ...l, quote: q });
+      toast('PDF descargado: adjúntalo en el chat de WhatsApp');
+      renderList();
+    });
+  };
+  draw();
+}
+
+function waQuoteLink(l, q) {
+  const phone = (l.phone || '').replace(/\D/g, '');
+  const msg = `¡Hola ${(l.name || '').split(' ')[0]}! 👋 Te escribe tu asesor de Ksta_.\n\nYa tenemos lista tu cotización para *${l.business || 'tu negocio'}* (${l.service || 'plan'}):\n\n💜 *Total: ${cop(q.total)}*${q.monthly ? `\n🔁 Mensual: ${cop(q.monthly)}` : ''}\n✅ Anticipo para iniciar: ${cop(q.deposit)}\n\nTe adjunto el PDF con el detalle. ¿Te parece si lo revisamos juntos?`;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+}
+
 function renderDetail() {
   const box = document.getElementById('detail');
   const l = leads.find((x) => x.id === selectedId);
@@ -305,6 +372,8 @@ function renderDetail() {
       <div><span>Plan</span><b>${esc(l.service || '—')}</b></div>
       <div><span>Plantilla</span><b>${esc(l.template || '—')}</b></div>
     </div>
+    <h3>Cotización</h3>
+    <div class="a-quote" id="aQuote"></div>
     <h3>Respuestas del cotizador</h3>
     <div class="a-cards">${answersHTML(l)}</div>
     ${l.template && l.details?.template && l.details.template !== 'custom' ? `<a class="a-d-tpl" href="/templates/${esc(l.details.template)}/index.html" target="_blank" rel="noopener">Ver plantilla elegida (${esc(l.template)}) ↗</a>` : ''}
@@ -315,6 +384,7 @@ function renderDetail() {
   box.querySelectorAll('[data-st]').forEach((b) => b.addEventListener('click', async () => {
     if (await update(l.id, { status: b.dataset.st })) { toast(`Marcada como ${statusLabel(b.dataset.st)}`); renderAll(); }
   }));
+  bindQuote(l);
   box.querySelector('#saveNotes').addEventListener('click', async () => {
     if (await update(l.id, { notes: box.querySelector('#notes').value })) toast('Notas guardadas');
   });

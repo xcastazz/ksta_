@@ -39,3 +39,8 @@ create policy "admins delete leads" on public.leads for delete to authenticated 
 
 -- Notificaciones en tiempo real
 alter publication supabase_realtime add table public.leads;
+
+-- Cotización automática
+alter table public.leads add column if not exists quote jsonb;        -- líneas, descuentos y totales
+alter table public.leads add column if not exists quote_total bigint;  -- total único (COP)
+

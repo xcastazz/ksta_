@@ -1,6 +1,7 @@
 import { icons } from './icons.js';
 import { supabase } from './supabase.js';
 import { TEMPLATES } from './templates.js';
+import { buildQuote, cop } from './pricing.js';
 
 const SERVICES = {
   branding: { label: 'Branding e identidad', icon: 'brand', desc: 'Logo, colores, tipografías y todo lo que hace reconocible a tu marca.' },
@@ -461,17 +462,21 @@ export function initQuote({ onStep }) {
   // ---------- submit: the sale closes here ----------
   async function submit() {
     busy = true;
-    next.disabled = true; next.textContent = 'Enviando…';
+    next.disabled = true; next.textContent = 'Calculando tu cotización…';
     const text = summaryLines().map(([k, v]) => `• ${k}: ${v}`).join('\n');
+    const quote = buildQuote({ plan: state.plan, services: state.services, details: state.details, template: state.template, timing: state.timing });
+    const lead = {
+      id: crypto.randomUUID(), created_at: new Date().toISOString(),
+      name: state.contact.name, email: state.contact.email, phone: state.contact.phone,
+      business: state.business.name, service: planLabel(), message: text, template: templateLabel() || null,
+      details: { plan: state.plan, services: state.services, details: state.details, template: state.template, business: state.business, style: state.style, timing: state.timing, budget: state.budget, notes: state.contact.notes },
+      quote, quote_total: quote.total,
+    };
     try {
       if (!supabase) throw new Error('Supabase no configurado');
-      const { error } = await supabase.from('leads').insert({
-        name: state.contact.name, email: state.contact.email, phone: state.contact.phone,
-        business: state.business.name, service: planLabel(), message: text, template: templateLabel() || null,
-        details: { plan: state.plan, services: state.services, details: state.details, template: state.template, business: state.business, style: state.style, timing: state.timing, budget: state.budget, notes: state.contact.notes },
-      });
+      const { error } = await supabase.from('leads').insert(lead);
       if (error) throw error;
-      showDone();
+      showDone(lead);
     } catch (err) {
       console.error(err);
       toast('No pudimos enviar tu solicitud. Intenta de nuevo.');
@@ -479,22 +484,44 @@ export function initQuote({ onStep }) {
     }
   }
 
-  function showDone() {
+  function showDone(lead) {
     const first = esc(state.contact.name.split(' ')[0]);
+    const q = lead.quote;
     swap(`
       <div class="done-badge">${icons.check}</div>
-      <p class="eyebrow">// solicitud recibida</p>
+      <p class="eyebrow">// cotización generada</p>
       <h2>¡Listo, ${first}!</h2>
-      <p class="q-sub">Recibimos tu solicitud del <b>${esc(planLabel())}</b>. Nuestros asesores te contactarán muy pronto a tu WhatsApp <b>${esc(state.contact.phone)}</b> con tu cotización personalizada.</p>
-      <div class="done-steps">
-        <div class="vision"><span>01</span><b>Revisamos tu plan</b><small>Un asesor analiza tus respuestas.</small></div>
-        <div class="vision"><span>02</span><b>Te escribimos</b><small>Por WhatsApp, en horario hábil.</small></div>
-        <div class="vision"><span>03</span><b>Recibes tu cotización</b><small>${state.template && state.template !== 'custom' ? 'Y una demo con tu plantilla.' : 'Clara y sin compromiso.'}</small></div>
+      <p class="q-sub">Esta es la inversión estimada para tu <b>${esc(planLabel())}</b>. Un asesor te contactará muy pronto a tu WhatsApp <b>${esc(state.contact.phone)}</b> para confirmar detalles y arrancar.</p>
+      <div class="done-price vision">
+        <span class="mono">Inversión total</span>
+        <b class="done-total" data-total="${q.total}">$0</b>
+        ${q.discount ? `<span class="done-save">Ahorras ${cop(q.discount)} con tu paquete</span>` : ''}
+        ${q.monthly ? `<small>+ ${cop(q.monthly)} /mes en servicios mensuales</small>` : ''}
+        <small>Anticipo para iniciar: <b>${cop(q.deposit)}</b> · Precios sin IVA</small>
       </div>
-      <button class="btn" data-close>Volver al sitio</button>`, 1, 'done');
+      <div class="done-actions">
+        <button class="btn btn-lg" data-pdf>${icons.file} Descargar mi cotización (PDF)</button>
+        <button class="btn btn-ghost" data-close>Volver al sitio</button>
+      </div>
+      <div class="done-steps">
+        <div class="vision"><span>01</span><b>Revisamos tu plan</b><small>Un asesor valida tus respuestas.</small></div>
+        <div class="vision"><span>02</span><b>Te escribimos</b><small>Por WhatsApp, en horario hábil.</small></div>
+        <div class="vision"><span>03</span><b>Arrancamos</b><small>${state.template && state.template !== 'custom' ? 'Con una demo de tu plantilla.' : 'Con el anticipo, empezamos.'}</small></div>
+      </div>`, 1, 'done');
     dots.querySelectorAll('span').forEach((d) => (d.className = 'done'));
     root.querySelector('.quote-nav').classList.add('gone'); root.classList.add('finished');
     onStep(99); // celebratory pose
+
+    // Count-up animation for the total
+    const el = stage.querySelector('.done-total'), target = q.total, t0 = performance.now();
+    const tick = (t) => { const k = Math.min(1, (t - t0) / 1600); el.textContent = cop(target * (1 - Math.pow(1 - k, 4))); if (k < 1) requestAnimationFrame(tick); };
+    setTimeout(() => requestAnimationFrame(tick), 500);
+
+    stage.querySelector('[data-pdf]').addEventListener('click', async (e) => {
+      const b = e.currentTarget; b.disabled = true;
+      const { downloadQuote } = await import('./pdf.js');
+      downloadQuote(lead); b.disabled = false;
+    });
   }
   stage.addEventListener('click', (e) => { if (e.target.closest('[data-close]')) close(); });
 
