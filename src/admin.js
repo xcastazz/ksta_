@@ -22,6 +22,8 @@ let query = '';
 let selectedId = null;
 let unread = 0;
 let me = null;
+let booted = null;   // email of the session already booted (avoid double boot)
+let channel = null;  // single realtime channel
 
 // ---------- Auth ----------
 async function boot() {
@@ -30,13 +32,18 @@ async function boot() {
   if (!session) return renderLogin();
   const { data: ok } = await supabase.rpc('is_admin');
   if (!ok) return renderLogin(`La cuenta ${esc(session.user.email)} no tiene acceso al panel.`, true);
+  if (booted === session.user.email) return; // INITIAL_SESSION + SIGNED_IN both fire on load
+  booted = session.user.email;
   me = session.user;
   renderShell();
   await loadLeads();
   subscribe();
 }
 
-supabase?.auth.onAuthStateChange((event) => { if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') boot(); });
+supabase?.auth.onAuthStateChange((event) => {
+  if (event === 'SIGNED_OUT') { booted = null; if (channel) { supabase.removeChannel(channel); channel = null; } boot(); }
+  else if (event === 'SIGNED_IN') boot();
+});
 
 function renderLogin(error = '', signedIn = false) {
   app.innerHTML = `
@@ -119,8 +126,8 @@ async function loadLeads() {
 }
 
 function subscribe() {
-  supabase.removeAllChannels(); // boot() can run twice (initial load + SIGNED_IN)
-  supabase.channel('leads-admin')
+  if (channel) return;
+  channel = supabase.channel('leads-admin')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'leads' }, ({ new: lead }) => {
       leads.unshift(lead);
       unread++; updateBadge();
@@ -137,11 +144,13 @@ function subscribe() {
       if (selectedId === old.id) selectedId = null;
       renderAll();
     })
-    .subscribe((status) => {
+    .subscribe((status, err) => {
+      if (err) console.warn('Realtime:', status, err);
       const ok = status === 'SUBSCRIBED';
       document.getElementById('live')?.classList.toggle('on', ok);
       const t = document.getElementById('liveText');
-      if (t) t.textContent = ok ? 'En vivo' : 'Reconectando…';
+      if (t) t.textContent = ok ? 'En vivo' : status === 'CLOSED' ? 'Desconectado' : 'Reconectando…';
+      // Supabase retries on its own after CHANNEL_ERROR / TIMED_OUT
     });
 }
 

@@ -230,3 +230,9 @@ body.admin { min-height: 100vh; }
 .ev b { display: block; font-weight: 500; font-size: .86rem; }
 .ev small { color: var(--muted); font-size: .72rem; }
 @media (max-width: 640px) { .board { grid-template-columns: repeat(5, 80vw); } .a-top .a-search { display: none; } }
+
+/* Icon sizing fixes: never let icons fill buttons */
+.admin .btn svg, .admin .btn .ph, .btn svg { width: 18px !important; height: 18px !important; flex-shrink: 0; }
+.admin .btn-sm svg { width: 16px !important; height: 16px !important; }
+.a-head .btn { white-space: nowrap; }
+.badge[hidden] { display: none !important; }
