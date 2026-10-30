@@ -50,6 +50,25 @@ function onScroll() {
 addEventListener('scroll', () => { if (!ticking) { requestAnimationFrame(onScroll); ticking = true; } }, { passive: true });
 onScroll();
 
+// 3D hero (lazy-loaded so the page paints first)
+import('./scene.js').then(({ initHeroScene }) => initHeroScene(document.getElementById('hero3d')));
+
+// 3D tilt on cards
+if (matchMedia('(hover: hover)').matches) {
+  document.querySelectorAll('.service, .package, .step, .device').forEach((el) => {
+    el.classList.add('tilt');
+    el.addEventListener('pointermove', (e) => {
+      const r = el.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+      el.style.setProperty('--rx', `${-y * 10}deg`);
+      el.style.setProperty('--ry', `${x * 12}deg`);
+      el.style.setProperty('--mx', `${(x + 0.5) * 100}%`);
+      el.style.setProperty('--my', `${(y + 0.5) * 100}%`);
+    });
+    el.addEventListener('pointerleave', () => { el.style.setProperty('--rx', '0deg'); el.style.setProperty('--ry', '0deg'); });
+  });
+}
+
 // Mobile menu
 const burger = document.getElementById('burger');
 burger.addEventListener('click', () => nav.classList.toggle('open'));

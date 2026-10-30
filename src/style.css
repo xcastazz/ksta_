@@ -187,7 +187,21 @@ main { width: min(1200px, calc(100% - 40px)); margin: 0 auto; }
 .reveal-scale { opacity: 0; transform: perspective(1200px) rotateX(18deg) scale(.88); transition: opacity 1.4s var(--ease), transform 1.4s var(--ease); }
 .reveal-scale.in { opacity: 1; transform: none; }
 
+/* 3D hero */
+.hero > *:not(.hero-3d) { position: relative; z-index: 1; }
+.hero-3d { position: absolute; top: 0; right: -10%; width: 65%; height: 100%; z-index: 0; pointer-events: none; }
+
+/* 3D tilt + glare */
+.tilt { transform-style: preserve-3d; position: relative; overflow: hidden; }
+.tilt.in { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .4s var(--ease), opacity 1.1s var(--ease), filter 1.1s var(--ease), border-color .6s, background .6s; }
+.tilt.in:hover { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(10px); }
+.tilt::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .4s; background: radial-gradient(400px circle at var(--mx, 50%) var(--my, 50%), rgba(192, 132, 252, .18), transparent 45%); }
+.tilt:hover::after { opacity: 1; }
+
 /* Responsive */
+@media (max-width: 960px) {
+  .hero-3d { width: 100%; right: 0; opacity: .45; }
+}
 @media (max-width: 960px) {
   .templates, .contact { grid-template-columns: 1fr; gap: 3rem; }
   .packages { grid-template-columns: 1fr; }
