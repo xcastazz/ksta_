@@ -483,12 +483,23 @@ function renderList(flashId) {
   const list = document.getElementById('list');
   if (!list) return;
   const rows = visible();
-  list.innerHTML = rows.length ? rows.map((l) => `
-    <button class="a-row ${l.id === selectedId ? 'sel' : ''} ${l.id === flashId ? 'flash' : ''}" data-id="${l.id}">
-      <span class="avatar">${esc((l.name || '?')[0].toUpperCase())}</span>
-      <span class="a-row-main"><b>${esc(l.name)} ${l.priority === 'alta' ? prio('alta') : ''}</b><small>${esc(l.business || 'Sin negocio')}</small><small class="a-row-plan">${esc(l.service || '')}</small></span>
-      <span class="a-row-side"><span class="st st-${esc(l.status)}">${esc(statusLabel(l.status))}</span><small>${meetings.some((m) => m.lead_id === l.id && m.status !== 'cancelada') ? `<span class="fu teams-tag">${icons.teams}Asesoría</span>` : ''}${followTag(l)}${l.quote_total ? cop(l.quote_total) + ' · ' : ''}${ago(l.created_at)}</small></span>
-    </button>`).join('') : `<div class="a-empty small">${icons.inbox}<p>No hay solicitudes aquí.</p></div>`;
+  list.innerHTML = rows.length ? rows.map((l, i) => {
+    const parts = (l.service || 'Sin plan').split(' + ');
+    const hasMeet = meetings.some((m) => m.lead_id === l.id && m.status !== 'cancelada');
+    return `
+    <button class="a-row lead st-edge-${esc(l.status)} ${l.id === selectedId ? 'sel' : ''} ${l.id === flashId ? 'flash' : ''}" data-id="${l.id}" style="--i:${i}">
+      <span class="lc-top">
+        <span class="avatar">${esc((l.name || '?')[0].toUpperCase())}</span>
+        <span class="lc-who"><b>${esc(l.name)}</b><small>${esc(l.business || 'Sin negocio')}</small></span>
+        <span class="st st-${esc(l.status)}">${esc(statusLabel(l.status))}</span>
+      </span>
+      <span class="lc-plan">${parts.map((p) => `<span>${esc(p)}</span>`).join('')}</span>
+      <span class="lc-foot">
+        <span class="lc-total">${l.quote_total ? `<small>Total</small><b>${cop(l.quote_total)}</b>` : '<small>Total</small><b class="muted">—</b>'}</span>
+        <span class="lc-meta">${l.priority === 'alta' ? prio('alta') : ''}${hasMeet ? `<span class="fu teams-tag">${icons.teams}Meet</span>` : ''}${followTag(l)}<small>${ago(l.created_at)}</small></span>
+      </span>
+    </button>`;
+  }).join('') : `<div class="a-empty small">${icons.inbox}<p>No hay solicitudes aquí.</p></div>`;
   list.querySelectorAll('.a-row').forEach((r) => r.addEventListener('click', () => { selectedId = r.dataset.id; renderList(); renderDetail(); }));
 }
 
