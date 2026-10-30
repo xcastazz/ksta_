@@ -700,7 +700,8 @@ export function initQuote({ onStep }) {
   // ---------- open / close ----------
   function open(preset) {
     reset();
-    if (preset === 'combo') state.cats = [...CAT_ORDER];
+    if (preset && typeof preset === 'object') { state.cats = [...preset.cats]; state.tiers = { ...preset.tiers }; }
+    else if (preset === 'combo') state.cats = [...CAT_ORDER];
     else if (CATS[preset]) state.cats = [preset];
     else if (findTier(preset)) { const { cat } = findTier(preset); state.cats = [cat]; state.tiers[cat] = preset; }
     buildSteps();

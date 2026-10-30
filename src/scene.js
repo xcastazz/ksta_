@@ -9,6 +9,7 @@ const POSES = {
   servicios:  { amp: 0.4,  freq: 1.3, speed: 0.6, color: 0x8b5cf6, camY: 2.6, tilt: -0.2, ring: 0.4 },
   plantillas: { amp: 0.7,  freq: 0.7, speed: 0.4, color: 0xc084fc, camY: 1.8, tilt: 0.3,  ring: 0.6 },
   paquetes:   { amp: 0.3,  freq: 1.0, speed: 0.5, color: 0xa78bfa, camY: 3.6, tilt: 0.0,  ring: 0 },
+  presupuesto: { amp: 0.6, freq: 1.1, speed: 0.6, color: 0x86efac, camY: 2.6, tilt: -0.25, ring: 0.7 },
   proceso:    { amp: 0.5,  freq: 1.6, speed: 0.8, color: 0xd946ef, camY: 2.4, tilt: -0.3, ring: 0.3 },
   nosotros:   { amp: 0.45, freq: 0.6, speed: 0.35, color: 0xf0abfc, camY: 2.8, tilt: 0.35, ring: 0.8 },
   contacto:   { amp: 0.6,  freq: 0.8, speed: 0.5, color: 0xa855f7, camY: 2.0, tilt: 0.15, ring: 1 },
