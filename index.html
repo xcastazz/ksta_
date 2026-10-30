@@ -8,7 +8,7 @@
   <meta property="og:title" content="Ksta_ · Estudio creativo" />
   <meta property="og:description" content="Construimos marcas completas: identidad, web, video, campañas y publicidad física." />
   <meta property="og:type" content="website" />
-  <meta name="theme-color" content="#0a0612" />
+  <meta name="theme-color" content="#07040d" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -20,6 +20,8 @@
     <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
     <div class="grid"></div>
   </div>
+  <canvas class="scene3d" id="scene3d" aria-hidden="true"></canvas>
+  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
 
   <header class="nav" id="nav">
     <a href="#inicio" class="logo">Ksta<span class="cursor">_</span></a>
@@ -33,10 +35,18 @@
     <button class="burger" id="burger" aria-label="Abrir menú"><span></span><span></span></button>
   </header>
 
+  <!-- Guided chapter rail -->
+  <nav class="rail" id="rail" aria-label="Recorrido"></nav>
+
+  <!-- Guided "next" pill -->
+  <a class="next glass-strong" id="nextBtn" href="#manifiesto">
+    <span class="next-label">Siguiente</span>
+    <span class="next-title" id="nextTitle">Manifiesto</span>
+    <i data-icon="arrow"></i>
+  </a>
+
   <main>
-    <!-- HERO -->
-    <section class="hero" id="inicio">
-      <canvas class="hero-3d" id="hero3d" aria-hidden="true"></canvas>
+    <section class="hero chapter" id="inicio" data-title="Inicio">
       <p class="eyebrow reveal">// estudio creativo</p>
       <h1 class="hero-title">
         <span class="line reveal">Tu marca,</span>
@@ -46,12 +56,10 @@
       <p class="hero-sub reveal">Branding, web, video, campañas y publicidad física. Todo lo que tu negocio necesita para verse profesional, en un solo lugar.</p>
       <div class="hero-cta reveal">
         <a href="#contacto" class="btn">Empezar proyecto</a>
-        <a href="#paquetes" class="btn btn-ghost">Ver paquetes</a>
+        <a href="#manifiesto" class="btn btn-ghost">Hacer el recorrido <i data-icon="arrow"></i></a>
       </div>
-      <div class="scroll-hint" aria-hidden="true"><span></span></div>
     </section>
 
-    <!-- MARQUEE -->
     <div class="marquee" aria-hidden="true">
       <div class="marquee-track">
         <span>Branding</span><span>✦</span><span>Desarrollo web</span><span>✦</span><span>Software</span><span>✦</span><span>Fotografía</span><span>✦</span><span>Video</span><span>✦</span><span>Meta Ads</span><span>✦</span><span>Impresión</span><span>✦</span>
@@ -59,79 +67,80 @@
       </div>
     </div>
 
-    <!-- STATEMENT (apple-style scroll text) -->
-    <section class="statement">
+    <section class="statement chapter" id="manifiesto" data-title="Manifiesto">
+      <p class="eyebrow reveal">00 — manifiesto</p>
       <p class="scrub" id="scrub">No hacemos piezas sueltas. Construimos marcas completas: cómo se ven, cómo se sienten, cómo venden — en pantalla y en la calle.</p>
     </section>
 
-    <!-- SERVICIOS -->
-    <section class="section" id="servicios">
+    <section class="section chapter" id="servicios" data-title="Servicios">
+      <span class="chapter-num" aria-hidden="true">01</span>
       <div class="section-head">
         <p class="eyebrow reveal">01 — servicios</p>
-        <h2 class="reveal">Todo lo que tu marca necesita.</h2>
+        <h2 class="mask"><span>Todo lo que tu marca necesita.</span></h2>
       </div>
       <div class="services" id="services"></div>
     </section>
 
-    <!-- PLANTILLAS -->
-    <section class="section templates" id="plantillas">
+    <section class="section templates chapter" id="plantillas" data-title="Plantillas">
+      <span class="chapter-num" aria-hidden="true">02</span>
       <div class="templates-copy">
         <p class="eyebrow reveal">02 — plantillas</p>
-        <h2 class="reveal">Mira tu negocio en línea <span class="gradient">antes de pagar.</span></h2>
+        <h2 class="mask"><span>Mira tu negocio en línea <em class="gradient">antes de pagar.</em></span></h2>
         <p class="reveal muted">Tenemos landings prediseñadas que personalizamos en tiempo récord con tu logo, colores y contenido. Si te gusta cómo se ve, cotizamos la versión completamente funcional.</p>
-        <ol class="steps reveal">
-          <li><span>1</span> Eliges una plantilla</li>
-          <li><span>2</span> La adaptamos a tu marca</li>
-          <li><span>3</span> Ves tu demo en vivo</li>
-          <li><span>4</span> Cotizamos la versión final</li>
+        <ol class="steps">
+          <li class="reveal" style="--d:0ms"><span>1</span> Eliges una plantilla</li>
+          <li class="reveal" style="--d:100ms"><span>2</span> La adaptamos a tu marca</li>
+          <li class="reveal" style="--d:200ms"><span>3</span> Ves tu demo en vivo</li>
+          <li class="reveal" style="--d:300ms"><span>4</span> Cotizamos la versión final</li>
         </ol>
       </div>
       <div class="device reveal-scale">
         <div class="device-bar"><i></i><i></i><i></i><span>tunegocio.com</span></div>
         <div class="device-body">
-          <div class="mock-hero"></div>
+          <div class="mock-hero"><b>Tu Negocio</b><small>Tu eslogan aquí</small></div>
           <div class="mock-row"><div></div><div></div><div></div></div>
           <div class="mock-line w80"></div><div class="mock-line w60"></div>
         </div>
       </div>
     </section>
 
-    <!-- PAQUETES -->
-    <section class="section" id="paquetes">
-      <div class="section-head">
+    <section class="section chapter" id="paquetes" data-title="Paquetes">
+      <span class="chapter-num" aria-hidden="true">03</span>
+      <div class="section-head center">
         <p class="eyebrow reveal">03 — paquetes integrales</p>
-        <h2 class="reveal">Combina servicios. <span class="gradient">Ahorra y crece.</span></h2>
+        <h2 class="mask"><span>Combina servicios. <em class="gradient">Ahorra y crece.</em></span></h2>
       </div>
       <div class="packages" id="packages"></div>
     </section>
 
-    <!-- PROCESO -->
-    <section class="section" id="proceso">
+    <section class="section chapter" id="proceso" data-title="Proceso">
+      <span class="chapter-num" aria-hidden="true">04</span>
       <div class="section-head">
         <p class="eyebrow reveal">04 — proceso</p>
-        <h2 class="reveal">Simple, claro y rápido.</h2>
+        <h2 class="mask"><span>Simple, claro y rápido.</span></h2>
       </div>
       <div class="process">
-        <div class="step glass reveal"><code>01</code><h3>Descubrimiento</h3><p>Conocemos tu negocio, tu público y tus metas.</p></div>
-        <div class="step glass reveal"><code>02</code><h3>Propuesta</h3><p>Te enviamos cotización, tiempos y una primera visión.</p></div>
-        <div class="step glass reveal"><code>03</code><h3>Creación</h3><p>Diseñamos, programamos y producimos con revisiones.</p></div>
-        <div class="step glass reveal"><code>04</code><h3>Lanzamiento</h3><p>Entregamos, publicamos y te acompañamos después.</p></div>
+        <div class="timeline" aria-hidden="true"><span id="timelineFill"></span></div>
+        <div class="step glass reveal" style="--d:0ms"><div class="icon" data-icon="search"></div><code>01</code><h3>Descubrimiento</h3><p>Conocemos tu negocio, tu público y tus metas.</p></div>
+        <div class="step glass reveal" style="--d:120ms"><div class="icon" data-icon="file"></div><code>02</code><h3>Propuesta</h3><p>Te enviamos cotización, tiempos y una primera visión.</p></div>
+        <div class="step glass reveal" style="--d:240ms"><div class="icon" data-icon="sparkles"></div><code>03</code><h3>Creación</h3><p>Diseñamos, programamos y producimos con revisiones.</p></div>
+        <div class="step glass reveal" style="--d:360ms"><div class="icon" data-icon="rocket"></div><code>04</code><h3>Lanzamiento</h3><p>Entregamos, publicamos y te acompañamos después.</p></div>
       </div>
     </section>
 
-    <!-- CONTACTO -->
-    <section class="section contact" id="contacto">
+    <section class="section contact chapter" id="contacto" data-title="Contacto">
+      <span class="chapter-num" aria-hidden="true">05</span>
       <div class="contact-copy">
         <p class="eyebrow reveal">05 — contacto</p>
-        <h2 class="reveal">Hablemos de <span class="gradient">tu proyecto.</span></h2>
+        <h2 class="mask"><span>Hablemos de <em class="gradient">tu proyecto.</em></span></h2>
         <p class="muted reveal">Cuéntanos qué necesitas y te enviamos una cotización sin compromiso.</p>
-        <div class="contact-links reveal">
-          <a href="https://wa.me/000000000" target="_blank" rel="noopener">WhatsApp ↗</a>
-          <a href="https://instagram.com/ksta_" target="_blank" rel="noopener">Instagram ↗</a>
-          <a href="mailto:hola@ksta.com">hola@ksta.com ↗</a>
+        <div class="contact-links">
+          <a class="glass reveal" href="https://wa.me/000000000" target="_blank" rel="noopener"><i data-icon="whatsapp"></i>WhatsApp</a>
+          <a class="glass reveal" href="https://instagram.com/ksta_" target="_blank" rel="noopener"><i data-icon="instagram"></i>Instagram</a>
+          <a class="glass reveal" href="mailto:hola@ksta.com"><i data-icon="mail"></i>hola@ksta.com</a>
         </div>
       </div>
-      <form class="form glass reveal" id="quoteForm">
+      <form class="form glass-strong reveal" id="quoteForm">
         <div class="row">
           <label>Nombre<input name="name" required maxlength="100" /></label>
           <label>Email<input name="email" type="email" required maxlength="150" /></label>
@@ -156,7 +165,7 @@
         </label>
         <label>Cuéntanos más<textarea name="message" rows="4" maxlength="2000"></textarea></label>
         <input name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
-        <button class="btn" type="submit">Enviar solicitud</button>
+        <button class="btn" type="submit">Enviar solicitud <i data-icon="send"></i></button>
         <p class="form-status" id="formStatus" role="status"></p>
       </form>
     </section>
