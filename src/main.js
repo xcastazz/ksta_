@@ -51,6 +51,10 @@ document.querySelectorAll('[data-icon]').forEach((el) => { el.innerHTML = icons[
 // Guided quote wizard: every "Cotizar" button opens it
 let quoteStep = -1;
 const quote = initQuote({ onStep: (i) => { quoteStep = i; dispatchEvent(new Event('scene:kick')); } });
+// Direct link: /#cotizar opens the quote wizard (also /#cotizar=web-pro to preselect a plan)
+const openFromHash = () => { const m = location.hash.match(/^#cotizar(?:=([\w-]+))?$/); if (m) quote.open(m[1]); };
+addEventListener('hashchange', openFromHash);
+setTimeout(openFromHash, 300);
 document.addEventListener('click', (e) => {
   const t = e.target.closest('[data-quote], [data-pkg]');
   if (!t) return;
@@ -58,6 +62,10 @@ document.addEventListener('click', (e) => {
   nav.classList.remove('open');
   quote.open(t.dataset.pkg);
 });
+
+// Phones get a lighter, calmer experience: no 3D, no reveal/scroll animations
+const LITE = matchMedia('(max-width: 720px)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches;
+document.documentElement.classList.toggle('lite', LITE);
 
 initShowcase();
 
@@ -141,7 +149,7 @@ document.body.dataset.chapter = active;
 onScroll();
 
 // 3D scene (lazy so the page paints first)
-import('./scene.js').then(({ initScene }) => initScene(document.getElementById('scene3d'), () => (quoteStep >= 0 ? `q${quoteStep}` : active)));
+if (!LITE) import('./scene.js').then(({ initScene }) => initScene(document.getElementById('scene3d'), () => (quoteStep >= 0 ? `q${quoteStep}` : active)));
 
 // 3D tilt + glare on cards
 if (matchMedia('(hover: hover)').matches) {

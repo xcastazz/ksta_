@@ -129,6 +129,7 @@ const INFO = {
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 export function initQuote({ onStep }) {
+  const lite = () => document.documentElement.classList.contains('lite');
   const root = document.createElement('div');
   root.className = 'quote';
   root.setAttribute('role', 'dialog');
@@ -373,8 +374,9 @@ export function initQuote({ onStep }) {
   function updateNav() {
     const lastBlock = bIdx >= blocks.length - 1;
     back.style.visibility = idx || bIdx ? 'visible' : 'hidden';
-    back.textContent = bIdx > 0 ? '↑ Anterior' : '← Paso anterior';
-    next.innerHTML = !lastBlock ? 'Siguiente ↓' : steps[idx] === 'summary' ? `Enviar solicitud ${icons.send}` : 'Continuar →';
+    back.textContent = bIdx > 0 && !lite() ? '↑ Anterior' : '← Atrás';
+    next.innerHTML = steps[idx] === 'summary' ? `Enviar solicitud ${icons.send}` : !lastBlock && !lite() ? 'Siguiente ↓' : 'Continuar →';
+    if (lite()) back.style.visibility = idx ? 'visible' : 'hidden';
     $('#qUp').disabled = !idx && !bIdx;
     $('#qDown').disabled = steps[idx] === 'summary' && lastBlock;
   }
@@ -384,7 +386,7 @@ export function initQuote({ onStep }) {
     panelEl = swap(R[name](arg), dir);
     blocks = [...panelEl.querySelectorAll(':scope > .choices, .q-block, :scope > .tpl-grid, .fields > label, :scope > .summary')];
     blocks.forEach((b) => b.classList.add('q-focus'));
-    panelEl.classList.toggle('focus-mode', blocks.length > 1);
+    panelEl.classList.toggle('focus-mode', blocks.length > 1 && !lite());
     dots.innerHTML = steps.map((_, i) => `<span class="${i < idx ? 'done' : i === idx ? 'cur' : ''}"></span>`).join('');
     count.textContent = `Paso ${idx + 1} de ${steps.length}`;
     onStep(idx);
@@ -478,6 +480,9 @@ export function initQuote({ onStep }) {
     if (!multi) setTimeout(nextBlock, 450);
   });
 
+  // Info boxes collapse to 2 lines on phones; tap to expand
+  stage.addEventListener('click', (e) => { const i = e.target.closest('.q-info'); if (i) i.classList.toggle('open'); });
+
   stage.addEventListener('input', (e) => {
     const f = e.target.dataset.f;
     if (!f) return;
@@ -485,8 +490,9 @@ export function initQuote({ onStep }) {
     state[group][key] = e.target.value.trim();
   });
 
-  back.addEventListener('click', prevBlock);
-  next.addEventListener('click', nextBlock);
+  // On phones the bottom buttons move whole steps (questions are just scrolled)
+  back.addEventListener('click', () => (lite() ? go(-1) : prevBlock()));
+  next.addEventListener('click', () => (lite() ? go(1) : nextBlock()));
   $('#qUp').addEventListener('click', prevBlock);
   $('#qDown').addEventListener('click', nextBlock);
   // Clicking a dimmed question brings it into focus
@@ -697,7 +703,7 @@ export function initQuote({ onStep }) {
     next.disabled = false; busy = false;
     document.body.classList.add('quote-open');
     root.classList.add('open');
-    playIntro();
+    if (lite()) render(1); else playIntro();
   }
 
   function close() {
