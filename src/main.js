@@ -1,6 +1,7 @@
 import { services, packages } from './data.js';
 import { icons } from './icons.js';
 import { initQuote } from './quote.js';
+import { initShowcase } from './showcase.js';
 import { WHATSAPP_NUMBER } from './config.js';
 
 // Render services & packages
@@ -32,6 +33,8 @@ document.addEventListener('click', (e) => {
   quote.open(t.dataset.pkg);
 });
 
+initShowcase();
+
 // Reveal on scroll
 const io = new IntersectionObserver((entries) => {
   entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
@@ -41,7 +44,7 @@ document.querySelectorAll('.reveal, .reveal-scale, .mask').forEach((el) => io.ob
 // Chapters: rail + active tracking
 const chapters = [...document.querySelectorAll('.chapter')];
 const rail = document.getElementById('rail');
-const RAIL_ICONS = { inicio: 'home', manifiesto: 'sparkles', servicios: 'layers', plantillas: 'code', paquetes: 'globe', proceso: 'file', contacto: 'send' };
+const RAIL_ICONS = { inicio: 'home', proyectos: 'monitor', manifiesto: 'sparkles', servicios: 'layers', plantillas: 'code', paquetes: 'globe', proceso: 'file', contacto: 'send' };
 rail.className = 'dock vision';
 rail.innerHTML = chapters.map((c) =>
   `<a href="#${c.id}" data-id="${c.id}" aria-label="${c.dataset.title}"><span class="dock-icon">${icons[RAIL_ICONS[c.id]]}</span><span class="dock-tip">${c.dataset.title}</span></a>`

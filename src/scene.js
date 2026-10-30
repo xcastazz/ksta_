@@ -4,6 +4,7 @@ import * as THREE from 'three';
 // Each section (and each quote step) tweaks wave, color and camera.
 const POSES = {
   inicio:     { amp: 0.55, freq: 0.9, speed: 0.5, color: 0xa855f7, camY: 2.2, tilt: 0.0,  ring: 1 },
+  proyectos:  { amp: 0.35, freq: 0.6, speed: 0.4, color: 0xc084fc, camY: 3.4, tilt: -0.15, ring: 0 },
   manifiesto: { amp: 0.25, freq: 0.5, speed: 0.3, color: 0xe879f9, camY: 3.2, tilt: 0.25, ring: 0 },
   servicios:  { amp: 0.4,  freq: 1.3, speed: 0.6, color: 0x8b5cf6, camY: 2.6, tilt: -0.2, ring: 0.4 },
   plantillas: { amp: 0.7,  freq: 0.7, speed: 0.4, color: 0xc084fc, camY: 1.8, tilt: 0.3,  ring: 0.6 },
@@ -80,6 +81,20 @@ export function initScene(canvas, getActive) {
     return line;
   });
 
+  // Minimal wireframe objects floating in the side margins (attached to the camera so they frame the content)
+  scene.add(camera);
+  const wireMat = new THREE.LineBasicMaterial({ color: 0xc084fc, transparent: true, opacity: 0.35 });
+  const shapes = [
+    new THREE.IcosahedronGeometry(0.55, 0), new THREE.TorusGeometry(0.45, 0.14, 8, 24), new THREE.OctahedronGeometry(0.5),
+    new THREE.BoxGeometry(0.6, 0.6, 0.6), new THREE.TetrahedronGeometry(0.5), new THREE.DodecahedronGeometry(0.45),
+    new THREE.TorusKnotGeometry(0.32, 0.09, 48, 6), new THREE.ConeGeometry(0.4, 0.7, 5),
+  ].map((g, i) => {
+    const m = new THREE.LineSegments(new THREE.EdgesGeometry(g, 1), wireMat);
+    const side = i % 2 ? 1 : -1;
+    m.userData = { side, base: (i / 8) * 2 - 1, depth: -7 - (i % 3) * 1.5, spin: 0.2 + (i % 4) * 0.12, sc: 0.8 + (i % 3) * 0.25 };
+    camera.add(m);
+    return m;
+  });
   const target = { x: 0, y: 0 }, mouse = new THREE.Vector2();
   addEventListener('pointermove', (e) => {
     target.x = (e.clientX / innerWidth - 0.5) * 2;
@@ -125,6 +140,20 @@ export function initScene(canvas, getActive) {
     rings.forEach((r, i) => {
       r.rotation.x = cur.t * r.userData.speed + i;
       r.rotation.y = cur.t * r.userData.speed * 0.7;    });
+    // Side objects: drift up with scroll, wrap around, keep to the margins
+    const vh = Math.tan(THREE.MathUtils.degToRad(25));
+    const scrollF = scrollY / innerHeight;
+    shapes.forEach((m) => {
+      const u = m.userData, h = vh * -u.depth, w = h * camera.aspect;
+      let y = ((u.base + scrollF * 0.35 * u.sc) % 2 + 2) % 2 - 1;     // -1..1 wrapped
+      m.position.set(u.side * w * (mobile ? 0.95 : 0.86), y * h * 1.1, u.depth);
+      m.rotation.x = cur.t * u.spin + scrollF * 0.8;
+      m.rotation.y = cur.t * u.spin * 1.3;
+      m.scale.setScalar(u.sc * (1 + cur.kick * 0.3));
+    });
+    wireMat.color.lerp(tmp.set(p.color), k);
+    wireMat.opacity = damp(wireMat.opacity, String(getActive()).startsWith('q') ? 0.15 : 0.4, k);
+
     renderer.render(scene, camera);
   });
 }
