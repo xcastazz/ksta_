@@ -627,3 +627,20 @@
 .lite .q-info.open p { -webkit-line-clamp: unset; display: block; }
 .lite .q-info b::after { content: ' · ver más'; font-weight: 400; color: var(--violet); font-size: .78rem; }
 .lite .q-info.open b::after { content: ''; }
+
+/* =========================================================
+   LITE quote: the whole wizard is ONE native scroller (iOS-safe).
+   No nested scroll areas, no 3D contexts, sticky header + footer.
+   ========================================================= */
+.lite .quote { display: block !important; overflow-y: auto !important; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 0 !important; background: #0b0614 !important; }
+.lite .quote-window { display: block !important; height: auto !important; min-height: 100%; overflow: visible !important; transform: none !important; border-radius: 0 !important; border: 0 !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: transparent !important; box-shadow: none !important; }
+.lite .quote-top { position: sticky; top: 0; z-index: 6; background: rgba(11, 6, 20, .96); }
+.lite .quote-nav { position: sticky; bottom: 0; z-index: 6; background: rgba(11, 6, 20, .97); }
+.lite .quote-stage { overflow: visible !important; perspective: none !important; min-height: calc(100vh - 150px); touch-action: auto; }
+.lite .q-panel, .lite .q-panel * { transform-style: flat !important; }
+.lite .tpl-modal { position: fixed !important; z-index: 20; }
+.lite .q-toast { position: fixed !important; z-index: 21; }
+.lite .vision .vision, .lite .choice { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+
+.lite .quote-top, .lite .quote-nav { background: #0b0614 !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+

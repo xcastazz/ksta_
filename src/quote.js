@@ -130,6 +130,8 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
 
 export function initQuote({ onStep }) {
   const lite = () => document.documentElement.classList.contains('lite');
+  // Desktop scrolls the inner stage; phones scroll the whole wizard (iOS Safari-safe)
+  const scroller = () => (lite() ? root : stage);
   const root = document.createElement('div');
   root.className = 'quote';
   root.setAttribute('role', 'dialog');
@@ -345,7 +347,7 @@ export function initQuote({ onStep }) {
     if (old) { old.classList.add('leaving', `leave-${dir > 0 ? 'fwd' : 'back'}`); setTimeout(() => old.remove(), 700); }
     stage.appendChild(panel);
     requestAnimationFrame(() => requestAnimationFrame(() => panel.classList.add('on')));
-    stage.scrollTop = 0;
+    scroller().scrollTop = 0;
     return panel;
   }
 
@@ -363,8 +365,13 @@ export function initQuote({ onStep }) {
     cur.classList.remove('focus-in'); void cur.offsetWidth; cur.classList.add('focus-in');
     panelEl.classList.toggle('head-dim', bIdx > 0);
     if (scroll) {
-      const top = cur.offsetTop - stage.clientHeight / 2 + Math.min(cur.offsetHeight, stage.clientHeight * 0.7) / 2;
-      stage.scrollTo({ top: bIdx === 0 ? 0 : top, behavior: 'smooth' });
+      if (lite()) {
+        // Phones: the whole wizard scrolls; bring the next question just under the header
+        if (bIdx > 0) root.scrollTo({ top: Math.max(0, cur.getBoundingClientRect().top + root.scrollTop - 90), behavior: 'smooth' });
+      } else {
+        const top = cur.offsetTop - stage.clientHeight / 2 + Math.min(cur.offsetHeight, stage.clientHeight * 0.7) / 2;
+        stage.scrollTo({ top: bIdx === 0 ? 0 : top, behavior: 'smooth' });
+      }
     }
     const input = cur.querySelector('input, textarea');
     if (input && matchMedia('(hover: hover)').matches) setTimeout(() => input.focus({ preventScroll: true }), 350);
