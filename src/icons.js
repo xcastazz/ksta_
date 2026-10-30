@@ -37,7 +37,7 @@ import i_heart from '@phosphor-icons/core/assets/duotone/heart-duotone.svg?raw';
 import i_coffee from '@phosphor-icons/core/assets/duotone/coffee-duotone.svg?raw';
 import i_map_pin from '@phosphor-icons/core/assets/duotone/map-pin-duotone.svg?raw';
 
-import i_teams from '@phosphor-icons/core/assets/duotone/microsoft-teams-logo-duotone.svg?raw';
+import i_teams from '@phosphor-icons/core/assets/duotone/video-conference-duotone.svg?raw';
 import i_clock from '@phosphor-icons/core/assets/duotone/clock-duotone.svg?raw';
 
 const RAW = {

@@ -272,3 +272,12 @@ body.admin { min-height: 100vh; }
 .mtg-time small + small { margin-top: .1rem; }
 .teams-tag { color: #c7d2fe !important; }
 .a-head-btns { display: flex; gap: .5rem; flex-wrap: wrap; }
+
+/* Google Meet colors */
+.mtg-gen { background: linear-gradient(150deg, #00ac47, #00832d) !important; box-shadow: 0 10px 26px -10px rgba(0,172,71,.8) !important; }
+.mtg-time { background: linear-gradient(150deg, rgba(0,172,71,.28), rgba(0,131,45,.15)) !important; }
+.mt-confirmada { background: rgba(0,172,71,.22) !important; color: #bbf7d0 !important; }
+.teams-tag { color: #86efac !important; }
+.mtg-genbox { display: grid; gap: .5rem; }
+.mtg-genbox [hidden] { display: none !important; }
+

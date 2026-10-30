@@ -426,3 +426,8 @@
 .about-avatar .about-photo { width: 168px; height: 168px; padding: 0; overflow: hidden; display: block; position: relative; border-radius: 44px; }
 .about-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 20%; transform: scale(1.04); transition: transform .8s var(--ease); }
 .about-card:hover .about-photo img { transform: scale(1.1); }
+
+/* Google Meet colors */
+.bk-logo { background: linear-gradient(150deg, #00ac47, #00832d) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 10px 24px -10px rgba(0,172,71,.8) !important; }
+.booking.booked { border-color: rgba(0,172,71,.55) !important; }
+

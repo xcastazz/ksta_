@@ -1,7 +1,7 @@
 import { supabase } from './supabase.js';
 import { icons } from './icons.js';
 import { buildQuote, totals, cop } from './pricing.js';
-import { TEAMS_LINK } from './config.js';
+import { MEET_LINK } from './config.js';
 
 const app = document.getElementById('app');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -154,7 +154,7 @@ function subscribe() {
         const when = fmtMeeting(m.starts_at);
         toast(`Nueva asesoría: ${m.name} · ${when}`, true);
         if ('Notification' in window && Notification.permission === 'granted') {
-          const n = new Notification('Nueva asesoría por Teams', { body: `${m.name} — ${when}`, icon: '/favicon.svg', tag: m.id });
+          const n = new Notification('Nueva asesoría por Google Meet', { body: `${m.name} — ${when}`, icon: '/favicon.svg', tag: m.id });
           n.onclick = () => { focus(); go('agenda'); };
         }
       }
@@ -299,7 +299,7 @@ function viewDashboard(el) {
         ['Ingreso mensual', cop(sum(won, monthlyOf)), 'Mensualidades de clientes cerrados', 'calendar'],
         ['Tasa de cierre', `${rate}%`, 'Cerradas sobre decididas', 'bolt'],
         ['Seguimientos', late.length, 'Para hoy o atrasados', 'bell'],
-        ['Asesorías', upcoming().length, 'Próximas por Teams', 'teams'],
+        ['Asesorías', upcoming().length, 'Próximas por Google Meet', 'teams'],
       ].map(([k, v, s, ic]) => `<div class="a-stat vision"><div class="a-stat-top"><span class="a-stat-icon">${icons[ic]}</span>${k}</div><b>${v}</b><small>${s}</small></div>`).join('')}
     </div>
     <div class="a-dash">
@@ -330,18 +330,20 @@ function viewDashboard(el) {
 const MT_STATUS = [['pendiente', 'Pendiente'], ['confirmada', 'Confirmada'], ['realizada', 'Realizada'], ['cancelada', 'Cancelada']];
 const fmtMeeting = (iso) => new Date(iso).toLocaleString('es-CO', { weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Bogota' });
 const upcoming = () => meetings.filter((m) => new Date(m.starts_at).getTime() > Date.now() - 3600e3 && !['cancelada', 'realizada'].includes(m.status));
-const teamsNewLink = (m) => {
+// Google Calendar event template: client invited, Meet is added on save → Google emails the invite
+const calendarLink = (m) => {
+  const t = (d) => new Date(d).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
   const start = new Date(m.starts_at), end = new Date(start.getTime() + (m.duration_min || 30) * 60e3);
-  const p = new URLSearchParams({ subject: `Asesoría KstaStudio_ · ${m.name}`, startTime: start.toISOString(), endTime: end.toISOString(), content: `Asesoría sobre tu plan con KstaStudio_.${m.topic ? ' Tema: ' + m.topic : ''}`, attendees: m.email || '' });
-  return `https://teams.microsoft.com/l/meeting/new?${p.toString().replace(/\+/g, '%20')}`;
+  const p = new URLSearchParams({ action: 'TEMPLATE', text: `Asesoría KstaStudio_ · ${m.name}`, dates: `${t(start)}/${t(end)}`, ctz: 'America/Bogota',
+    details: `Asesoría sobre tu plan con KstaStudio_.${m.topic ? '\nTema: ' + m.topic : ''}\n\nÚnete por Google Meet con el enlace de esta invitación.`, add: m.email || '' });
+  return `https://calendar.google.com/calendar/render?${p.toString()}`;
 };
 const waMeeting = (m) => {
-  const msg = `¡Hola ${(m.name || '').split(' ')[0]}! 👋 Te escribe tu asesor de KstaStudio_. Tu asesoría por Microsoft Teams quedó confirmada para el ${fmtMeeting(m.starts_at)} (hora de Colombia).${m.teams_link ? `\n\nÚnete aquí: ${m.teams_link}` : '\n\nTe enviamos la invitación a tu correo.'}\n\n¡Nos vemos!`;
+  const msg = `¡Hola ${(m.name || '').split(' ')[0]}! 👋 Te escribe tu asesor de KstaStudio_. Tu asesoría por Google Meet quedó confirmada para el ${fmtMeeting(m.starts_at)} (hora de Colombia).${m.teams_link ? `\n\nÚnete por Google Meet aquí: ${m.teams_link}` : '\n\nTe enviamos la invitación de Google Calendar a tu correo.'}\n\n¡Nos vemos!`;
   return `https://wa.me/${(m.phone || '').replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`;
 };
 
-const genLink = (m) => TEAMS_LINK || `https://meet.jit.si/KstaStudio-${m.id.slice(0, 8)}`;
-const linkKind = () => (TEAMS_LINK ? 'Microsoft Teams' : 'Jitsi Meet');
+const isMeet = (u) => /meet\.google\.com\//.test(u || '');
 const mailMeeting = (m) => {
   const subject = `Tu asesoría con KstaStudio_ · ${fmtMeeting(m.starts_at)}`;
   const body = `Hola ${(m.name || '').split(' ')[0]},\n\nTu asesoría con KstaStudio_ quedó confirmada:\n\n📅 ${fmtMeeting(m.starts_at)} (hora de Colombia)\n⏱ ${m.duration_min} minutos\n🔗 Enlace: ${m.teams_link || '(te lo enviaremos pronto)'}\n\nTe adjuntamos la invitación para tu calendario.\n\n¡Nos vemos!\nJerónimo Castañeda Velásquez\nKstaStudio_`;
@@ -371,7 +373,8 @@ function meetingHTML(m) {
         ${m.topic ? `<p class="mtg-topic">“${esc(m.topic)}”</p>` : ''}
         ${m.teams_link
           ? `<div class="mtg-ready">${icons.check}<span>Reunión lista</span><a href="${esc(m.teams_link)}" target="_blank" rel="noopener">${esc(m.teams_link)}</a></div>`
-          : `<button class="btn mtg-gen" data-gen>${icons.teams} Generar reunión</button>`}
+          : `<div class="mtg-genbox"><button class="btn mtg-gen" data-gen>${icons.teams} Generar reunión de Google Meet</button>
+            ${MEET_LINK ? '' : `<div class="mtg-link" data-pastebox hidden><input placeholder="Pega aquí el enlace meet.google.com/…" data-link2 /><button class="btn btn-sm" data-save2>Guardar enlace</button></div>`}</div>`}
         <div class="mtg-actions">
           ${m.teams_link ? `
             <a class="btn btn-sm" href="${waMeeting(m)}" target="_blank" rel="noopener" data-wa>${icons.whatsapp} Enviar por WhatsApp</a>
@@ -383,8 +386,8 @@ function meetingHTML(m) {
           <select data-st>${MT_STATUS.map(([k, lab]) => `<option value="${k}" ${m.status === k ? 'selected' : ''}>${lab}</option>`).join('')}</select>
         </div>
         <details class="mtg-more"><summary>Usar otro enlace</summary>
-          <div class="mtg-link"><input placeholder="Pega un enlace de Teams, Meet o Zoom" value="${esc(m.teams_link || '')}" data-link /><button class="btn btn-sm btn-ghost" data-save>Guardar</button></div>
-          <a class="small" href="${teamsNewLink(m)}" target="_blank" rel="noopener">Crear una reunión nueva en Teams ↗</a>
+          <div class="mtg-link"><input placeholder="Pega un enlace de Google Meet" value="${esc(m.teams_link || '')}" data-link /><button class="btn btn-sm btn-ghost" data-save>Guardar</button></div>
+          <a class="small" href="${calendarLink(m)}" target="_blank" rel="noopener">Crear evento en Google Calendar ↗</a> · <a class="small" href="https://meet.google.com/new" target="_blank" rel="noopener">Abrir un Meet nuevo ↗</a>
         </details>
       </div>
     </article>`;
@@ -396,8 +399,20 @@ function bindMeetings(root, rerender) {
     if (!m) return;
     const q = (s) => art.querySelector(s);
     q('[data-gen]')?.addEventListener('click', async () => {
-      const link = genLink(m);
-      if (await updateMeeting(m, { teams_link: link, status: m.status === 'pendiente' ? 'confirmada' : m.status }, `Reunión generada (${linkKind()})`)) { toast(`Reunión generada en ${linkKind()}. Ya puedes enviarla.`); rerender(); }
+      if (MEET_LINK) {
+        if (await updateMeeting(m, { teams_link: MEET_LINK, status: m.status === 'pendiente' ? 'confirmada' : m.status }, 'Reunión de Google Meet generada')) { toast('Reunión de Google Meet lista. Ya puedes enviarla.'); rerender(); }
+        return;
+      }
+      // No fixed link: open Google Calendar with the event ready; Google adds Meet and emails the client
+      window.open(calendarLink(m), '_blank', 'noopener');
+      if (m.status === 'pendiente') updateMeeting(m, { status: 'confirmada' }, 'Evento creado en Google Calendar');
+      const pb = q('[data-pastebox]'); if (pb) { pb.hidden = false; q('[data-link2]').focus(); }
+      toast('Guarda el evento en Google Calendar (con Meet) y pega aquí el enlace para enviarlo por WhatsApp');
+    });
+    q('[data-save2]')?.addEventListener('click', async () => {
+      const v = q('[data-link2]').value.trim();
+      if (!isMeet(v)) return toast('Pega un enlace de Google Meet (meet.google.com/…)');
+      if (await updateMeeting(m, { teams_link: v, status: 'confirmada' }, 'Enlace de Google Meet guardado')) { toast('Enlace de Meet guardado. Ya puedes enviarlo.'); rerender(); }
     });
     q('[data-save]').addEventListener('click', async () => {
       const v = q('[data-link]').value.trim() || null;
@@ -428,7 +443,7 @@ function viewAgenda(el) {
   future.forEach((m) => { const k = new Date(m.starts_at).toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Bogota' }); (byDay[k] ||= []).push(m); });
   const card = meetingHTML;
   el.innerHTML = `
-    <div class="a-head"><div><h1>Agenda</h1><p class="muted">Asesorías por Microsoft Teams que agendan tus clientes al terminar el cotizador. Hora de Colombia.</p></div></div>
+    <div class="a-head"><div><h1>Agenda</h1><p class="muted">Asesorías por Google Meet que agendan tus clientes al terminar el cotizador. Hora de Colombia.</p></div></div>
     ${Object.keys(byDay).length ? Object.entries(byDay).map(([d, arr]) => `<h3 class="day-h">${d}</h3><div class="mtgs">${arr.map(card).join('')}</div>`).join('') : `<div class="a-empty">${icons.teams}<p>No hay asesorías próximas.</p></div>`}
     ${past.length ? `<details class="past"><summary>Asesorías pasadas (${past.length})</summary><div class="mtgs">${past.map(card).join('')}</div></details>` : ''}`;
 

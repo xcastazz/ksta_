@@ -542,7 +542,7 @@ export function initQuote({ onStep }) {
         <div class="vision"><span>03</span><b>La recibes</b><small>Por WhatsApp y correo, con el detalle en PDF.</small></div>
       </div>
       <section class="booking vision" id="booking">
-        <div class="bk-head"><span class="bk-logo">${icons.teams}</span><div><b>Agenda una asesoría gratis por Microsoft Teams</b><small>${MEETING.durationMin} minutos para resolver tus dudas y revisar tu plan con un asesor. Hora de Colombia.</small></div></div>
+        <div class="bk-head"><span class="bk-logo">${icons.teams}</span><div><b>Agenda una asesoría gratis por Google Meet</b><small>${MEETING.durationMin} minutos para resolver tus dudas y revisar tu plan con un asesor. Hora de Colombia.</small></div></div>
         <div class="bk-days" id="bkDays"><p class="muted small">Cargando horarios…</p></div>
         <div class="bk-hours" id="bkHours"></div>
         <label class="bk-topic">¿Algo puntual que quieras revisar? <input id="bkTopic" maxlength="300" placeholder="Opcional" /></label>
@@ -610,7 +610,7 @@ export function initQuote({ onStep }) {
       }
       box.classList.add('booked');
       box.innerHTML = `<div class="bk-done"><span class="bk-logo">${icons.teams}</span>
-        <div><b>¡Asesoría agendada!</b><p>${prettyDay(day)} a las ${prettyHour(hour)} (hora de Colombia) por Microsoft Teams. Te enviaremos el enlace de la reunión a <b>${esc(lead.email)}</b> y a tu WhatsApp.</p></div></div>`;
+        <div><b>¡Asesoría agendada!</b><p>${prettyDay(day)} a las ${prettyHour(hour)} (hora de Colombia) por Google Meet. Te enviaremos el enlace de la reunión a <b>${esc(lead.email)}</b> y a tu WhatsApp.</p></div></div>`;
       dispatchEvent(new Event('scene:kick'));
     });
   }
