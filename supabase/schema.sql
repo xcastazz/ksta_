@@ -44,3 +44,29 @@ alter publication supabase_realtime add table public.leads;
 alter table public.leads add column if not exists quote jsonb;        -- líneas, descuentos y totales
 alter table public.leads add column if not exists quote_total bigint;  -- total único (COP)
 
+
+-- ===== Panel completo: seguimiento, prioridad e historial =====
+alter table public.leads add column if not exists follow_up date;
+alter table public.leads add column if not exists priority text default 'media';
+alter table public.leads add column if not exists updated_at timestamptz default now();
+
+create table if not exists public.lead_events (
+  id uuid primary key default gen_random_uuid(),
+  lead_id uuid not null references public.leads(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  type text not null,
+  text text,
+  actor text default (auth.jwt() ->> 'email')
+);
+alter table public.lead_events enable row level security;
+drop policy if exists "admins all events" on public.lead_events;
+create policy "admins all events" on public.lead_events for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "admins manage admins" on public.admins;
+create policy "admins manage admins" on public.admins for all to authenticated using (public.is_admin()) with check (public.is_admin());
+
+do $$ begin
+  if not exists (select 1 from pg_publication_tables where pubname='supabase_realtime' and tablename='lead_events') then
+    alter publication supabase_realtime add table public.lead_events;
+  end if;
+end $$;

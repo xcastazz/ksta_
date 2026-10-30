@@ -8,13 +8,20 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
 const STATUSES = [
   ['nuevo', 'Nuevo'], ['contactado', 'Contactado'], ['cotizado', 'Cotizado'], ['cerrado', 'Cerrado'], ['perdido', 'Perdido'],
 ];
+const PRIORITIES = [['alta', 'Alta'], ['media', 'Media'], ['baja', 'Baja']];
 const statusLabel = (s) => (STATUSES.find(([k]) => k === s) || [, s])[1];
+const VIEWS = [
+  ['dashboard', 'Inicio', 'grid'], ['solicitudes', 'Solicitudes', 'inbox'], ['tablero', 'Tablero', 'layers'],
+  ['seguimientos', 'Seguimientos', 'calendar'], ['ajustes', 'Ajustes', 'list'],
+];
 
 let leads = [];
+let view = 'dashboard';
 let filter = 'todos';
 let query = '';
 let selectedId = null;
 let unread = 0;
+let me = null;
 
 // ---------- Auth ----------
 async function boot() {
@@ -23,7 +30,8 @@ async function boot() {
   if (!session) return renderLogin();
   const { data: ok } = await supabase.rpc('is_admin');
   if (!ok) return renderLogin(`La cuenta ${esc(session.user.email)} no tiene acceso al panel.`, true);
-  renderShell(session.user);
+  me = session.user;
+  renderShell();
   await loadLeads();
   subscribe();
 }
@@ -58,47 +66,43 @@ function renderLogin(error = '', signedIn = false) {
 }
 
 // ---------- Shell ----------
-function renderShell(user) {
+function renderShell() {
   app.innerHTML = `
     <aside class="a-rail vision">
       <a href="/" class="a-rail-logo" title="Ver sitio">K_</a>
-      <button class="active" title="Solicitudes">${icons.inbox}</button>
-      <button id="notifBtn" title="Activar notificaciones">${icons.bell}</button>
-      <button id="logout" title="Cerrar sesión">${icons.logout}</button>
+      ${VIEWS.map(([k, label, ic]) => `<button data-view="${k}" title="${label}" aria-label="${label}">${icons[ic]}<span class="a-tip">${label}</span></button>`).join('')}
+      <span class="a-rail-sep"></span>
+      <button id="notifBtn" title="Activar notificaciones">${icons.bell}<span class="a-tip">Notificaciones</span></button>
+      <button id="logout" title="Cerrar sesión">${icons.logout}<span class="a-tip">Salir</span></button>
     </aside>
     <div class="a-main">
       <header class="a-top vision">
-        <div class="a-user"><span class="avatar">${esc(user.email[0].toUpperCase())}</span><span>Hola, <b>${esc(user.email.split('@')[0])}</b></span></div>
+        <div class="a-user"><span class="avatar">${esc(me.email[0].toUpperCase())}</span><span>Hola, <b>${esc(me.email.split('@')[0])}</b></span></div>
+        <div class="a-search"><input id="search" placeholder="Buscar cliente, negocio, teléfono…" /></div>
         <div class="a-live" id="live"><span class="dot"></span><span id="liveText">Conectando…</span></div>
-        <button class="a-bell" id="bell" title="Notificaciones">${icons.bell}<span class="badge" id="badge" hidden>0</span></button>
+        <button class="a-bell" id="bell" title="Nuevas solicitudes">${icons.bell}<span class="badge" id="badge" hidden>0</span></button>
       </header>
-
-      <section class="a-window vision">
-        <div class="a-head">
-          <div><h1>Solicitudes</h1><p class="muted">Cotizaciones que llegan desde el cotizador guiado, en tiempo real.</p></div>
-          <div class="a-search"><input id="search" placeholder="Buscar por nombre, negocio, teléfono…" /></div>
-        </div>
-        <div class="a-stats" id="stats"></div>
-        <div class="a-seg" id="seg"></div>
-        <div class="a-body">
-          <div class="a-list" id="list"></div>
-          <div class="a-detail vision" id="detail"><div class="a-empty">${icons.inbox}<p>Selecciona una solicitud para ver el detalle.</p></div></div>
-        </div>
-      </section>
+      <section class="a-window vision" id="view"></section>
     </div>
     <div class="a-toasts" id="toasts"></div>`;
 
+  app.querySelectorAll('[data-view]').forEach((b) => b.addEventListener('click', () => go(b.dataset.view)));
   document.getElementById('logout').addEventListener('click', () => supabase.auth.signOut());
-  document.getElementById('search').addEventListener('input', (e) => { query = e.target.value.toLowerCase(); renderList(); });
-  const askNotif = async () => {
+  document.getElementById('search').addEventListener('input', (e) => { query = e.target.value.toLowerCase(); if (view !== 'solicitudes' && view !== 'tablero') view = 'solicitudes'; renderAll(); });
+  document.getElementById('notifBtn').addEventListener('click', async () => {
     if (!('Notification' in window)) return toast('Tu navegador no soporta notificaciones');
     const p = await Notification.requestPermission();
     toast(p === 'granted' ? 'Notificaciones activadas' : 'Notificaciones bloqueadas en el navegador');
     updateNotifBtn();
-  };
-  document.getElementById('notifBtn').addEventListener('click', askNotif);
-  document.getElementById('bell').addEventListener('click', () => { unread = 0; updateBadge(); filter = 'nuevo'; renderAll(); });
+  });
+  document.getElementById('bell').addEventListener('click', () => { unread = 0; updateBadge(); filter = 'nuevo'; go('solicitudes'); });
   updateNotifBtn();
+}
+
+function go(v, id) {
+  view = v;
+  if (id) selectedId = id;
+  renderAll();
 }
 
 function updateNotifBtn() {
@@ -108,7 +112,7 @@ function updateNotifBtn() {
 
 // ---------- Data ----------
 async function loadLeads() {
-  const { data, error } = await supabase.from('leads').select('*').order('created_at', { ascending: false }).limit(500);
+  const { data, error } = await supabase.from('leads').select('*').order('created_at', { ascending: false }).limit(1000);
   if (error) { toast('Error cargando solicitudes'); console.error(error); return; }
   leads = data;
   renderAll();
@@ -126,7 +130,7 @@ function subscribe() {
     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'leads' }, ({ new: lead }) => {
       const i = leads.findIndex((l) => l.id === lead.id);
       if (i >= 0) leads[i] = lead;
-      renderAll();
+      if (view !== 'solicitudes' || lead.id !== selectedId) renderAll();
     })
     .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'leads' }, ({ old }) => {
       leads = leads.filter((l) => l.id !== old.id);
@@ -134,19 +138,24 @@ function subscribe() {
       renderAll();
     })
     .subscribe((status) => {
-      const live = document.getElementById('live');
       const ok = status === 'SUBSCRIBED';
-      live?.classList.toggle('on', ok);
+      document.getElementById('live')?.classList.toggle('on', ok);
       const t = document.getElementById('liveText');
       if (t) t.textContent = ok ? 'En vivo' : 'Reconectando…';
     });
 }
 
-async function update(id, patch) {
-  const { error } = await supabase.from('leads').update(patch).eq('id', id);
+async function update(id, patch, event) {
+  const { error } = await supabase.from('leads').update({ ...patch, updated_at: new Date().toISOString() }).eq('id', id);
   if (error) { toast('No se pudo guardar'); console.error(error); return false; }
   Object.assign(leads.find((l) => l.id === id), patch);
+  if (event) logEvent(id, ...event);
   return true;
+}
+
+async function logEvent(lead_id, type, text) {
+  await supabase.from('lead_events').insert({ lead_id, type, text, actor: me?.email });
+  if (lead_id === selectedId) loadEvents(lead_id);
 }
 
 // ---------- Notifications ----------
@@ -156,7 +165,7 @@ function notify(lead) {
   document.title = `(${unread}) Panel · KstaStudio_`;
   if ('Notification' in window && Notification.permission === 'granted') {
     const n = new Notification('Nueva cotización en KstaStudio_', { body: `${lead.name} — ${lead.business || ''}\n${lead.service || ''}`, icon: '/favicon.svg', tag: lead.id });
-    n.onclick = () => { focus(); selectedId = lead.id; renderAll(); };
+    n.onclick = () => { focus(); go('solicitudes', lead.id); };
   }
 }
 
@@ -192,38 +201,7 @@ function toast(msg, highlight = false) {
   setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 500); }, 5000);
 }
 
-// ---------- Rendering ----------
-function renderAll(flashId) {
-  renderStats(); renderSeg(); renderList(flashId); renderDetail();
-}
-
-function renderStats() {
-  const count = (s) => leads.filter((l) => l.status === s).length;
-  const today = leads.filter((l) => new Date(l.created_at).toDateString() === new Date().toDateString()).length;
-  const closed = count('cerrado');
-  const rate = leads.length ? Math.round((closed / leads.length) * 100) : 0;
-  document.getElementById('stats').innerHTML = [
-    ['Total', leads.length, `${today} hoy`, 'inbox'],
-    ['Nuevas', count('nuevo'), 'Sin contactar', 'bell'],
-    ['En proceso', count('contactado') + count('cotizado'), 'Contactadas o cotizadas', 'file'],
-    ['Cierre', `${rate}%`, `${closed} ventas cerradas`, 'check'],
-  ].map(([k, v, s, ic]) => `<div class="a-stat vision"><div class="a-stat-top"><span class="a-stat-icon">${icons[ic]}</span>${k}</div><b>${v}</b><small>${s}</small></div>`).join('');
-}
-
-function renderSeg() {
-  const opts = [['todos', 'Todas'], ...STATUSES];
-  document.getElementById('seg').innerHTML = opts.map(([k, l]) => {
-    const n = k === 'todos' ? leads.length : leads.filter((x) => x.status === k).length;
-    return `<button class="${filter === k ? 'on' : ''}" data-f="${k}">${l} <span>${n}</span></button>`;
-  }).join('');
-  document.querySelectorAll('#seg button').forEach((b) => b.addEventListener('click', () => { filter = b.dataset.f; renderAll(); }));
-}
-
-function visible() {
-  return leads.filter((l) => (filter === 'todos' || l.status === filter) &&
-    (!query || [l.name, l.business, l.phone, l.email, l.service].join(' ').toLowerCase().includes(query)));
-}
-
+// ---------- Helpers ----------
 const ago = (d) => {
   const s = (Date.now() - new Date(d)) / 1000;
   if (s < 60) return 'ahora';
@@ -231,22 +209,236 @@ const ago = (d) => {
   if (s < 86400) return `hace ${Math.floor(s / 3600)} h`;
   return new Date(d).toLocaleDateString('es', { day: 'numeric', month: 'short' });
 };
+const todayISO = () => new Date().toISOString().slice(0, 10);
+const quoteOf = (l) => l.quote_total || 0;
+const monthlyOf = (l) => l.quote?.monthly || 0;
+const visible = () => leads.filter((l) => (filter === 'todos' || l.status === filter) &&
+  (!query || [l.name, l.business, l.phone, l.email, l.service].join(' ').toLowerCase().includes(query)));
+const prio = (p) => `<span class="pr pr-${esc(p || 'media')}">${esc((PRIORITIES.find(([k]) => k === p) || PRIORITIES[1])[1])}</span>`;
+const followTag = (l) => {
+  if (!l.follow_up) return '';
+  const t = todayISO();
+  const cls = l.follow_up < t ? 'late' : l.follow_up === t ? 'today' : '';
+  return `<span class="fu ${cls}">${icons.calendar}${new Date(l.follow_up + 'T12:00').toLocaleDateString('es', { day: 'numeric', month: 'short' })}</span>`;
+};
+
+// ---------- Rendering ----------
+function renderAll(flashId) {
+  app.querySelectorAll('[data-view]').forEach((b) => b.classList.toggle('active', b.dataset.view === view));
+  const el = document.getElementById('view');
+  if (!el) return;
+  ({ dashboard: viewDashboard, solicitudes: viewLeads, tablero: viewBoard, seguimientos: viewFollow, ajustes: viewSettings })[view](el, flashId);
+}
+
+// ===== Dashboard =====
+function viewDashboard(el) {
+  const count = (s) => leads.filter((l) => l.status === s).length;
+  const sum = (arr, f) => arr.reduce((s, l) => s + f(l), 0);
+  const open = leads.filter((l) => !['cerrado', 'perdido'].includes(l.status));
+  const won = leads.filter((l) => l.status === 'cerrado');
+  const decided = won.length + count('perdido');
+  const rate = decided ? Math.round((won.length / decided) * 100) : 0;
+  const today = leads.filter((l) => new Date(l.created_at).toDateString() === new Date().toDateString()).length;
+  const late = leads.filter((l) => l.follow_up && l.follow_up <= todayISO() && !['cerrado', 'perdido'].includes(l.status));
+
+  // Leads per day, last 14 days (single series → one hue, no legend)
+  const days = [...Array(14)].map((_, i) => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - 13 + i); return d; });
+  const perDay = days.map((d) => leads.filter((l) => new Date(l.created_at).toDateString() === d.toDateString()).length);
+  const max = Math.max(1, ...perDay);
+  const bars = perDay.map((n, i) => `<div class="bar-col" title="${days[i].toLocaleDateString('es', { weekday: 'short', day: 'numeric', month: 'short' })}: ${n} solicitud${n === 1 ? '' : 'es'}">
+      <span class="bar-v">${n || ''}</span><span class="bar" style="height:${(n / max) * 100}%"></span><span class="bar-x">${days[i].getDate()}</span></div>`).join('');
+
+  // Pipeline by status (magnitude bars with value labels)
+  const pipe = STATUSES.map(([k, lab]) => [k, lab, leads.filter((l) => l.status === k)]);
+  const pmax = Math.max(1, ...pipe.map(([, , a]) => a.length));
+
+  // Interest by category
+  const catCount = { web: 0, branding: 0, marketing: 0, audiovisual: 0, print: 0 };
+  leads.forEach((l) => (l.details?.services || []).forEach((s) => { if (s in catCount) catCount[s]++; }));
+  const catNames = { web: 'Web', branding: 'Diseño y marca', marketing: 'Marketing', audiovisual: 'Foto y video', print: 'Impresos' };
+  const cmax = Math.max(1, ...Object.values(catCount));
+
+  el.innerHTML = `
+    <div class="a-head"><div><h1>Inicio</h1><p class="muted">Resumen de tu negocio en tiempo real.</p></div>
+      <button class="btn btn-sm" id="goNew">${icons.inbox} Ver nuevas (${count('nuevo')})</button></div>
+    <div class="a-stats">
+      ${[
+        ['Solicitudes', leads.length, `${today} hoy`, 'inbox'],
+        ['En curso', cop(sum(open, quoteOf)), `${open.length} oportunidades abiertas`, 'target'],
+        ['Vendido', cop(sum(won, quoteOf)), `${won.length} ventas cerradas`, 'check'],
+        ['Ingreso mensual', cop(sum(won, monthlyOf)), 'Mensualidades de clientes cerrados', 'calendar'],
+        ['Tasa de cierre', `${rate}%`, 'Cerradas sobre decididas', 'bolt'],
+        ['Seguimientos', late.length, 'Para hoy o atrasados', 'bell'],
+      ].map(([k, v, s, ic]) => `<div class="a-stat vision"><div class="a-stat-top"><span class="a-stat-icon">${icons[ic]}</span>${k}</div><b>${v}</b><small>${s}</small></div>`).join('')}
+    </div>
+    <div class="a-dash">
+      <section class="a-panel vision span2"><h3>Solicitudes últimos 14 días</h3><div class="bars">${bars}</div></section>
+      <section class="a-panel vision"><h3>Embudo de ventas</h3>
+        <div class="hbars">${pipe.map(([k, lab, a]) => `<div class="hbar" title="${lab}: ${a.length} · ${cop(sum(a, quoteOf))}"><span class="hbar-l">${lab}</span><span class="hbar-t"><span class="hbar-f" style="width:${(a.length / pmax) * 100}%"></span></span><b>${a.length}</b></div>`).join('')}</div>
+      </section>
+      <section class="a-panel vision"><h3>Servicios más pedidos</h3>
+        <div class="hbars">${Object.entries(catCount).sort((a, b) => b[1] - a[1]).map(([k, n]) => `<div class="hbar" title="${catNames[k]}: ${n}"><span class="hbar-l">${catNames[k]}</span><span class="hbar-t"><span class="hbar-f" style="width:${(n / cmax) * 100}%"></span></span><b>${n}</b></div>`).join('')}</div>
+      </section>
+      <section class="a-panel vision"><h3>Seguimientos pendientes</h3>
+        ${late.length ? `<div class="mini-list">${late.slice(0, 6).map((l) => `<button data-open="${l.id}">${followTag(l)}<b>${esc(l.name)}</b><small>${esc(l.business || '')}</small></button>`).join('')}</div>` : '<p class="muted small">Nada pendiente. ¡Bien!</p>'}
+      </section>
+      <section class="a-panel vision"><h3>Últimas solicitudes</h3>
+        <div class="mini-list">${leads.slice(0, 6).map((l) => `<button data-open="${l.id}"><span class="st st-${esc(l.status)}">${statusLabel(l.status)}</span><b>${esc(l.name)}</b><small>${ago(l.created_at)}</small></button>`).join('') || '<p class="muted small">Aún no hay solicitudes.</p>'}</div>
+      </section>
+    </div>`;
+  el.querySelector('#goNew').addEventListener('click', () => { filter = 'nuevo'; go('solicitudes'); });
+  el.querySelectorAll('[data-open]').forEach((b) => b.addEventListener('click', () => go('solicitudes', b.dataset.open)));
+}
+
+// ===== Leads list + detail =====
+function viewLeads(el, flashId) {
+  el.innerHTML = `
+    <div class="a-head"><div><h1>Solicitudes</h1><p class="muted">Todo lo que llega del cotizador, en tiempo real.</p></div>
+      <button class="btn btn-sm btn-ghost" id="csv">${icons.file} Exportar CSV</button></div>
+    <div class="a-seg" id="seg">${[['todos', 'Todas'], ...STATUSES].map(([k, l]) => {
+      const n = k === 'todos' ? leads.length : leads.filter((x) => x.status === k).length;
+      return `<button class="${filter === k ? 'on' : ''}" data-f="${k}">${l} <span>${n}</span></button>`;
+    }).join('')}</div>
+    <div class="a-body">
+      <div class="a-list" id="list"></div>
+      <div class="a-detail vision" id="detail"></div>
+    </div>`;
+  el.querySelectorAll('#seg button').forEach((b) => b.addEventListener('click', () => { filter = b.dataset.f; renderAll(); }));
+  el.querySelector('#csv').addEventListener('click', exportCSV);
+  renderList(flashId);
+  renderDetail();
+}
 
 function renderList(flashId) {
   const list = document.getElementById('list');
+  if (!list) return;
   const rows = visible();
   list.innerHTML = rows.length ? rows.map((l) => `
     <button class="a-row ${l.id === selectedId ? 'sel' : ''} ${l.id === flashId ? 'flash' : ''}" data-id="${l.id}">
       <span class="avatar">${esc((l.name || '?')[0].toUpperCase())}</span>
-      <span class="a-row-main"><b>${esc(l.name)}</b><small>${esc(l.business || '—')} · ${esc(l.service || '')}</small></span>
-      <span class="a-row-side"><span class="st st-${esc(l.status)}">${esc(statusLabel(l.status))}</span><small>${l.quote_total ? cop(l.quote_total) + ' · ' : ''}${ago(l.created_at)}</small></span>
-    </button>`).join('') : `<div class="a-empty small">${icons.inbox}<p>No hay solicitudes aquí todavía.</p></div>`;
+      <span class="a-row-main"><b>${esc(l.name)} ${l.priority === 'alta' ? prio('alta') : ''}</b><small>${esc(l.business || '—')} · ${esc(l.service || '')}</small></span>
+      <span class="a-row-side"><span class="st st-${esc(l.status)}">${esc(statusLabel(l.status))}</span><small>${followTag(l)}${l.quote_total ? cop(l.quote_total) + ' · ' : ''}${ago(l.created_at)}</small></span>
+    </button>`).join('') : `<div class="a-empty small">${icons.inbox}<p>No hay solicitudes aquí.</p></div>`;
   list.querySelectorAll('.a-row').forEach((r) => r.addEventListener('click', () => { selectedId = r.dataset.id; renderList(); renderDetail(); }));
+}
+
+// ===== Kanban board (drag & drop between statuses) =====
+function viewBoard(el) {
+  const rows = leads.filter((l) => !query || [l.name, l.business, l.phone, l.email, l.service].join(' ').toLowerCase().includes(query));
+  el.innerHTML = `
+    <div class="a-head"><div><h1>Tablero</h1><p class="muted">Arrastra las tarjetas para cambiar el estado de cada cliente.</p></div></div>
+    <div class="board">${STATUSES.map(([k, lab]) => {
+      const col = rows.filter((l) => l.status === k);
+      return `<div class="col" data-col="${k}">
+        <div class="col-head"><span class="st st-${k}">${lab}</span><small>${col.length} · ${cop(col.reduce((s, l) => s + quoteOf(l), 0))}</small></div>
+        <div class="col-body">${col.map((l) => `
+          <div class="kcard" draggable="true" data-id="${l.id}">
+            <div class="kcard-top"><b>${esc(l.name)}</b>${prio(l.priority)}</div>
+            <small>${esc(l.business || '')}</small>
+            <small class="muted">${esc(l.service || '')}</small>
+            <div class="kcard-foot">${l.quote_total ? `<b>${cop(l.quote_total)}</b>` : '<span></span>'}${followTag(l)}</div>
+          </div>`).join('') || '<p class="col-empty">Suelta aquí</p>'}</div>
+      </div>`;
+    }).join('')}</div>`;
+  let dragId = null;
+  el.querySelectorAll('.kcard').forEach((c) => {
+    c.addEventListener('dragstart', (e) => { dragId = c.dataset.id; c.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+    c.addEventListener('dragend', () => c.classList.remove('dragging'));
+    c.addEventListener('click', () => go('solicitudes', c.dataset.id));
+  });
+  el.querySelectorAll('.col').forEach((col) => {
+    col.addEventListener('dragover', (e) => { e.preventDefault(); col.classList.add('over'); });
+    col.addEventListener('dragleave', () => col.classList.remove('over'));
+    col.addEventListener('drop', async (e) => {
+      e.preventDefault(); col.classList.remove('over');
+      const l = leads.find((x) => x.id === dragId);
+      const st = col.dataset.col;
+      if (!l || l.status === st) return;
+      const from = l.status;
+      if (await update(l.id, { status: st }, ['estado', `${statusLabel(from)} → ${statusLabel(st)}`])) { toast(`${l.name}: ${statusLabel(st)}`); renderAll(); }
+    });
+  });
+}
+
+// ===== Follow-ups =====
+function viewFollow(el) {
+  const t = todayISO();
+  const active = leads.filter((l) => !['cerrado', 'perdido'].includes(l.status));
+  const groups = [
+    ['Atrasados', active.filter((l) => l.follow_up && l.follow_up < t), 'late'],
+    ['Hoy', active.filter((l) => l.follow_up === t), 'today'],
+    ['Próximos', active.filter((l) => l.follow_up && l.follow_up > t).sort((a, b) => a.follow_up.localeCompare(b.follow_up)), ''],
+    ['Sin fecha de seguimiento', active.filter((l) => !l.follow_up), 'none'],
+  ];
+  el.innerHTML = `
+    <div class="a-head"><div><h1>Seguimientos</h1><p class="muted">A quién escribirle y cuándo. Asigna fechas desde el detalle de cada solicitud.</p></div></div>
+    <div class="follow">${groups.map(([title, arr, cls]) => `
+      <section class="a-panel vision ${cls}"><h3>${title} <span class="count">${arr.length}</span></h3>
+        ${arr.length ? `<div class="mini-list">${arr.map((l) => `<button data-open="${l.id}">${followTag(l)}<b>${esc(l.name)}</b><small>${esc(l.business || '')} · ${statusLabel(l.status)}</small>${prio(l.priority)}</button>`).join('')}</div>` : '<p class="muted small">Nada por aquí.</p>'}
+      </section>`).join('')}</div>`;
+  el.querySelectorAll('[data-open]').forEach((b) => b.addEventListener('click', () => go('solicitudes', b.dataset.open)));
+}
+
+// ===== Settings =====
+async function viewSettings(el) {
+  el.innerHTML = `
+    <div class="a-head"><div><h1>Ajustes</h1><p class="muted">Equipo, exportación y preferencias.</p></div></div>
+    <div class="a-dash">
+      <section class="a-panel vision"><h3>Administradores</h3>
+        <p class="muted small">Estas personas pueden entrar al panel con su correo.</p>
+        <div class="mini-list" id="admins"><p class="muted small">Cargando…</p></div>
+        <form class="inline-form" id="addAdmin"><input type="email" required placeholder="correo@ejemplo.com" /><button class="btn btn-sm">Agregar</button></form>
+      </section>
+      <section class="a-panel vision"><h3>Exportar</h3>
+        <p class="muted small">Descarga todas las solicitudes en un archivo CSV para Excel o Google Sheets.</p>
+        <button class="btn btn-sm" id="csv2">${icons.file} Exportar ${leads.length} solicitudes</button>
+      </section>
+      <section class="a-panel vision"><h3>Notificaciones</h3>
+        <p class="muted small">Recibe una alerta en el escritorio cuando llegue una solicitud (con el panel abierto).</p>
+        <button class="btn btn-sm btn-ghost" id="notif2">${icons.bell} ${'Notification' in window && Notification.permission === 'granted' ? 'Activadas ✓' : 'Activar notificaciones'}</button>
+      </section>
+      <section class="a-panel vision"><h3>Precios y documentos</h3>
+        <p class="muted small">La lista de precios está en <code>src/pricing.js</code> y los planes en <code>src/plans.js</code>. Los PDF de cotización y de propuesta se generan solos con esos valores.</p>
+      </section>
+    </div>`;
+  el.querySelector('#csv2').addEventListener('click', exportCSV);
+  el.querySelector('#notif2').addEventListener('click', () => document.getElementById('notifBtn').click());
+  const loadAdmins = async () => {
+    const { data, error } = await supabase.from('admins').select('email').order('email');
+    const box = el.querySelector('#admins');
+    if (error) { box.innerHTML = '<p class="muted small">No se pudo cargar.</p>'; return; }
+    box.innerHTML = data.map(({ email }) => `<div class="adm"><span class="avatar">${esc(email[0].toUpperCase())}</span><b>${esc(email)}</b>${email === me.email ? '<small>tú</small>' : `<button class="aq-del" data-rm="${esc(email)}" title="Quitar">✕</button>`}</div>`).join('');
+    box.querySelectorAll('[data-rm]').forEach((b) => b.addEventListener('click', async () => {
+      if (!confirm(`¿Quitar el acceso de ${b.dataset.rm}?`)) return;
+      const { error: e } = await supabase.from('admins').delete().eq('email', b.dataset.rm);
+      toast(e ? 'No se pudo quitar' : 'Acceso quitado'); loadAdmins();
+    }));
+  };
+  el.querySelector('#addAdmin').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = e.target.querySelector('input').value.trim().toLowerCase();
+    const { error } = await supabase.from('admins').insert({ email });
+    toast(error ? 'No se pudo agregar' : `${email} ahora tiene acceso`); e.target.reset(); loadAdmins();
+  });
+  loadAdmins();
+}
+
+function exportCSV() {
+  const cols = [['Fecha', (l) => new Date(l.created_at).toLocaleString('es-CO')], ['Nombre', (l) => l.name], ['Negocio', (l) => l.business], ['WhatsApp', (l) => l.phone], ['Email', (l) => l.email],
+    ['Plan', (l) => l.service], ['Plantilla', (l) => l.template], ['Estado', (l) => statusLabel(l.status)], ['Prioridad', (l) => l.priority], ['Seguimiento', (l) => l.follow_up],
+    ['Total', (l) => l.quote_total], ['Mensual', (l) => l.quote?.monthly], ['Notas', (l) => l.notes]];
+  const cell = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const csv = '﻿' + [cols.map(([h]) => cell(h)).join(';'), ...leads.map((l) => cols.map(([, f]) => cell(f(l))).join(';'))].join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = `solicitudes-kstastudio-${todayISO()}.csv`;
+  a.click();
+  toast('CSV descargado');
 }
 
 function waLink(lead) {
   const phone = (lead.phone || '').replace(/\D/g, '');
-  const msg = `¡Hola ${lead.name.split(' ')[0]}! 👋 Te escribe tu asesor de KstaStudio_. Recibimos tu solicitud del ${lead.service || 'plan'} para ${lead.business || 'tu negocio'} y ya estamos preparando tu cotización.`;
+  const msg = `¡Hola ${lead.name.split(' ')[0]}! 👋 Te escribe tu asesor de KstaStudio_. Recibimos tu solicitud de ${lead.service || 'plan'} para ${lead.business || 'tu negocio'} y ya estamos preparando tu cotización.`;
   return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
 }
 
@@ -272,7 +464,7 @@ function answersHTML(l) {
   }
   const b = d.business || {};
   let html = card('Plan', 'sparkles',
-    field('Paquete', l.service) + field('Servicios', (d.services || []).map((s) => SVC[s]?.[0] || s)) + field('Plantilla web', l.template));
+    field('Plan', l.service) + field('Servicios', (d.services || []).map((s) => SVC[s]?.[0] || s)) + field('Plantilla web', l.template));
   for (const s of d.services || []) {
     const ans = (d.details || {})[s] || {};
     html += card(SVC[s]?.[0] || s, SVC[s]?.[1] || 'layers', Object.entries(ans).map(([k, v]) => field(KEY_LABELS[k] || k, v)).join(''));
@@ -317,12 +509,15 @@ function bindQuote(l) {
         <div><span>Anticipo</span><b>${cop(q.deposit)}</b></div>
       </div>
       <div class="aq-actions">
-        <button class="btn btn-sm" id="aqPdf">${icons.file} Descargar PDF</button>
+        <button class="btn btn-sm" id="aqPdf">${icons.file} Cotización PDF</button>
+        <button class="btn btn-sm" id="aqPlan">${icons.list} Propuesta y plan PDF</button>
         <a class="btn btn-sm btn-ghost" id="aqWa" target="_blank" rel="noopener">${icons.whatsapp} Enviar por WhatsApp</a>
+        <a class="btn btn-sm btn-ghost" id="aqMail">${icons.mail} Enviar por correo</a>
         <button class="btn btn-sm btn-ghost" id="aqSave">Guardar cambios</button>
         <button class="btn btn-sm btn-ghost" id="aqReset" title="Recalcular con la lista de precios">↻ Recalcular</button>
       </div>`;
     box.querySelector('#aqWa').href = waQuoteLink(l, q);
+    box.querySelector('#aqMail').href = mailQuoteLink(l, q);
     box.querySelectorAll('input[data-i]').forEach((inp) => inp.addEventListener('change', () => { q.items[+inp.dataset.i].price = Math.max(0, Number(inp.value) || 0); q = totals(q); draw(); }));
     box.querySelectorAll('[data-del]').forEach((b) => b.addEventListener('click', () => { q.items.splice(+b.dataset.del, 1); q = totals(q); draw(); }));
     box.querySelector('#aqDisc').addEventListener('change', (e) => { q.discountRate = Math.min(100, Math.max(0, Number(e.target.value) || 0)) / 100; q = totals(q); draw(); });
@@ -332,30 +527,43 @@ function bindQuote(l) {
       q.items.push({ group: 'Adicionales', concept, price, monthly: false }); q = totals(q); draw();
     });
     box.querySelector('#aqReset').addEventListener('click', () => { l.quote = null; q = totals(ensureQuote(l)); draw(); toast('Recalculado con la lista de precios'); });
-    box.querySelector('#aqSave').addEventListener('click', async () => { if (await update(l.id, { quote: q, quote_total: q.total })) toast('Cotización guardada'); });
+    box.querySelector('#aqSave').addEventListener('click', async () => { if (await update(l.id, { quote: q, quote_total: q.total }, ['cotizacion', `Cotización actualizada: ${cop(q.total)}`])) toast('Cotización guardada'); });
     box.querySelector('#aqPdf').addEventListener('click', async () => {
       const { downloadQuote } = await import('./pdf.js');
-      downloadQuote({ ...l, quote: q });
+      downloadQuote({ ...l, quote: q }); logEvent(l.id, 'pdf', 'Descargó la cotización en PDF');
     });
-    box.querySelector('#aqWa').addEventListener('click', async () => {
-      await update(l.id, { quote: q, quote_total: q.total, status: l.status === 'nuevo' || l.status === 'contactado' ? 'cotizado' : l.status });
-      const { downloadQuote } = await import('./pdf.js');
-      downloadQuote({ ...l, quote: q });
-      toast('PDF descargado: adjúntalo en el chat de WhatsApp');
-      renderList();
+    box.querySelector('#aqPlan').addEventListener('click', async () => {
+      const { downloadProposal } = await import('./proposal.js');
+      downloadProposal({ ...l, quote: q }); logEvent(l.id, 'pdf', 'Descargó la propuesta y plan de trabajo');
     });
+    const sent = async (via) => {
+      await update(l.id, { quote: q, quote_total: q.total, status: ['nuevo', 'contactado'].includes(l.status) ? 'cotizado' : l.status }, ['envio', `Cotización enviada por ${via}: ${cop(q.total)}`]);
+      const [{ downloadQuote }, { downloadProposal }] = await Promise.all([import('./pdf.js'), import('./proposal.js')]);
+      downloadQuote({ ...l, quote: q }); downloadProposal({ ...l, quote: q });
+      toast(`PDFs descargados: adjúntalos en ${via}`);
+    };
+    box.querySelector('#aqWa').addEventListener('click', () => sent('WhatsApp'));
+    box.querySelector('#aqMail').addEventListener('click', () => sent('correo'));
   };
   draw();
 }
 
 function waQuoteLink(l, q) {
   const phone = (l.phone || '').replace(/\D/g, '');
-  const msg = `¡Hola ${(l.name || '').split(' ')[0]}! 👋 Te escribe tu asesor de KstaStudio_.\n\nYa tenemos lista tu cotización para *${l.business || 'tu negocio'}* (${l.service || 'plan'}):\n\n💜 *Total: ${cop(q.total)}*${q.monthly ? `\n🔁 Mensual: ${cop(q.monthly)}` : ''}\n✅ Anticipo para iniciar: ${cop(q.deposit)}\n\nTe adjunto el PDF con el detalle. ¿Te parece si lo revisamos juntos?`;
+  const msg = `¡Hola ${(l.name || '').split(' ')[0]}! 👋 Te escribe tu asesor de KstaStudio_.\n\nYa tenemos lista tu cotización para *${l.business || 'tu negocio'}* (${l.service || 'plan'}):\n\n💜 *Total: ${cop(q.total)}*${q.monthly ? `\n🔁 Mensual: ${cop(q.monthly)}` : ''}\n✅ Anticipo para iniciar: ${cop(q.deposit)}\n\nTe adjunto el PDF con la cotización y la propuesta con el plan de trabajo, tus derechos y condiciones. ¿Te parece si lo revisamos juntos?`;
   return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
 }
 
+function mailQuoteLink(l, q) {
+  const subject = `Tu cotización de KstaStudio_ · ${l.business || l.name}`;
+  const body = `Hola ${(l.name || '').split(' ')[0]},\n\nGracias por confiar en KstaStudio_. Te compartimos la cotización y la propuesta con el plan de trabajo para ${l.business || 'tu negocio'} (${l.service || ''}).\n\nTotal: ${cop(q.total)}${q.monthly ? `\nMensualidad: ${cop(q.monthly)}` : ''}\nAnticipo para iniciar: ${cop(q.deposit)}\n\nEn los archivos adjuntos encontrarás el detalle, el cronograma, tus derechos como consumidor y el tratamiento de tus datos.\n\nQuedamos atentos,\nJerónimo Castañeda Velásquez\nKstaStudio_`;
+  return `mailto:${encodeURIComponent(l.email || '')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+// ---------- Detail ----------
 function renderDetail() {
   const box = document.getElementById('detail');
+  if (!box) return;
   const l = leads.find((x) => x.id === selectedId);
   if (!l) { box.innerHTML = `<div class="a-empty">${icons.inbox}<p>Selecciona una solicitud para ver el detalle.</p></div>`; return; }
 
@@ -365,15 +573,16 @@ function renderDetail() {
       <div><h2>${esc(l.name)}</h2><p class="muted">${esc(l.business || '')} · ${new Date(l.created_at).toLocaleString('es')}</p></div>
     </div>
     <div class="a-d-actions">
-      <a class="btn" href="${waLink(l)}" target="_blank" rel="noopener">${icons.whatsapp} Escribir por WhatsApp</a>
+      <a class="btn" href="${waLink(l)}" target="_blank" rel="noopener" id="waHello">${icons.whatsapp} Escribir por WhatsApp</a>
       <a class="btn btn-ghost" href="mailto:${esc(l.email)}">${icons.mail} Email</a>
+      <button class="btn btn-ghost" id="copy">${icons.file} Copiar resumen</button>
     </div>
     <div class="a-d-status">${STATUSES.map(([k, lab]) => `<button class="${l.status === k ? 'on' : ''}" data-st="${k}">${lab}</button>`).join('')}</div>
     <div class="a-d-grid">
       <div><span>WhatsApp</span><b>${esc(l.phone || '—')}</b></div>
       <div><span>Email</span><b>${esc(l.email)}</b></div>
-      <div><span>Plan</span><b>${esc(l.service || '—')}</b></div>
-      <div><span>Plantilla</span><b>${esc(l.template || '—')}</b></div>
+      <div><span>Prioridad</span><select id="prio">${PRIORITIES.map(([k, lab]) => `<option value="${k}" ${(l.priority || 'media') === k ? 'selected' : ''}>${lab}</option>`).join('')}</select></div>
+      <div><span>Próximo seguimiento</span><input type="date" id="fu" value="${esc(l.follow_up || '')}" /></div>
     </div>
     <h3>Cotización</h3>
     <div class="a-quote" id="aQuote"></div>
@@ -381,15 +590,26 @@ function renderDetail() {
     <div class="a-cards">${answersHTML(l)}</div>
     ${l.template && l.details?.template && l.details.template !== 'custom' ? `<a class="a-d-tpl" href="/templates/${esc(l.details.template)}/index.html" target="_blank" rel="noopener">Ver plantilla elegida (${esc(l.template)}) ↗</a>` : ''}
     <h3>Notas internas</h3>
-    <textarea id="notes" rows="4" placeholder="Ej: le envié la cotización el martes, quiere demo…">${esc(l.notes || '')}</textarea>
-    <div class="a-d-foot"><button class="btn btn-sm" id="saveNotes">Guardar notas</button><button class="btn btn-sm btn-ghost danger" id="del">${icons.trash} Eliminar</button></div>`;
+    <textarea id="notes" rows="3" placeholder="Ej: le envié la cotización el martes, quiere demo…">${esc(l.notes || '')}</textarea>
+    <div class="a-d-foot"><button class="btn btn-sm" id="saveNotes">Guardar notas</button><button class="btn btn-sm btn-ghost danger" id="del">${icons.trash} Eliminar</button></div>
+    <h3>Historial</h3>
+    <div class="timeline-list" id="events"><p class="muted small">Cargando…</p></div>`;
 
   box.querySelectorAll('[data-st]').forEach((b) => b.addEventListener('click', async () => {
-    if (await update(l.id, { status: b.dataset.st })) { toast(`Marcada como ${statusLabel(b.dataset.st)}`); renderAll(); }
+    const from = l.status, st = b.dataset.st;
+    if (from === st) return;
+    if (await update(l.id, { status: st }, ['estado', `${statusLabel(from)} → ${statusLabel(st)}`])) { toast(`Marcada como ${statusLabel(st)}`); renderList(); renderDetail(); }
   }));
+  box.querySelector('#prio').addEventListener('change', async (e) => { if (await update(l.id, { priority: e.target.value }, ['prioridad', `Prioridad: ${e.target.value}`])) { toast('Prioridad actualizada'); renderList(); } });
+  box.querySelector('#fu').addEventListener('change', async (e) => { const v = e.target.value || null; if (await update(l.id, { follow_up: v }, ['seguimiento', v ? `Seguimiento para el ${v}` : 'Seguimiento quitado'])) { toast('Seguimiento guardado'); renderList(); } });
+  box.querySelector('#waHello').addEventListener('click', () => { if (l.status === 'nuevo') update(l.id, { status: 'contactado' }, ['estado', 'Nuevo → Contactado (WhatsApp)']).then(() => renderList()); else logEvent(l.id, 'contacto', 'Escribió por WhatsApp'); });
+  box.querySelector('#copy').addEventListener('click', async () => {
+    await navigator.clipboard.writeText(`${l.name} · ${l.business || ''}\n${l.phone || ''} · ${l.email || ''}\n${l.service || ''}\n\n${l.message || ''}`);
+    toast('Resumen copiado');
+  });
   bindQuote(l);
   box.querySelector('#saveNotes').addEventListener('click', async () => {
-    if (await update(l.id, { notes: box.querySelector('#notes').value })) toast('Notas guardadas');
+    if (await update(l.id, { notes: box.querySelector('#notes').value }, ['nota', 'Actualizó las notas internas'])) toast('Notas guardadas');
   });
   box.querySelector('#del').addEventListener('click', async () => {
     if (!confirm(`¿Eliminar la solicitud de ${l.name}? No se puede deshacer.`)) return;
@@ -397,6 +617,17 @@ function renderDetail() {
     if (error) return toast('No se pudo eliminar');
     leads = leads.filter((x) => x.id !== l.id); selectedId = null; renderAll(); toast('Solicitud eliminada');
   });
+  loadEvents(l.id);
+}
+
+const EVENT_ICONS = { estado: 'layers', nota: 'file', cotizacion: 'target', envio: 'send', pdf: 'file', prioridad: 'bolt', seguimiento: 'calendar', contacto: 'chat' };
+async function loadEvents(id) {
+  const { data } = await supabase.from('lead_events').select('*').eq('lead_id', id).order('created_at', { ascending: false }).limit(50);
+  const box = document.getElementById('events');
+  if (!box || selectedId !== id) return;
+  const l = leads.find((x) => x.id === id);
+  const items = [...(data || []), { type: 'creado', text: 'Llegó la solicitud desde el cotizador', created_at: l?.created_at, actor: 'cliente' }];
+  box.innerHTML = items.map((e) => `<div class="ev"><span class="ev-i">${icons[EVENT_ICONS[e.type] || 'sparkles']}</span><div><b>${esc(e.text)}</b><small>${ago(e.created_at)} · ${esc(e.actor || '')}</small></div></div>`).join('');
 }
 
 boot();
