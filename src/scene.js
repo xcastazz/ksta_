@@ -10,6 +10,7 @@ const POSES = {
   plantillas: { amp: 0.7,  freq: 0.7, speed: 0.4, color: 0xc084fc, camY: 1.8, tilt: 0.3,  ring: 0.6 },
   paquetes:   { amp: 0.3,  freq: 1.0, speed: 0.5, color: 0xa78bfa, camY: 3.6, tilt: 0.0,  ring: 0 },
   proceso:    { amp: 0.5,  freq: 1.6, speed: 0.8, color: 0xd946ef, camY: 2.4, tilt: -0.3, ring: 0.3 },
+  nosotros:   { amp: 0.45, freq: 0.6, speed: 0.35, color: 0xf0abfc, camY: 2.8, tilt: 0.35, ring: 0.8 },
   contacto:   { amp: 0.6,  freq: 0.8, speed: 0.5, color: 0xa855f7, camY: 2.0, tilt: 0.15, ring: 1 },
 };
 const QUIZ = [
@@ -19,7 +20,12 @@ const QUIZ = [
   { amp: 0.5, freq: 0.9, speed: 0.5, color: 0x8b5cf6, camY: 2.4, tilt: -0.1,  ring: 0.5 },
 ];
 const DONE = { amp: 0.9, freq: 0.6, speed: 1.2, color: 0xe879f9, camY: 2.0, tilt: 0, ring: 1 };
-const poseFor = (key) => POSES[key] || (Number(key.slice(1)) >= 20 ? DONE : QUIZ[Number(key.slice(1)) % QUIZ.length]);
+const poseFor = (key) => {
+  if (POSES[key]) return POSES[key];
+  const n = Number(String(key).slice(1));
+  if (!Number.isFinite(n)) return POSES.inicio; // unknown section: never crash the loop
+  return n >= 20 ? DONE : QUIZ[n % QUIZ.length];
+};
 
 export function initScene(canvas, getActive) {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
