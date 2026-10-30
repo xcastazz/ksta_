@@ -41,8 +41,10 @@ document.querySelectorAll('.reveal, .reveal-scale, .mask').forEach((el) => io.ob
 // Chapters: rail + active tracking
 const chapters = [...document.querySelectorAll('.chapter')];
 const rail = document.getElementById('rail');
-rail.innerHTML = chapters.map((c, i) =>
-  `<a href="#${c.id}" data-id="${c.id}"><span class="rail-label">${String(i).padStart(2, '0')} ${c.dataset.title}</span><span class="rail-dot"></span></a>`
+const RAIL_ICONS = { inicio: 'home', manifiesto: 'sparkles', servicios: 'layers', plantillas: 'code', paquetes: 'globe', proceso: 'file', contacto: 'send' };
+rail.classList.add('vision');
+rail.innerHTML = chapters.map((c) =>
+  `<a href="#${c.id}" data-id="${c.id}" aria-label="${c.dataset.title}"><span class="rail-icon">${icons[RAIL_ICONS[c.id]]}</span><span class="rail-label vision">${c.dataset.title}</span></a>`
 ).join('');
 const railLinks = [...rail.querySelectorAll('a')];
 const nextBtn = document.getElementById('nextBtn');

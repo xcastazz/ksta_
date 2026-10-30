@@ -19,3 +19,23 @@ create policy "public can insert leads"
   on public.leads for insert
   to anon
   with check (true);
+
+-- ===== Panel de administración =====
+alter table public.leads add column if not exists notes text;     -- notas internas del asesor
+alter table public.leads add column if not exists template text;  -- plantilla web elegida
+
+create table if not exists public.admins (email text primary key);
+alter table public.admins enable row level security;
+insert into public.admins(email) values ('evacanocdlm@gmail.com') on conflict do nothing;
+
+create or replace function public.is_admin() returns boolean language sql stable security definer set search_path = public as $$
+  select exists(select 1 from public.admins where email = (auth.jwt() ->> 'email'));
+$$;
+
+create policy "admins read admins" on public.admins for select to authenticated using (public.is_admin());
+create policy "admins read leads" on public.leads for select to authenticated using (public.is_admin());
+create policy "admins update leads" on public.leads for update to authenticated using (public.is_admin()) with check (public.is_admin());
+create policy "admins delete leads" on public.leads for delete to authenticated using (public.is_admin());
+
+-- Notificaciones en tiempo real
+alter publication supabase_realtime add table public.leads;
