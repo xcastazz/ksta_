@@ -4,70 +4,70 @@
 // =========================================================
 export const PRICES = {
   branding: {
-    logo: { 'No tengo logo': 450000, 'Tengo, quiero rediseñarlo': 350000, 'Tengo, solo necesito la identidad': 250000 },
+    logo: { 'No tengo logo': 220000, 'Tengo, quiero rediseñarlo': 170000, 'Tengo, solo necesito la identidad': 120000 },
     piezas: {
       'Logo': 0, // incluido en el punto anterior
-      'Manual de marca': 400000,
-      'Tarjetas y papelería': 150000,
-      'Empaques / etiquetas': 350000,
-      'Piezas para redes': 200000,
-      'Mockups': 120000,
+      'Manual de marca': 180000,
+      'Tarjetas y papelería': 70000,
+      'Empaques / etiquetas': 150000,
+      'Piezas para redes': 90000,
+      'Mockups': 50000,
     },
   },
   web: {
     tipo: {
-      'Landing page': 900000,
-      'Web corporativa': 1800000,
-      'Portafolio': 1200000,
-      'Catálogo': 1500000,
-      'Tienda virtual': 2800000,
-      'Sistema / software a medida': 4500000,
+      'Landing page': 450000,
+      'Web corporativa': 850000,
+      'Portafolio': 550000,
+      'Catálogo': 700000,
+      'Tienda virtual': 1300000,
+      'Sistema / software a medida': 2200000,
     },
     funciones: {
       'Formulario de contacto': 0,
       'Botón de WhatsApp': 0,
-      'Reservas / citas': 600000,
-      'Pagos en línea': 700000,
-      'Blog': 300000,
-      'Panel administrativo': 900000,
+      'Reservas / citas': 250000,
+      'Pagos en línea': 300000,
+      'Blog': 120000,
+      'Panel administrativo': 400000,
     },
-    dominio: { 'Sí, ya tengo': 0, 'No, necesito uno': 90000, 'No sé qué es': 90000 },
-    disenoPersonalizado: 600000, // si elige "Diseño 100% personalizado" en vez de plantilla
+    dominio: { 'Sí, ya tengo': 0, 'No, necesito uno': 70000, 'No sé qué es': 70000 },
+    disenoPersonalizado: 250000, // si elige "Diseño 100% personalizado" en vez de plantilla
   },
   audiovisual: {
     contenido: {
-      'Fotografía de producto': 450000,
-      'Fotografía corporativa': 500000,
-      'Video publicitario': 1200000,
-      'Reels para redes': 600000,
-      'Video institucional': 1500000,
-      'Cobertura de evento': 900000,
+      'Fotografía de producto': 200000,
+      'Fotografía corporativa': 230000,
+      'Video publicitario': 550000,
+      'Reels para redes': 250000,
+      'Video institucional': 650000,
+      'Cobertura de evento': 400000,
     },
   },
   marketing: {
     acciones: {
-      'Contenido para redes': 800000,
-      'Campañas en Meta Ads': 700000,
-      'Lanzamiento de marca/producto': 1200000,
-      'Promociones y ventas': 400000,
-      'Estrategia completa': 1500000,
+      'Contenido para redes': 350000,
+      'Campañas en Meta Ads': 300000,
+      'Lanzamiento de marca/producto': 500000,
+      'Promociones y ventas': 150000,
+      'Estrategia completa': 650000,
     },
     mensual: ['Contenido para redes', 'Campañas en Meta Ads', 'Estrategia completa'],
   },
   print: {
     impresos: {
-      'Letrero / aviso': 650000,
-      'Afiches': 150000,
-      'Pendones / banners': 220000,
-      'Vinilos y adhesivos': 250000,
-      'Señalización': 350000,
-      'Tarjetas y material promocional': 180000,
-      'Branding del local': 1800000,
+      'Letrero / aviso': 320000,
+      'Afiches': 60000,
+      'Pendones / banners': 110000,
+      'Vinilos y adhesivos': 120000,
+      'Señalización': 160000,
+      'Tarjetas y material promocional': 80000,
+      'Branding del local': 850000,
     },
   },
   // Descuento por paquete (sobre los servicios de pago único)
   descuentos: { 'solo-web': 0, emprendimiento: 0.10, presencia: 0.12, integral: 0.15, custom: 0 },
-  urgencia: { 'Lo antes posible': 0.15 }, // recargo
+  urgencia: { 'Lo antes posible': 0.10 }, // recargo
   anticipo: 0.5,
   vigenciaDias: 15,
 };
