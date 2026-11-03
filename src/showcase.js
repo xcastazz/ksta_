@@ -42,16 +42,14 @@ export function initShowcase() {
 
     devices.forEach((d, i) => {
       const o = i - f;                                       // <0 passed, 0 focused, >0 upcoming
-      const a = Math.max(-1.6, Math.min(1.6, o));
-      const x = a * (mobile ? 40 : 55);                      // vw-ish percent of stage
-      const z = -Math.abs(a) * 420;
-      const ry = -a * 38;
-      const rx = 8 - Math.abs(a) * 4;
-      const s = 1 - Math.min(Math.abs(a), 1) * 0.12;
-      d.style.transform = `translate3d(${x}%, ${Math.abs(a) * 6}%, ${z}px) rotateY(${ry}deg) rotateX(${rx}deg) scale(${s})`;
-      d.style.opacity = String(Math.max(0, 1 - Math.max(0, Math.abs(o) - 0.6) * 1.2));
+      // Minimal: soft crossfade with a small lift, no 3D rotation
+      const a = Math.max(-1, Math.min(1, o));
+      const vis = Math.max(0, 1 - Math.abs(o) * 1.8);
+      d.style.transform = `translate3d(0, ${a * (mobile ? 24 : 36)}px, 0) scale(${1 - Math.abs(a) * 0.03})`;
+      d.style.opacity = String(vis);
+      d.style.pointerEvents = vis > 0.5 ? 'auto' : 'none';
       d.style.zIndex = String(100 - Math.round(Math.abs(o) * 10));
-      d.style.setProperty('--glare', `${50 + a * 60}%`);
+      d.style.setProperty('--glare', '50%');
       d.classList.toggle('is-active', i === active);
     });
     items.forEach((it, i) => it.classList.toggle('on', i === active));
