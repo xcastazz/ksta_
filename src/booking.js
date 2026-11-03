@@ -10,7 +10,7 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', 
 /** Booking widget markup (shared by the quote wizard and the budget planner). */
 export const bookingHTML = () => `
   <section class="booking vision">
-    <div class="bk-head"><span class="bk-logo">${icons.teams}</span><div><b>¿Quieres hablar con nosotros por videollamada? Es gratis</b><small>${MEETING.durationMin} minutos para resolver tus dudas. Te mandamos un enlace y solo tienes que tocarlo para entrar. Hora de Colombia.</small></div></div>
+    <div class="bk-head"><span class="bk-logo">${icons.teams}</span><div><b>¿Quieres hablar conmigo por videollamada? Es gratis</b><small>${MEETING.durationMin} minutos para resolver tus dudas. Te mando un enlace y solo tienes que tocarlo para entrar. Hora de Colombia.</small></div></div>
     <div class="bk-days" id="bkDays"><p class="muted small">Cargando horarios…</p></div>
     <div class="bk-hours" id="bkHours"></div>
     <label class="bk-topic">¿Quieres preguntarnos algo en especial? <input id="bkTopic" maxlength="300" placeholder="Opcional" /></label>
@@ -37,7 +37,7 @@ export async function setupBooking(box, lead, toast) {
     if (free.length) days.push([ds, free]);
   }
   let day = null, hour = null;
-  if (!days.length) { daysEl.innerHTML = '<p class="muted small">Por ahora no hay horas libres. Te escribimos para buscar una que te sirva.</p>'; btn.remove(); return; }
+  if (!days.length) { daysEl.innerHTML = '<p class="muted small">Por ahora no hay horas libres. Te escribo para buscar una que te sirva.</p>'; btn.remove(); return; }
   const drawHours = () => {
     const free = (days.find(([d]) => d === day) || [, []])[1];
     hoursEl.innerHTML = free.map((h) => `<button type="button" class="${h === hour ? 'on' : ''}" data-h="${h}">${prettyHour(h)}</button>`).join('');
@@ -60,14 +60,14 @@ export async function setupBooking(box, lead, toast) {
     });
     if (error) {
       console.error(error);
-      toast(error.code === '23505' ? 'Uy, alguien te ganó ese horario. Escoge otro' : 'Uy, no pudimos agendar. ¿Lo intentas otra vez?');
+      toast(error.code === '23505' ? 'Uy, alguien te ganó ese horario. Escoge otro' : 'Uy, no pude agendar. ¿Lo intentas otra vez?');
       btn.disabled = false; btn.innerHTML = `${icons.teams} Apartar mi cita`;
       if (error.code === '23505') setupBooking(box, lead, toast);
       return;
     }
     box.classList.add('booked');
     box.innerHTML = `<div class="bk-done"><span class="bk-logo">${icons.teams}</span>
-      <div><b>¡Listo! Tu cita quedó apartada</b><p>${prettyDay(day)} a las ${prettyHour(hour)} (hora de Colombia), por videollamada. Te mandamos el enlace para entrar a <b>${esc(lead.email)}</b> y a tu WhatsApp.</p></div></div>`;
+      <div><b>¡Listo! Tu cita quedó apartada</b><p>${prettyDay(day)} a las ${prettyHour(hour)} (hora de Colombia), por videollamada. Te mando el enlace para entrar a <b>${esc(lead.email)}</b> y a tu WhatsApp.</p></div></div>`;
     dispatchEvent(new Event('scene:kick'));
   });
 }

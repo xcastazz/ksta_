@@ -822,3 +822,32 @@ html:not(.lite) .sc-item.on { transform: none; }
 html:not(.lite) .sc-device { transition: none; will-change: clip-path, transform; }
 html:not(.lite) .sc-device { transition: box-shadow .3s ease; will-change: clip-path, transform, filter, opacity; }
 html:not(.lite) .sc-device.opening { box-shadow: 0 0 0 1px rgba(192,132,252,.6), 0 0 80px 10px rgba(168,85,247,.45); }
+
+/* Línea "muy pronto" bajo los servicios */
+.soon-line { text-align: center; margin-top: 1.6rem; font-size: .95rem; }
+/* Garantía */
+.guarantee { display: flex; gap: .9rem; align-items: flex-start; max-width: 680px; margin: 2rem auto 0; padding: 1.1rem 1.3rem; border-radius: 20px; }
+.guarantee > i { width: 34px; height: 34px; flex: none; display: grid; place-items: center; border-radius: 50%; background: rgba(134,239,172,.14); color: #86efac; }
+.guarantee > i svg { width: 18px; height: 18px; }
+.guarantee b { display: block; margin-bottom: .2rem; }
+.guarantee small { color: var(--muted); font-size: .9rem; line-height: 1.5; }
+/* Preguntas frecuentes */
+.faq-list { max-width: 760px; margin: 0 auto; display: grid; gap: .7rem; }
+.faq-list details { border-radius: 18px; padding: 0; overflow: hidden; }
+.faq-list summary { cursor: pointer; list-style: none; padding: 1.1rem 1.3rem; font-weight: 600; display: flex; justify-content: space-between; gap: 1rem; }
+.faq-list summary::-webkit-details-marker { display: none; }
+.faq-list summary::after { content: '+'; color: var(--violet); font-size: 1.3rem; line-height: 1; transition: transform .3s ease; }
+.faq-list details[open] summary::after { transform: rotate(45deg); }
+.faq-list details p { padding: 0 1.3rem 1.2rem; color: var(--muted); line-height: 1.6; margin: 0; }
+/* Precio rápido */
+.quick-link { display: block; margin-top: .9rem; text-align: center; color: var(--violet); font-size: .9rem; text-decoration: underline; text-underline-offset: 3px; }
+/* Casilla de privacidad */
+.consent { display: flex !important; gap: .6rem; align-items: flex-start; font-size: .85rem; color: var(--muted); cursor: pointer; }
+.consent input { width: 18px; height: 18px; margin-top: .1rem; flex: none; accent-color: #a855f7; }
+.consent a { color: var(--violet); }
+.footer a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+/* WhatsApp flotante */
+.wa-float { position: fixed; right: 18px; bottom: 18px; z-index: 60; display: flex; align-items: center; gap: .5rem; padding: .75rem 1.1rem .75rem .85rem; border-radius: 999px; background: #25d366; color: #052e14; font-weight: 700; text-decoration: none; box-shadow: 0 10px 30px rgba(0,0,0,.35); transition: transform .2s ease; }
+.wa-float:hover { transform: translateY(-2px); }
+.wa-float svg { width: 24px; height: 24px; }
+@media (max-width: 720px) { .wa-float span { display: none; } .wa-float { padding: .8rem; } }

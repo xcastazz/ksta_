@@ -1,6 +1,13 @@
 // Número de WhatsApp que recibe las cotizaciones (código de país + número, sin + ni espacios). Ej: 573001234567
 export const WHATSAPP_NUMBER = '000000000';
 
+// Correo e Instagram que se muestran en la página. Mientras sigan vacíos, esos botones no aparecen.
+export const EMAIL = '';
+export const INSTAGRAM = ''; // solo el usuario, sin @ (ej: kstastudio_)
+
+// true cuando ya pusiste tu número real arriba
+export const HAS_WHATSAPP = !/^0+$/.test(WHATSAPP_NUMBER);
+
 // Asesorías por Google Meet (hora de Colombia, UTC-5)
 export const MEETING = {
   days: 10,                              // cuántos días hábiles hacia adelante se pueden agendar

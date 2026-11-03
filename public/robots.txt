@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Sitemap: https://ksta.jc-casta00.workers.dev/sitemap.xml

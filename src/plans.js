@@ -28,10 +28,10 @@ export const CATS = {
     services: ['branding'],
     tiers: [
       { id: 'marca-inicial', name: 'Logo básico', tag: 'Lo esencial', services: ['branding'],
-        items: ['Te creamos tu logo', 'Escogemos los colores y letras de tu negocio', 'Tarjetas de presentación'],
+        items: ['Te creo tu logo', 'Escojo los colores y letras de tu negocio', 'Tarjetas de presentación'],
         details: { branding: { logo: 'No tengo logo', piezas: ['Logo', 'Tarjetas y papelería'] } } },
       { id: 'marca-pro', name: 'Imagen completa', tag: 'La más pedida', featured: true, services: ['branding'],
-        items: ['Te creamos tu logo', 'Una guía para usar tu logo siempre igual', 'Tarjetas y hojas con tu logo', 'Diseños listos para tus redes sociales'],
+        items: ['Te creo tu logo', 'Una guía para usar tu logo siempre igual', 'Tarjetas y hojas con tu logo', 'Diseños listos para tus redes sociales'],
         details: { branding: { logo: 'No tengo logo', piezas: ['Logo', 'Manual de marca', 'Tarjetas y papelería', 'Piezas para redes'] } } },
       { id: 'marca-completa', name: 'Imagen + empaques', tag: 'Todo incluido', services: ['branding'],
         items: ['Todo lo de Imagen completa', 'Diseño de tus empaques y etiquetas', 'Fotos de muestra de cómo se ve tu marca en productos reales'],
@@ -44,7 +44,7 @@ export const CATS = {
     services: ['marketing', 'audiovisual', 'print'],
     tiers: [
       { id: 'redes-basico', name: 'Redes al día', tag: 'Cada mes', services: ['marketing'],
-        items: ['Publicaciones bonitas para tu Facebook e Instagram', 'Te las hacemos cada mes', 'Te decimos qué publicar y cuándo'],
+        items: ['Publicaciones bonitas para tu Facebook e Instagram', 'Te las hago cada mes', 'Te digo qué publicar y cuándo'],
         details: { marketing: { acciones: ['Contenido para redes'], pauta: 'Aún no sé' } } },
       { id: 'redes-pro', name: 'Redes que venden', tag: 'La más pedida', featured: true, services: ['marketing', 'audiovisual'],
         items: ['Publicaciones para tus redes cada mes', 'Anuncios pagados en Facebook e Instagram para llegar a más gente', 'Videos cortos para tus redes cada mes'],

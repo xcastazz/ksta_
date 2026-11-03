@@ -5,10 +5,10 @@ import { icons } from './icons.js';
 import { initQuote } from './quote.js';
 import { initShowcase } from './showcase.js';
 import { initPlanner } from './planner.js';
-import { WHATSAPP_NUMBER } from './config.js';
+import { WHATSAPP_NUMBER, HAS_WHATSAPP, EMAIL, INSTAGRAM } from './config.js';
 
 // Render services & packages
-document.getElementById('services').innerHTML = services.map((s, i) => `
+document.getElementById('services').innerHTML = services.filter((s) => ['code', 'brand'].includes(s.icon)).map((s, i) => `
   <article class="service glass reveal ${['code', 'brand'].includes(s.icon) ? '' : 'soon'}" style="--d:${i * 90}ms">
     <div class="icon">${icons[s.icon]}</div>${['code', 'brand'].includes(s.icon) ? '<span class="soon-tag on">Disponible</span>' : '<span class="soon-tag">Próximamente</span>'}
     <h3>${s.title}</h3>
@@ -19,7 +19,7 @@ document.getElementById('services').innerHTML = services.map((s, i) => `
 const PLAN_TABS = CAT_ORDER.length > 1 ? [...CAT_ORDER, 'combo'] : CAT_ORDER;
 const pkgEl = document.getElementById('packages');
 function renderPlans(active = 'web') {
-  const tabs = `<div class="plan-tabs vision" role="tablist">${PLAN_TABS.map((k) => `<button role="tab" class="${k === active ? 'on' : ''}" data-tab="${k}">${k === 'combo' ? `${icons.sparkles}Varias cosas juntas` : `${icons[CATS[k].icon]}${CATS[k].label}`}</button>`).join('')}${CAT_SOON.map((k) => `<button role="tab" class="soon" disabled>${icons[CATS[k].icon]}${CATS[k].label}<small>Próximamente</small></button>`).join('')}</div>`;
+  const tabs = `<div class="plan-tabs vision" role="tablist">${PLAN_TABS.map((k) => `<button role="tab" class="${k === active ? 'on' : ''}" data-tab="${k}">${k === 'combo' ? `${icons.sparkles}Varias cosas juntas` : `${icons[CATS[k].icon]}${CATS[k].label}`}</button>`).join('')}</div>`;
   let body;
   if (active === 'combo') {
     const mid = CAT_ORDER.map((k) => CATS[k].tiers.find((t) => t.featured));
@@ -80,7 +80,7 @@ document.querySelectorAll('.reveal, .reveal-scale, .mask').forEach((el) => io.ob
 // Chapters: rail + active tracking
 const chapters = [...document.querySelectorAll('.chapter')];
 const rail = document.getElementById('rail');
-const RAIL_ICONS = { inicio: 'home', proyectos: 'monitor', manifiesto: 'sparkles', servicios: 'layers', plantillas: 'code', paquetes: 'globe', presupuesto: 'target', proceso: 'file', nosotros: 'user', contacto: 'send' };
+const RAIL_ICONS = { inicio: 'home', proyectos: 'monitor', manifiesto: 'sparkles', servicios: 'layers', plantillas: 'code', paquetes: 'globe', presupuesto: 'target', proceso: 'file', faq: 'chat', nosotros: 'user', contacto: 'send' };
 rail.className = 'dock vision';
 rail.innerHTML = chapters.map((c) =>
   `<a href="#${c.id}" data-id="${c.id}" aria-label="${c.dataset.title}"><span class="dock-icon">${icons[RAIL_ICONS[c.id]]}</span><span class="dock-tip">${c.dataset.title}</span></a>`
@@ -178,3 +178,16 @@ document.querySelectorAll('.nav-links a').forEach((a) => a.addEventListener('cli
 document.querySelectorAll('a[href^="https://wa.me/"]').forEach((a) => { a.href = `https://wa.me/${WHATSAPP_NUMBER}`; });
 
 document.getElementById('year').textContent = new Date().getFullYear();
+
+// Contact buttons + floating WhatsApp (only the ones with real data)
+{
+  const wa = HAS_WHATSAPP ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('¡Hola Jerónimo! Vi tu página y quiero saber más.')}` : '';
+  const links = [
+    wa && `<a class="glass" href="${wa}" target="_blank" rel="noopener">${icons.whatsapp}WhatsApp</a>`,
+    INSTAGRAM && `<a class="glass" href="https://instagram.com/${INSTAGRAM}" target="_blank" rel="noopener">${icons.instagram}@${INSTAGRAM}</a>`,
+    EMAIL && `<a class="glass" href="mailto:${EMAIL}">${icons.mail}${EMAIL}</a>`,
+  ].filter(Boolean);
+  const el = document.getElementById('contactLinks');
+  if (el) el.innerHTML = links.join('');
+  if (wa) document.body.insertAdjacentHTML('beforeend', `<a class="wa-float" href="${wa}" target="_blank" rel="noopener" aria-label="Escríbeme por WhatsApp">${icons.whatsapp}<span>¿Hablamos?</span></a>`);
+}

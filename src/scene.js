@@ -123,7 +123,8 @@ export function initScene(canvas, getActive) {
   const clock = new THREE.Clock();
   const damp = (a, b, k) => a + (b - a) * k;
 
-  renderer.setAnimationLoop(() => {
+  document.addEventListener('visibilitychange', () => { if (document.hidden) renderer.setAnimationLoop(null); else { clock.getDelta(); renderer.setAnimationLoop(loop); } });
+  const loop = () => {
     const dt = Math.min(clock.getDelta(), 0.05);
     const p = poseFor(getActive());
     const k = 1 - Math.pow(0.03, dt);
@@ -164,5 +165,6 @@ export function initScene(canvas, getActive) {
     wireMat.opacity = damp(wireMat.opacity, String(getActive()).startsWith('q') ? 0.12 : mobile ? 0.22 : 0.4, k);
 
     renderer.render(scene, camera);
-  });
+  };
+  renderer.setAnimationLoop(loop);
 }

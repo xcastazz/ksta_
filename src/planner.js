@@ -25,7 +25,7 @@ export function initPlanner(root, onQuote) {
         <div class="pl-quick">${[500000, 1000000, 2000000, 3500000].map((v) => `<button type="button" data-v="${v}">${cop(v)}</button>`).join('')}</div>
         <p class="pl-label">¿Qué es lo que más te interesa?</p>
         <div class="pl-prio">${CAT_ORDER.map((k) => `<button type="button" class="${prio.includes(k) ? 'on' : ''}" data-k="${k}"><i>${icons[CATS[k].icon]}</i>${CATS[k].label}</button>`).join('')}</div>
-        <small class="muted pl-note">Contamos lo que pagarías para empezar: el trabajo completo más el primer mes.</small>
+        <small class="muted pl-note">Aquí sumo lo que pagarías para empezar: el trabajo completo más el primer mes.</small>
       </div>
       <div class="pl-result" id="plResult" aria-live="polite"></div>
     </div>`;
@@ -51,8 +51,8 @@ export function initPlanner(root, onQuote) {
     const key = best ? JSON.stringify(best.pick) : 'none';
     const changed = key !== lastKey; lastKey = key;
     if (!best) {
-      out.innerHTML = `<div class="pl-card vision pl-empty"><b>Con ${cop(budget)} todavía no nos alcanza para algo completo.</b>
-        <p class="muted">Lo más económico que tenemos empieza en <b>${cop(cheapest.start)}</b> (${cheapest.tiers.map((t) => t.name).join(' + ')}).</p>
+      out.innerHTML = `<div class="pl-card vision pl-empty"><b>Con ${cop(budget)} todavía no alcanza para algo completo.</b>
+        <p class="muted">Lo más económico que tengo empieza en <b>${cop(cheapest.start)}</b> (${cheapest.tiers.map((t) => t.name).join(' + ')}).</p>
         <button class="btn btn-ghost" data-set="${cheapest.start}">Usar ${cop(cheapest.start)}</button></div>`;
       out.querySelector('[data-set]').addEventListener('click', (e) => setBudget(+e.currentTarget.dataset.set));
       return;
@@ -62,7 +62,7 @@ export function initPlanner(root, onQuote) {
     const n = Object.keys(best.pick).length;
     out.innerHTML = `
       <div class="pl-card vision ${changed ? 'pop-in' : ''}">
-        <div class="pl-head"><span class="pill">Esto te recomendamos</span>${n > 1 ? `<span class="pill premium">${n} cosas juntas</span>` : ''}</div>
+        <div class="pl-head"><span class="pill">Esto te recomiendo</span>${n > 1 ? `<span class="pill premium">${n} cosas juntas</span>` : ''}</div>
         <div class="pl-tiers">${Object.entries(best.pick).map(([k, t], i) => { const tier = CATS[k].tiers[t]; return `
           <div class="pl-tier" style="--i:${i}"><span class="pl-ic">${icons[CATS[k].icon]}</span>
             <div><small>${CATS[k].label}</small><b>${tier.name}</b><ul>${tier.items.slice(0, 3).map((x) => `<li>${icons.check}${x}</li>`).join('')}</ul></div></div>`; }).join('')}
@@ -95,7 +95,7 @@ export function initPlanner(root, onQuote) {
     out.querySelector('[data-want]').hidden = true;
     box.innerHTML = `
       <div class="pl-detail">
-        <h4>Esto es todo lo que te hacemos</h4>
+        <h4>Esto es todo lo que incluye</h4>
         ${tiers.map(([k, t]) => `<div class="pl-dt"><b>${icons[CATS[k].icon]}${t.name}</b><ul>${t.items.map((x) => `<li>${icons.check}${esc(x)}</li>`).join('')}</ul></div>`).join('')}
         <div class="pl-bill">
           <div><span>Precio del trabajo</span><b>${cop(q.subtotal)}</b></div>
@@ -106,14 +106,14 @@ export function initPlanner(root, onQuote) {
         </div>
       </div>
       <form class="pl-form" novalidate>
-        <h4>¿A quién le escribimos?</h4>
+        <h4>¿A quién le escribo?</h4>
         <div class="pl-fields">
           <label>Tu nombre<input name="name" required maxlength="100" autocomplete="name" /></label>
           <label>WhatsApp<input name="phone" required maxlength="30" inputmode="tel" autocomplete="tel" placeholder="+57 300 000 0000" /></label>
           <label>Correo<input name="email" type="email" required maxlength="150" autocomplete="email" /></label>
           <label>¿Cómo se llama tu negocio?<input name="business" maxlength="120" placeholder="Opcional" /></label>
         </div>
-        <p class="pl-legal muted">Usamos tus datos solo para escribirte sobre tu pedido. No se los damos a nadie (Ley 1581 de 2012).</p>
+        <label class="consent pl-legal"><input type="checkbox" name="consent" /> <span>Acepto que KstaStudio_ use mis datos solo para responderme sobre mi pedido. <a href="/privacidad.html" target="_blank" rel="noopener">Leer el aviso de privacidad</a></span></label>
         <button class="btn btn-lg" type="submit">${icons.send} Enviar mi pedido</button>
         <p class="pl-err" role="alert"></p>
       </form>`;
@@ -123,7 +123,7 @@ export function initPlanner(root, onQuote) {
       e.preventDefault();
       const fd = Object.fromEntries(new FormData(form));
       const err = form.querySelector('.pl-err');
-      if (!fd.name?.trim() || (fd.phone || '').replace(/\D/g, '').length < 7 || !/^\S+@\S+\.\S+$/.test(fd.email || '')) { err.textContent = 'Nos falta tu nombre, tu WhatsApp o tu correo.'; return; }
+      if (!fd.name?.trim() || (fd.phone || '').replace(/\D/g, '').length < 7 || !/^\S+@\S+\.\S+$/.test(fd.email || '') || !fd.consent) { err.textContent = fd.consent ? 'Me falta tu nombre, tu WhatsApp o tu correo.' : 'Marca la casilla de privacidad para poder enviarlo.'; return; }
       const btn = form.querySelector('button'); btn.disabled = true; btn.textContent = 'Enviando…'; err.textContent = '';
       const cats = CAT_ORDER.filter((k) => k in best.pick);
       const tierIds = Object.fromEntries(tiers.map(([k, t]) => [k, t.id]));
@@ -144,7 +144,7 @@ export function initPlanner(root, onQuote) {
         <div class="pl-done">
           <span class="pl-done-badge">${icons.check}</span>
           <h4>¡Listo, ${esc(lead.name.split(' ')[0])}! Tu plan ${esc(planName)} ya quedó pedido.</h4>
-          <p class="muted">Muy pronto te escribimos a tu WhatsApp <b>${esc(lead.phone)}</b> y a <b>${esc(lead.email)}</b> con todos los detalles.</p>
+          <p class="muted">Muy pronto te escribo a tu WhatsApp <b>${esc(lead.phone)}</b> y a <b>${esc(lead.email)}</b> con todos los detalles.</p>
         </div>
         <div id="plBooking">${bookingHTML()}</div>`;
       setupBooking(box.querySelector('#plBooking .booking'), lead, (m) => { const p = box.querySelector('.pl-done p'); if (p) p.textContent = m; });

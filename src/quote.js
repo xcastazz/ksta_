@@ -21,9 +21,9 @@ const DETAILS = {
     intro: 'El logo es como la cara de tu negocio: es lo primero que la gente ve y recuerda.',
     qs: [
       { key: 'logo', q: '¿Tienes logo?', help: 'El logo es el dibujo o las letras que identifican tu negocio.', type: 'single', opts: [
-        ['No tengo logo', 'Te lo creamos desde cero.'],
-        ['Tengo, quiero rediseñarlo', 'Lo arreglamos para que se vea más moderno.'],
-        ['Tengo, solo necesito la identidad', 'Lo usamos tal cual y le damos colores y estilo.'],
+        ['No tengo logo', 'Te lo creo desde cero.'],
+        ['Tengo, quiero rediseñarlo', 'Lo arreglo para que se vea más moderno.'],
+        ['Tengo, solo necesito la identidad', 'Lo uso tal cual y le doy colores y estilo.'],
       ] },
       { key: 'piezas', q: '¿Qué más quieres con tu logo?', help: 'Puedes tocar varias. Cada una suma al precio.', type: 'multi', opts: [
         ['Logo', 'El dibujo o letras de tu negocio.'],
@@ -38,7 +38,7 @@ const DETAILS = {
   web: {
     intro: 'Una página web es como tener tu local abierto en internet todo el día. La gente entra desde el celular, ve lo que vendes y te escribe.',
     qs: [
-      { key: 'tipo', q: '¿Qué quieres que tenga tu página?', help: 'Si no estás seguro, toca la que más se parezca. Nosotros te ayudamos después.', type: 'single', opts: [
+      { key: 'tipo', q: '¿Qué quieres que tenga tu página?', help: 'Si no estás seguro, toca la que más se parezca. Yo te ayudo después.', type: 'single', opts: [
         ['Landing page', 'Una sola página con lo más importante de tu negocio.'],
         ['Web corporativa', 'Varias partes: inicio, quiénes somos, servicios y contacto.'],
         ['Portafolio', 'Para mostrar fotos de lo que has hecho.'],
@@ -55,9 +55,9 @@ const DETAILS = {
         ['Panel administrativo', 'Que tú mismo cambies textos, fotos y precios.'],
       ] },
       { key: 'dominio', q: '¿Ya tienes tu dirección en internet?', help: 'Es el nombre que la gente escribe para encontrarte, por ejemplo: tunegocio.com', type: 'single', opts: [
-        ['Sí, ya tengo', 'La usamos para tu nueva página.'],
-        ['No, necesito uno', 'Te ayudamos a sacarla.'],
-        ['No sé qué es', 'Tranquilo, nosotros nos encargamos.'],
+        ['Sí, ya tengo', 'La uso para tu nueva página.'],
+        ['No, necesito uno', 'Te ayudo a sacarla.'],
+        ['No sé qué es', 'Tranquilo, yo me encargo.'],
       ] },
     ],
   },
@@ -70,7 +70,7 @@ const DETAILS = {
         ['Video publicitario', 'Un video tipo comercial de televisión.'],
         ['Reels para redes', 'Videos cortos para Instagram, TikTok o Facebook.'],
         ['Video institucional', 'Un video contando la historia de tu negocio.'],
-        ['Cobertura de evento', 'Vamos a tu evento y lo grabamos.'],
+        ['Cobertura de evento', 'Voy a tu evento y lo grabo.'],
       ] },
       { key: 'frecuencia', q: '¿Cada cuánto los necesitas?', help: 'Si es cada mes, cada foto o video te sale más barato.', type: 'single', opts: [
         ['Una sola vez', 'Solo esta vez.'],
@@ -82,29 +82,29 @@ const DETAILS = {
   marketing: {
     intro: 'Tener redes no basta: hay que publicar seguido y mostrarse a la gente correcta para que te compren.',
     qs: [
-      { key: 'acciones', q: '¿En qué te ayudamos con tus redes?', help: 'Puedes tocar varias.', type: 'multi', opts: [
-        ['Contenido para redes', 'Te hacemos las publicaciones de Facebook e Instagram.'],
-        ['Campañas en Meta Ads', 'Pagamos anuncios para que te vea gente nueva de tu zona.'],
+      { key: 'acciones', q: '¿En qué te ayudo con tus redes?', help: 'Puedes tocar varias.', type: 'multi', opts: [
+        ['Contenido para redes', 'Te hago las publicaciones de Facebook e Instagram.'],
+        ['Campañas en Meta Ads', 'Pago anuncios para que te vea gente nueva de tu zona.'],
         ['Lanzamiento de marca/producto', 'Un plan para que mucha gente se entere de algo nuevo.'],
         ['Promociones y ventas', 'Diseños para anunciar tus ofertas.'],
-        ['Estrategia completa', 'Te decimos qué hacer y nos encargamos de todo.'],
+        ['Estrategia completa', 'Te digo qué hacer y me encargo de todo.'],
       ] },
       { key: 'pauta', q: '¿Cuánto podrías poner al mes para anuncios?', help: 'Es la plata que se le paga a Facebook para mostrar tus anuncios. Va aparte de nuestro trabajo.', type: 'single', opts: [
-        ['Aún no sé', 'Te aconsejamos cuánto.'], ['Bajo', 'Poquito, para empezar a probar.'], ['Medio', 'Algo más, para crecer.'], ['Alto', 'Bastante, para crecer rápido.'],
+        ['Aún no sé', 'Te aconsejo cuánto.'], ['Bajo', 'Poquito, para empezar a probar.'], ['Medio', 'Algo más, para crecer.'], ['Alto', 'Bastante, para crecer rápido.'],
       ] },
     ],
   },
   print: {
-    intro: 'Lo impreso hace que te vean en la calle. Nosotros lo diseñamos y lo mandamos a imprimir.',
+    intro: 'Lo impreso hace que te vean en la calle. Yo lo diseño y lo mando a imprimir.',
     qs: [
-      { key: 'impresos', q: '¿Qué necesitas imprimir?', help: 'Lo diseñamos, lo imprimimos y te ayudamos a instalarlo.', type: 'multi', opts: [
+      { key: 'impresos', q: '¿Qué necesitas imprimir?', help: 'Lo diseño, lo imprimo y te ayudo a instalarlo.', type: 'multi', opts: [
         ['Letrero / aviso', 'El aviso grande de la entrada de tu local.'],
         ['Afiches', 'Para pegar y anunciar promociones.'],
         ['Pendones / banners', 'Los que se paran en el piso, para ferias o la entrada.'],
         ['Vinilos y adhesivos', 'Para vitrinas, carros o paredes.'],
         ['Señalización', 'Letreros dentro del local (baños, salida, caja).'],
         ['Tarjetas y material promocional', 'Volantes, stickers y tarjetas.'],
-        ['Branding del local', 'Decoramos tu local con tu marca.'],
+        ['Branding del local', 'Decoro tu local con tu marca.'],
       ] },
     ],
   },
@@ -116,14 +116,14 @@ const BUDGET = [['Aún no lo sé', 'Ayúdenme a decidir'], ['Básico', 'Lo justo
 
 const INFO = {
   cats: 'Puedes escoger una sola cosa o varias. Si escoges varias, una sola persona se encarga de todo para que tu página, tu logo y tu publicidad se vean iguales. Eso tiene un costo extra pequeño por la coordinación.',
-  tiers: 'Te dejamos listas las opciones que más recomendamos. Más adelante puedes cambiar lo que quieras.',
+  tiers: 'Te dejo listas las opciones que más recomiendo. Más adelante puedes cambiar lo que quieras.',
   plan: 'Los paquetes juntan varias cosas a mejor precio.',
-  services: 'Por cada cosa que toques te haremos unas preguntas cortas. No te preocupes si no sabes algo: puedes tocar "No sé" y te ayudamos.',
-  template: 'Escoger un diseño ya hecho hace que tu página esté lista más rápido y cueste menos. Le ponemos tu nombre, tus fotos y tus colores.',
-  business: 'Con esto entendemos tu negocio para hacerte algo que de verdad te sirva.',
+  services: 'Por cada cosa que toques te haré unas preguntas cortas. No te preocupes si no sabes algo: puedes tocar "No sé" y te ayudo.',
+  template: 'Escoger un diseño ya hecho hace que tu página esté lista más rápido y cueste menos. Le pongo tu nombre, tus fotos y tus colores.',
+  business: 'Con esto entiendo tu negocio para hacerte algo que de verdad te sirva.',
   style: 'Es como escoger la ropa de tu negocio: ¿cómo quieres que se vea? No hay respuestas malas.',
-  timing: 'Esto nos ayuda a organizarnos. No es un compromiso.',
-  contact: 'Te escribiremos a este WhatsApp con el precio. Tus datos son solo para eso, no se los damos a nadie.',
+  timing: 'Esto me ayuda a organizarme. No es un compromiso.',
+  contact: 'Te escribiré a este WhatsApp con el precio. Tus datos son solo para eso, no se los doy a nadie.',
   summary: 'Revisa que todo esté bien. Si algo no te gusta, toca "Atrás" y lo cambias.',
 };
 
@@ -198,14 +198,14 @@ export function initQuote({ onStep }) {
     }).join('')}</div>`;
 
   const R = {
-    cats: () => head('paso 1', '¡Hola! ¿Qué necesitas?', 'Toca una o varias. ¿Tienes dudas? Tranqui, más adelante te explicamos todo.') + info('cats') + `
+    cats: () => head('paso 1', '¡Hola! ¿Qué necesitas?', 'Toca una o varias. ¿Tienes dudas? Tranqui, más adelante te explico todo.') + info('cats') + `
       <div class="choices big cats">${CAT_ORDER.map((k, i) => {
         const c = CATS[k], cheapest = c.tiers.map((t) => tierPrice(t)).sort((a, b) => fromValue(a) - fromValue(b))[0];
         return `<button type="button" class="choice vision ${state.cats.includes(k) ? 'on' : ''}" data-name="cats" data-val="${k}" data-multi="1" style="--i:${i}">
           <span class="icon">${icons[c.icon]}</span><b>${esc(c.label)}</b><small>${esc(c.desc)}</small><span class="from">desde <b>${priceHTML({ ...cheapest, monthly: cheapest.total ? 0 : cheapest.monthly }, cop)}</b></span><span class="tick corner">${icons.check}</span></button>`;
       }).join('')}${CAT_SOON.map((k) => `<div class="choice vision soon" aria-disabled="true"><span class="icon">${icons[CATS[k].icon]}</span><b>${esc(CATS[k].label)}</b><small>Muy pronto podrás pedirnos esto también.</small><span class="pill">Próximamente</span></div>`).join('')}</div>
       ${CAT_ORDER.length > 1 ? `<div class="combo-meter vision" id="comboMeter">${comboMeter()}</div>` : ''}`,
-    tiers: () => head('tu plan', state.cats.length > 1 ? 'Escoge una de cada una.' : '¿Cuál te late más?', 'Cada opción ya trae lo que más recomendamos. Después cambias lo que quieras, sin lío.') + info('tiers') +
+    tiers: () => head('tu plan', state.cats.length > 1 ? 'Escoge una de cada una.' : '¿Cuál te late más?', 'Cada opción ya trae lo que más recomiendo. Después cambias lo que quieras, sin lío.') + info('tiers') +
       state.cats.map((k) => `<div class="q-block"><h3 class="tier-head"><i>${icons[CATS[k].icon]}</i>${esc(CATS[k].label)}</h3>
         <div class="choices tiers">${CATS[k].tiers.map((t, i) => { const tp = tierPrice(t); return `
           <button type="button" class="choice vision tier ${state.tiers[k] === t.id ? 'on' : ''} ${t.featured ? 'feat' : ''}" data-name="tier:${k}" data-val="${t.id}" data-multi="0" style="--i:${i}">
@@ -218,11 +218,11 @@ export function initQuote({ onStep }) {
             <span class="tier-top"><b>Quiero escoger yo</b></span><small>Prefiero ir escogiendo cada cosa en las siguientes preguntas.</small><span class="tick corner">${icons.check}</span>
           </button>
         </div></div>`).join(''),
-    services: () => head('revisa', '¿Así está bien?', 'Ya te marcamos lo que trae tu plan. Toca para quitar o agregar.') +
+    services: () => head('revisa', '¿Así está bien?', 'Ya te marqué lo que trae tu plan. Toca para quitar o agregar.') +
       info('services') + bigChoice('services', Object.entries(SERVICES).filter(([id]) => ['web', 'branding'].includes(id)).map(([id, s]) => ({ id, ...s })), state.services, true),
     detail: (svc) => head(`// ${SERVICES[svc].label.toLowerCase()}`, SERVICES[svc].label) + info(null, DETAILS[svc].intro) +
       DETAILS[svc].qs.map((d) => `<div class="q-block"><h3>${d.q}${d.type === 'multi' ? ' <span class="pill">varias</span>' : ''}</h3><p class="q-help">${d.help}</p>${choice(`d:${svc}:${d.key}`, d.opts, (state.details[svc] || {})[d.key] ?? (d.type === 'multi' ? [] : null), d.type === 'multi')}</div>`).join(''),
-    template: () => head('ejemplos de páginas', '¿Cuál te enamora más?', 'Toca “Ver cómo se ve” para mirarlo completo. Después le ponemos tu nombre, tus fotos y tus colores.') + info('template') + `
+    template: () => head('ejemplos de páginas', '¿Cuál te enamora más?', 'Toca “Ver cómo se ve” para mirarlo completo. Después le pongo tu nombre, tus fotos y tus colores.') + info('template') + `
       <div class="tpl-grid">${TEMPLATES.map((t, i) => `
         <div class="tpl vision ${state.template === t.id ? 'on' : ''}" data-tpl="${t.id}" style="--i:${i}">
           <div class="tpl-thumb"><iframe src="/templates/${t.id}/index.html" loading="lazy" tabindex="-1" title="${t.name}" aria-hidden="true"></iframe></div>
@@ -235,28 +235,29 @@ export function initQuote({ onStep }) {
         </div>
       </div>
       <p class="q-credit mono muted">Plantillas base por <a href="https://html5up.net" target="_blank" rel="noopener">HTML5 UP</a> (CC BY 3.0).</p>`,
-    business: () => head('tu negocio', 'Cuéntanos de tu negocio, queremos conocerlo.') + info('business') + `
+    business: () => head('tu negocio', 'Cuéntame de tu negocio, quiero conocerlo.') + info('business') + `
       <div class="fields">
         <label>¿Cómo se llama tu negocio? *<input data-f="business.name" value="${esc(state.business.name)}" maxlength="120" placeholder="Ej: Café Aurora" /><small>Tal como quieres que aparezca.</small></label>
         <label>¿Qué vendes o a qué te dedicas? *<input data-f="business.sector" value="${esc(state.business.sector)}" maxlength="120" placeholder="Ej: cafetería de especialidad" /><small>Con tus palabras, por ejemplo: “vendo tortas para cumpleaños”.</small></label>
         <label>Ciudad<input data-f="business.city" value="${esc(state.business.city)}" maxlength="80" /><small>Para mostrarte a la gente de tu zona.</small></label>
         <label>¿Tienes Instagram o Facebook?<input data-f="business.link" value="${esc(state.business.link)}" maxlength="200" placeholder="@tunegocio" /><small>Si tienes, escríbelo. Si no, déjalo vacío.</small></label>
-        <label class="span2">¿Quiénes te compran normalmente?<input data-f="business.audience" value="${esc(state.business.audience)}" maxlength="200" placeholder="Ej: jóvenes de 20 a 35 que trabajan cerca" /><small>Así hacemos algo que le guste a tus clientes.</small></label>
+        <label class="span2">¿Quiénes te compran normalmente?<input data-f="business.audience" value="${esc(state.business.audience)}" maxlength="200" placeholder="Ej: jóvenes de 20 a 35 que trabajan cerca" /><small>Así hago algo que le guste a tus clientes.</small></label>
       </div>`,
     style: () => head('estilo', '¿Qué estilo va contigo?', 'Toca hasta 3. Aquí no hay respuestas malas.') + info('style') +
       choice('style', STYLES, state.style, true) + `
-      <div class="fields one"><label>¿Hay colores o negocios que te gusten?<textarea data-f="business.refs" rows="3" maxlength="600" placeholder="Ej: tonos tierra, me gusta cómo se ve la marca X…">${esc(state.business.refs)}</textarea><small>No es obligatorio, pero nos ayuda mucho.</small></label></div>`,
+      <div class="fields one"><label>¿Hay colores o negocios que te gusten?<textarea data-f="business.refs" rows="3" maxlength="600" placeholder="Ej: tonos tierra, me gusta cómo se ve la marca X…">${esc(state.business.refs)}</textarea><small>No es obligatorio, pero me ayuda mucho.</small></label></div>`,
     timing: () => head('tiempo y plata', '¿Para cuándo y con cuánta plata?') + info('timing') +
       `<div class="q-block"><h3>¿Para cuándo lo necesitas?</h3>${choice('timing', TIMING, state.timing, false)}</div>
        <div class="q-block"><h3>¿Cuánto quieres gastar más o menos?</h3>${choice('budget', BUDGET, state.budget, false)}</div>`,
-    contact: () => head('último pasito', '¿A dónde te mandamos el precio?') + info('contact') + `
+    contact: () => head('último pasito', '¿A dónde te mando el precio?') + info('contact') + `
       <div class="fields">
         <label>Tu nombre *<input data-f="contact.name" value="${esc(state.contact.name)}" maxlength="100" /></label>
-        <label>WhatsApp *<input data-f="contact.phone" value="${esc(state.contact.phone)}" maxlength="30" inputmode="tel" placeholder="+57 300 000 0000" /><small>Aquí te escribimos con el precio.</small></label>
+        <label>WhatsApp *<input data-f="contact.phone" value="${esc(state.contact.phone)}" maxlength="30" inputmode="tel" placeholder="+57 300 000 0000" /><small>Aquí te escribo con el precio.</small></label>
         <label class="span2">Email *<input data-f="contact.email" type="email" value="${esc(state.contact.email)}" maxlength="150" /></label>
         <label class="span2">¿Quieres contarnos algo más?<textarea data-f="contact.notes" rows="3" maxlength="1500">${esc(state.contact.notes)}</textarea></label>
+        <label class="span2 consent"><input type="checkbox" id="qConsent" ${state.contact.consent ? 'checked' : ''} /> <span>Acepto que KstaStudio_ use mis datos solo para responderme sobre mi pedido. <a href="/privacidad.html" target="_blank" rel="noopener">Leer el aviso de privacidad</a></span></label>
       </div>`,
-    summary: () => head('casi, casi', 'Mira, esto es lo que nos pediste.') + info('summary') +
+    summary: () => head('casi, casi', 'Mira, esto es lo que me pediste.') + info('summary') +
       `<div class="summary vision">${summaryLines().map(([k, v]) => `<div><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('')}</div>`,
   };
 
@@ -265,7 +266,7 @@ export function initQuote({ onStep }) {
   function comboMeter() {
     const n = state.cats.length, off = COMBO[n] || 0;
     return `<div class="cm-steps">${[1, 2, 3].map((i) => `<span class="${n >= i ? 'on' : ''}">${i}</span>`).join('<i></i>')}</div>
-      <p>${n === 0 ? 'Toca al menos una opción.' : n === 1 ? 'Si quieres, puedes tocar otra opción más.' : n === 2 ? 'Escogiste 2 cosas: una sola persona se encarga de todo (+15% por la coordinación).' : 'Escogiste las 3: nos encargamos de todo tu negocio (+25% por la coordinación).'}</p>
+      <p>${n === 0 ? 'Toca al menos una opción.' : n === 1 ? 'Si quieres, puedes tocar otra opción más.' : n === 2 ? 'Escogiste 2 cosas: una sola persona se encarga de todo (+15% por la coordinación).' : 'Escogiste las 3: me encargo de todo tu negocio (+25% por la coordinación).'}</p>
       ${off ? `<span class="cm-badge">Premium</span>` : ''}`;
   }
   // When leaving the plan step: chosen tiers → services + pre-filled answers
@@ -318,11 +319,11 @@ export function initQuote({ onStep }) {
       const svc = s.split(':')[1];
       return need(DETAILS[svc].qs.every((d) => { const v = (state.details[svc] || {})[d.key]; return d.type === 'multi' ? v?.length : v; }), 'Te faltan unas preguntitas');
     }
-    if (s === 'business') return need(state.business.name && state.business.sector, 'Cuéntanos cómo se llama tu negocio y a qué se dedica');
+    if (s === 'business') return need(state.business.name && state.business.sector, 'Cuéntame cómo se llama tu negocio y a qué se dedica');
     if (s === 'timing') return need(state.timing && state.budget, 'Te falta decirnos para cuándo y con cuánta plata');
     if (s === 'contact') {
       const c = state.contact;
-      return need(c.name && (c.phone || '').replace(/\D/g, '').length >= 7 && /^\S+@\S+\.\S+$/.test(c.email || ''), 'Revisa tu nombre, tu WhatsApp y tu correo, porfa');
+      return need(c.name && (c.phone || '').replace(/\D/g, '').length >= 7 && /^\S+@\S+\.\S+$/.test(c.email || ''), 'Revisa tu nombre, tu WhatsApp y tu correo, porfa') && need(state.contact.consent, 'Marca la casilla de privacidad para poder enviarlo');
     }
     return true;
   }
@@ -399,7 +400,7 @@ export function initQuote({ onStep }) {
   // Move one question; at the edges, move one whole step
   function nextBlock() {
     if (bIdx < blocks.length - 1) {
-      if (!blockAnswered(blocks[bIdx])) { shakeBlock(); return toast('Respóndenos esta y seguimos'); }
+      if (!blockAnswered(blocks[bIdx])) { shakeBlock(); return toast('Respóndeme esta y seguimos'); }
       return setBlock(bIdx + 1);
     }
     go(1);
@@ -535,17 +536,17 @@ export function initQuote({ onStep }) {
     const first = esc(state.contact.name.split(' ')[0]);
     swap(`
       <div class="done-badge">${icons.check}</div>
-      <p class="eyebrow">¡nos llegó!</p>
-      <h2>¡Listo, ${first}! Ya estamos en esas.</h2>
-      <p class="q-sub">Ya tenemos tu pedido de <b>${esc(planLabel())}</b>. Prepárate, que muy pronto te escribimos al WhatsApp y al correo con tu precio y todo explicado.</p>
+      <p class="eyebrow">¡me llegó!</p>
+      <h2>¡Listo, ${first}! Ya estoy en esas.</h2>
+      <p class="q-sub">Ya tengo tu pedido de <b>${esc(planLabel())}</b>. Prepárate, que muy pronto te escribo al WhatsApp y al correo con tu precio y todo explicado.</p>
       <div class="done-send vision">
         <div><span class="ds-icon">${icons.whatsapp}</span><span><small>WhatsApp</small><b>${esc(state.contact.phone)}</b></span></div>
         <div><span class="ds-icon">${icons.mail}</span><span><small>Correo electrónico</small><b>${esc(state.contact.email)}</b></span></div>
       </div>
       <div class="done-steps">
-        <div class="vision"><span>01</span><b>¡Nos llegó!</b><small>Ya lo estamos mirando.</small></div>
-        <div class="vision"><span>02</span><b>Hacemos cuentas</b><small>Miramos lo que necesitas y armamos tu precio.</small></div>
-        <div class="vision"><span>03</span><b>Te escribimos</b><small>Por WhatsApp y correo, con todo clarito.</small></div>
+        <div class="vision"><span>01</span><b>¡Me llegó!</b><small>Ya lo estoy mirando.</small></div>
+        <div class="vision"><span>02</span><b>Hago cuentas</b><small>Miro lo que necesitas y armo tu precio.</small></div>
+        <div class="vision"><span>03</span><b>Te escribo</b><small>Por WhatsApp y correo, con todo clarito.</small></div>
       </div>
       <div id="booking">${bookingHTML()}</div>
       <button class="btn btn-ghost" data-close>Volver a la página</button>`, 1, 'done');
@@ -556,13 +557,14 @@ export function initQuote({ onStep }) {
   }
 
   stage.addEventListener('click', (e) => { if (e.target.closest('[data-close]')) close(); });
+  stage.addEventListener('change', (e) => { if (e.target.id === 'qConsent') state.contact.consent = e.target.checked; });
 
   // ---------- motion-graphics intro ----------
   const INTRO = [
     { icon: 'target', sats: ['code', 'rocket', 'building'], t: 'Toca lo que necesitas', d: 'Una página, un logo o las dos. Solo tocas y ya.' },
-    { icon: 'list', sats: ['brand', 'code', 'video'], t: 'Preguntas facilitas', d: 'Todo explicado en palabras normales. ¿No sabes algo? Tranqui, te ayudamos.' },
-    { icon: 'palette', sats: ['images', 'code', 'sparkles'], t: 'Cuéntanos tu estilo', d: 'Mira ejemplos de páginas y dinos cómo te sueñas tu negocio.' },
-    { icon: 'handshake', sats: ['whatsapp', 'chat', 'calendar'], t: 'Te escribimos', d: 'Te mandamos el precio por WhatsApp. Preguntar es gratis, de verdad.' },
+    { icon: 'list', sats: ['brand', 'code', 'video'], t: 'Preguntas facilitas', d: 'Todo explicado en palabras normales. ¿No sabes algo? Tranqui, te ayudo.' },
+    { icon: 'palette', sats: ['images', 'code', 'sparkles'], t: 'Cuéntame tu estilo', d: 'Mira ejemplos de páginas y dime cómo te sueñas tu negocio.' },
+    { icon: 'handshake', sats: ['whatsapp', 'chat', 'calendar'], t: 'Te escribo', d: 'Te mando el precio por WhatsApp. Preguntar es gratis, de verdad.' },
   ];
   const SCENE_MS = 3200;
   let introTimer = null, introIdx = 0;
