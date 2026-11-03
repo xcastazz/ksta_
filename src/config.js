@@ -1,8 +1,8 @@
 // Número de WhatsApp que recibe las cotizaciones (código de país + número, sin + ni espacios). Ej: 573001234567
-export const WHATSAPP_NUMBER = '000000000';
+export const WHATSAPP_NUMBER = '573116390334';
 
 // Correo e Instagram que se muestran en la página. Mientras sigan vacíos, esos botones no aparecen.
-export const EMAIL = '';
+export const EMAIL = 'jc.casta00@hotmail.com';
 export const INSTAGRAM = ''; // solo el usuario, sin @ (ej: kstastudio_)
 
 // true cuando ya pusiste tu número real arriba
