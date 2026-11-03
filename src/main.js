@@ -9,8 +9,8 @@ import { WHATSAPP_NUMBER } from './config.js';
 
 // Render services & packages
 document.getElementById('services').innerHTML = services.map((s, i) => `
-  <article class="service glass reveal ${s.icon === 'code' ? '' : 'soon'}" style="--d:${i * 90}ms">
-    <div class="icon">${icons[s.icon]}</div>${s.icon === 'code' ? '<span class="soon-tag on">Disponible</span>' : '<span class="soon-tag">Próximamente</span>'}
+  <article class="service glass reveal ${['code', 'brand'].includes(s.icon) ? '' : 'soon'}" style="--d:${i * 90}ms">
+    <div class="icon">${icons[s.icon]}</div>${['code', 'brand'].includes(s.icon) ? '<span class="soon-tag on">Disponible</span>' : '<span class="soon-tag">Próximamente</span>'}
     <h3>${s.title}</h3>
     <ul>${s.items.map((it) => `<li>${it}</li>`).join('')}</ul>
   </article>`).join('');
@@ -25,11 +25,11 @@ function renderPlans(active = 'web') {
     const mid = CAT_ORDER.map((k) => CATS[k].tiers.find((t) => t.featured));
     const sum = mid.reduce((s, t) => s + tierPrice(t).total, 0);
     body = `<div class="combo-grid">
-      ${[[2, 'Dos cosas juntas', 'Por ejemplo, página web y logo', 'Una sola persona se encarga de que todo combine.'], [3, 'Todo junto', 'Página, logo y publicidad', 'Nos encargamos de todo tu negocio, de principio a fin.']].map(([n, name, sub, ex], i) => `
+      ${[[2, 'Dos cosas juntas', 'Por ejemplo, página web y logo', 'Una sola persona se encarga de que todo combine.'], [3, 'Todo junto', 'Página, logo y publicidad', 'Nos encargamos de todo tu negocio, de principio a fin.']].filter(([n]) => n <= CAT_ORDER.length).map(([n, name, sub, ex], i) => `
         <article class="package glass reveal ${n === 3 ? 'featured' : ''}" style="--d:${i * 120}ms">
           <div class="package-top"><div class="icon">${icons[n === 3 ? 'sparkles' : 'layers']}</div><span class="tag">Premium</span></div>
           <h3>${name}</h3><p class="muted">${sub}. ${ex}</p>
-          ${n === 3 ? `<p class="combo-example">Ej: ${mid.map((t) => t.name).join(' + ')}<br><b>${cop(sum * (1 + COMBO[3]))}</b> con la coordinación incluida</p>` : ''}
+          ${n === CAT_ORDER.length ? `<p class="combo-example">Ej: ${mid.map((t) => t.name).join(' + ')}<br><b>${cop(sum * (1 + COMBO[n]))}</b> con la coordinación incluida</p>` : ''}
           <a href="#contacto" class="btn ${n === 3 ? '' : 'btn-ghost'}" data-pkg="combo">Quiero varias cosas</a>
         </article>`).join('')}
     </div>`;

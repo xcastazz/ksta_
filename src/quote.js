@@ -219,7 +219,7 @@ export function initQuote({ onStep }) {
           </button>
         </div></div>`).join(''),
     services: () => head('revisa', '¿Esto es lo que necesitas?', 'Ya marcamos lo que trae tu plan. Toca para agregar o quitar.') +
-      info('services') + bigChoice('services', Object.entries(SERVICES).filter(([id]) => id === 'web').map(([id, s]) => ({ id, ...s })), state.services, true),
+      info('services') + bigChoice('services', Object.entries(SERVICES).filter(([id]) => ['web', 'branding'].includes(id)).map(([id, s]) => ({ id, ...s })), state.services, true),
     detail: (svc) => head(`// ${SERVICES[svc].label.toLowerCase()}`, SERVICES[svc].label) + info(null, DETAILS[svc].intro) +
       DETAILS[svc].qs.map((d) => `<div class="q-block"><h3>${d.q}${d.type === 'multi' ? ' <span class="pill">varias</span>' : ''}</h3><p class="q-help">${d.help}</p>${choice(`d:${svc}:${d.key}`, d.opts, (state.details[svc] || {})[d.key] ?? (d.type === 'multi' ? [] : null), d.type === 'multi')}</div>`).join(''),
     template: () => head('ejemplos de páginas', '¿Cuál de estos diseños te gusta más?', 'Toca “Ver cómo se ve” para mirarlo completo. Después le ponemos tu nombre, tus fotos y tus colores.') + info('template') + `

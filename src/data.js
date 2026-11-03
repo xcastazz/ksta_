@@ -21,7 +21,7 @@ const allServices = [
   },
 ];
 // Páginas web primero (lo que ya ofrecemos); el resto sale como 'Próximamente'
-export const services = [...allServices.filter((s) => s.icon === 'code'), ...allServices.filter((s) => s.icon !== 'code')];
+export const services = [...allServices.filter((s) => ['code', 'brand'].includes(s.icon)), ...allServices.filter((s) => !['code', 'brand'].includes(s.icon))];
 
 export const packages = [
   {

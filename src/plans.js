@@ -56,8 +56,8 @@ export const CATS = {
   },
 };
 
-export const CAT_ORDER = ['web']; // lo que ya ofrecemos
-export const CAT_SOON = ['diseno', 'publicidad']; // próximamente
+export const CAT_ORDER = ['web', 'diseno']; // lo que ya ofrecemos
+export const CAT_SOON = ['publicidad']; // próximamente
 export const COMBO = { 1: 0, 2: 0.15, 3: 0.25 }; // recargo de gestión integral // descuento por cantidad de categorías
 
 export const findTier = (id) => {
