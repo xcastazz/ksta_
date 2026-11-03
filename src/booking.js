@@ -10,11 +10,11 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', 
 /** Booking widget markup (shared by the quote wizard and the budget planner). */
 export const bookingHTML = () => `
   <section class="booking vision">
-    <div class="bk-head"><span class="bk-logo">${icons.teams}</span><div><b>Agenda una asesoría gratis por Google Meet</b><small>${MEETING.durationMin} minutos para resolver tus dudas y revisar tu plan con un asesor. Hora de Colombia.</small></div></div>
+    <div class="bk-head"><span class="bk-logo">${icons.teams}</span><div><b>¿Quieres hablar con nosotros por videollamada? Es gratis</b><small>${MEETING.durationMin} minutos para resolver tus dudas. Te mandamos un enlace y solo tienes que tocarlo para entrar. Hora de Colombia.</small></div></div>
     <div class="bk-days" id="bkDays"><p class="muted small">Cargando horarios…</p></div>
     <div class="bk-hours" id="bkHours"></div>
-    <label class="bk-topic">¿Algo puntual que quieras revisar? <input id="bkTopic" maxlength="300" placeholder="Opcional" /></label>
-    <button class="btn" id="bkGo" disabled>${icons.teams} Agendar asesoría</button>
+    <label class="bk-topic">¿Quieres preguntarnos algo en especial? <input id="bkTopic" maxlength="300" placeholder="Opcional" /></label>
+    <button class="btn" id="bkGo" disabled>${icons.teams} Apartar mi cita</button>
   </section>`;
 // Slot as an absolute instant in Colombia time (UTC-5, no DST)
 const slotISO = (d, h) => `${d}T${String(h).padStart(2, '0')}:00:00-05:00`;
@@ -37,7 +37,7 @@ export async function setupBooking(box, lead, toast) {
     if (free.length) days.push([ds, free]);
   }
   let day = null, hour = null;
-  if (!days.length) { daysEl.innerHTML = '<p class="muted small">No hay horarios disponibles por ahora. Un asesor te escribirá para coordinar.</p>'; btn.remove(); return; }
+  if (!days.length) { daysEl.innerHTML = '<p class="muted small">Por ahora no hay horas libres. Te escribimos para buscar una que te sirva.</p>'; btn.remove(); return; }
   const drawHours = () => {
     const free = (days.find(([d]) => d === day) || [, []])[1];
     hoursEl.innerHTML = free.map((h) => `<button type="button" class="${h === hour ? 'on' : ''}" data-h="${h}">${prettyHour(h)}</button>`).join('');
@@ -53,7 +53,7 @@ export async function setupBooking(box, lead, toast) {
 
   btn.addEventListener('click', async () => {
     if (!day || hour == null) return;
-    btn.disabled = true; btn.textContent = 'Agendando…';
+    btn.disabled = true; btn.textContent = 'Apartando…';
     const { error } = await supabase.from('meetings').insert({
       lead_id: lead.id, starts_at: slotISO(day, hour), duration_min: MEETING.durationMin,
       name: lead.name, email: lead.email, phone: lead.phone, topic: box.querySelector('#bkTopic').value.trim() || null,
@@ -61,13 +61,13 @@ export async function setupBooking(box, lead, toast) {
     if (error) {
       console.error(error);
       toast(error.code === '23505' ? 'Ese horario acaba de ocuparse. Elige otro.' : 'No pudimos agendar. Intenta de nuevo.');
-      btn.disabled = false; btn.innerHTML = `${icons.teams} Agendar asesoría`;
+      btn.disabled = false; btn.innerHTML = `${icons.teams} Apartar mi cita`;
       if (error.code === '23505') setupBooking(box, lead, toast);
       return;
     }
     box.classList.add('booked');
     box.innerHTML = `<div class="bk-done"><span class="bk-logo">${icons.teams}</span>
-      <div><b>¡Asesoría agendada!</b><p>${prettyDay(day)} a las ${prettyHour(hour)} (hora de Colombia) por Google Meet. Te enviaremos el enlace de la reunión a <b>${esc(lead.email)}</b> y a tu WhatsApp.</p></div></div>`;
+      <div><b>¡Listo, tu cita quedó apartada!</b><p>${prettyDay(day)} a las ${prettyHour(hour)} (hora de Colombia), por videollamada. Te mandamos el enlace para entrar a <b>${esc(lead.email)}</b> y a tu WhatsApp.</p></div></div>`;
     dispatchEvent(new Event('scene:kick'));
   });
 }

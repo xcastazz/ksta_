@@ -89,34 +89,34 @@ export function quotePDF(lead) {
   };
   y += 4;
   row('Subtotal', cop(q.subtotal));
-  if (q.discount) row(`Descuento paquete (${Math.round(q.discountRate * 100)}%)`, '- ' + cop(q.discount), false, [22, 140, 80]);
-  if (q.combo) row(`Gestión integral de combo (+${Math.round(q.comboRate * 100)}%)`, '+ ' + cop(q.combo));
-  if (q.rush) row(`Entrega prioritaria (+${Math.round(q.rushRate * 100)}%)`, '+ ' + cop(q.rush));
+  if (q.discount) row(`Descuento (${Math.round(q.discountRate * 100)}%)`, '- ' + cop(q.discount), false, [22, 140, 80]);
+  if (q.combo) row(`Coordinación de todo (+${Math.round(q.comboRate * 100)}%)`, '+ ' + cop(q.combo));
+  if (q.rush) row(`Entrega rápida (+${Math.round(q.rushRate * 100)}%)`, '+ ' + cop(q.rush));
   y += 4;
   doc.setFillColor(...PURPLE); doc.roundedRect(tx - 14, y - 4, W - M - tx + 14, 44, 10, 10, 'F');
   doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(230, 220, 255);
-  doc.text('TOTAL INVERSIÓN', tx, y + 13);
+  doc.text('TOTAL A PAGAR', tx, y + 13);
   doc.setFont('helvetica', 'bold'); doc.setFontSize(18); doc.setTextColor(255, 255, 255);
   doc.text(cop(q.total), W - M - 14, y + 30, { align: 'right' });
   y += 58;
-  if (q.maintenance) row(`Mantenimiento mensual (${Math.round(q.maintenanceRate * 100)}%)`, cop(q.maintenance) + ' /mes', false, PURPLE);
-  if (q.services) row('Servicios mensuales', cop(q.services) + ' /mes', false, PURPLE);
-  if (q.monthly) row('Total mensual', cop(q.monthly) + ' /mes', true, PURPLE);
-  row(`Anticipo para iniciar (${Math.round(PRICES.anticipo * 100)}%)`, cop(q.deposit), true);
+  if (q.maintenance) row('Mantenimiento cada mes', cop(q.maintenance) + ' /mes', false, PURPLE);
+  if (q.services) row('Redes y contenido cada mes', cop(q.services) + ' /mes', false, PURPLE);
+  if (q.monthly) row('Total cada mes', cop(q.monthly) + ' /mes', true, PURPLE);
+  row('Para empezar pagas', cop(q.deposit), true);
 
   // ---- Terms
   ensure(110, false);
   y += 10;
   doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(...INK);
-  doc.text('Condiciones', M, y); y += 14;
+  doc.text('Bueno saber', M, y); y += 14;
   doc.setFont('helvetica', 'normal'); doc.setFontSize(8.8); doc.setTextColor(...MUTED);
   const terms = [
-    `Valores en pesos colombianos (COP), no incluyen IVA. Cotización válida por ${PRICES.vigenciaDias} días.`,
-    `Forma de pago: ${Math.round(PRICES.anticipo * 100)}% de anticipo para iniciar y el saldo contra entrega.`,
-    'Incluye hasta 2 rondas de ajustes por pieza. Cambios adicionales se cotizan aparte.',
-    `Mantenimiento mensual (${Math.round(PRICES.mantenimiento * 100)}% del valor total): soporte, actualizaciones, copias de seguridad y ajustes menores.`,
-    'La pauta publicitaria (lo que se paga a Meta por los anuncios) no está incluida en estos valores.',
-    'Impresión y producción física sujetas a medidas y materiales finales.',
+    `Precios en pesos colombianos, sin IVA. Este precio se mantiene por ${PRICES.vigenciaDias} días.`,
+    'Pagas la mitad para empezar y la otra mitad cuando te entreguemos.',
+    'Puedes pedirnos cambios 2 veces por cada cosa. Si quieres más cambios, te decimos cuánto cuestan.',
+    'El pago de cada mes es para mantener todo funcionando: te ayudamos si algo falla, hacemos copias de seguridad y cambios pequeños.',
+    'La plata que se le paga a Facebook e Instagram para mostrar tus anuncios va aparte.',
+    'El precio de lo impreso puede cambiar según el tamaño y el material.',
   ];
   terms.forEach((t) => { const l = doc.splitTextToSize('•  ' + t, W - M * 2); doc.text(l, M, y); y += l.length * 12; });
 

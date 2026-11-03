@@ -17,15 +17,15 @@ export function initPlanner(root, onQuote) {
   root.innerHTML = `
     <div class="pl-grid">
       <div class="pl-controls vision">
-        <p class="eyebrow">// tu presupuesto</p>
-        <label class="pl-label" for="plRange">¿Cuánto quieres invertir para empezar?</label>
+        <p class="eyebrow">// tu dinero</p>
+        <label class="pl-label" for="plRange">¿Cuánta plata tienes para empezar?</label>
         <div class="pl-amount"><span>$</span><input id="plInput" inputmode="numeric" value="${budget.toLocaleString('es-CO')}" aria-label="Presupuesto en pesos" /><small>COP</small></div>
         <input type="range" id="plRange" min="${MIN}" max="${MAX}" step="${STEP}" value="${budget}" />
         <div class="pl-ticks"><span>${cop(MIN)}</span><span>${cop(MAX)}+</span></div>
         <div class="pl-quick">${[500000, 1000000, 2000000, 3500000].map((v) => `<button type="button" data-v="${v}">${cop(v)}</button>`).join('')}</div>
-        <p class="pl-label">¿Qué es lo más importante para ti?</p>
+        <p class="pl-label">¿Qué es lo que más te interesa?</p>
         <div class="pl-prio">${CAT_ORDER.map((k) => `<button type="button" class="${prio.includes(k) ? 'on' : ''}" data-k="${k}"><i>${icons[CATS[k].icon]}</i>${CATS[k].label}</button>`).join('')}</div>
-        <small class="muted pl-note">Calculamos con lo que pagas para arrancar: el valor del proyecto más el primer mes de servicios.</small>
+        <small class="muted pl-note">Contamos lo que pagarías para empezar: el trabajo completo más el primer mes.</small>
       </div>
       <div class="pl-result" id="plResult" aria-live="polite"></div>
     </div>`;
@@ -51,8 +51,8 @@ export function initPlanner(root, onQuote) {
     const key = best ? JSON.stringify(best.pick) : 'none';
     const changed = key !== lastKey; lastKey = key;
     if (!best) {
-      out.innerHTML = `<div class="pl-card vision pl-empty"><b>Con ${cop(budget)} aún no alcanzamos un plan completo.</b>
-        <p class="muted">El plan más accesible arranca desde <b>${cop(cheapest.start)}</b> (${cheapest.tiers.map((t) => t.name).join(' + ')}).</p>
+      out.innerHTML = `<div class="pl-card vision pl-empty"><b>Con ${cop(budget)} todavía no nos alcanza para algo completo.</b>
+        <p class="muted">Lo más económico que tenemos empieza en <b>${cop(cheapest.start)}</b> (${cheapest.tiers.map((t) => t.name).join(' + ')}).</p>
         <button class="btn btn-ghost" data-set="${cheapest.start}">Usar ${cop(cheapest.start)}</button></div>`;
       out.querySelector('[data-set]').addEventListener('click', (e) => setBudget(+e.currentTarget.dataset.set));
       return;
@@ -62,21 +62,21 @@ export function initPlanner(root, onQuote) {
     const n = Object.keys(best.pick).length;
     out.innerHTML = `
       <div class="pl-card vision ${changed ? 'pop-in' : ''}">
-        <div class="pl-head"><span class="pill">Tu plan recomendado</span>${n > 1 ? `<span class="pill premium">Combo ${n === 3 ? 'Total' : 'Dúo'} Premium</span>` : ''}</div>
+        <div class="pl-head"><span class="pill">Esto te recomendamos</span>${n > 1 ? `<span class="pill premium">${n} cosas juntas</span>` : ''}</div>
         <div class="pl-tiers">${Object.entries(best.pick).map(([k, t], i) => { const tier = CATS[k].tiers[t]; return `
           <div class="pl-tier" style="--i:${i}"><span class="pl-ic">${icons[CATS[k].icon]}</span>
             <div><small>${CATS[k].label}</small><b>${tier.name}</b><ul>${tier.items.slice(0, 3).map((x) => `<li>${icons.check}${x}</li>`).join('')}</ul></div></div>`; }).join('')}
         </div>
         <div class="pl-meter"><span class="pl-fill" style="width:${used}%"></span></div>
         <div class="pl-sum">
-          <div><small>Para arrancar</small><b class="pl-total">${cop(shown)}</b></div>
-          <div><small>${left >= 0 ? 'Te sobran' : 'Te faltan'}</small><b class="${left >= 0 ? 'ok' : ''}">${cop(Math.abs(left))}</b></div>
-          ${best.q.monthly ? `<div><small>Luego, cada mes</small><b>${cop(best.q.monthly)}</b></div>` : ''}
+          <div><small>Pagas para empezar</small><b class="pl-total">${cop(shown)}</b></div>
+          <div><small>${left >= 0 ? 'Te sobra' : 'Te falta'}</small><b class="${left >= 0 ? 'ok' : ''}">${cop(Math.abs(left))}</b></div>
+          ${best.q.monthly ? `<div><small>Después, cada mes</small><b>${cop(best.q.monthly)}</b></div>` : ''}
         </div>
-        <div class="pl-ctas"><button class="btn btn-lg pl-go" data-want>Quiero este plan →</button><button class="pl-link" data-go>Personalizarlo en el cotizador</button></div>
+        <div class="pl-ctas"><button class="btn btn-lg pl-go" data-want>¡Quiero esto! →</button><button class="pl-link" data-go>Prefiero cambiar algunas cosas</button></div>
         <div class="pl-order" id="plOrder" hidden></div>
       </div>
-      ${up ? `<div class="pl-up vision ${changed ? 'pop-in' : ''}"><span class="pl-ic">${icons.bolt}</span><p>Con <b>${cop(up.start)}</b> tendrías <b>${up.tiers.map((t) => t.name).join(' + ')}</b>.</p><button class="btn btn-sm btn-ghost" data-set="${up.start}">Ver</button></div>` : ''}`;
+      ${up ? `<div class="pl-up vision ${changed ? 'pop-in' : ''}"><span class="pl-ic">${icons.bolt}</span><p>Con <b>${cop(up.start)}</b> podrías tener <b>${up.tiers.map((t) => t.name).join(' + ')}</b>.</p><button class="btn btn-sm btn-ghost" data-set="${up.start}">Ver</button></div>` : ''}`;
     countTo(out.querySelector('.pl-total'), best.start);
     out.querySelector('[data-go]').addEventListener('click', () => {
       const tiers = {}; Object.entries(best.pick).forEach(([k, t]) => { tiers[k] = CATS[k].tiers[t].id; });
@@ -95,26 +95,26 @@ export function initPlanner(root, onQuote) {
     out.querySelector('[data-want]').hidden = true;
     box.innerHTML = `
       <div class="pl-detail">
-        <h4>Esto es lo que incluye tu plan</h4>
+        <h4>Esto es todo lo que te hacemos</h4>
         ${tiers.map(([k, t]) => `<div class="pl-dt"><b>${icons[CATS[k].icon]}${t.name}</b><ul>${t.items.map((x) => `<li>${icons.check}${esc(x)}</li>`).join('')}</ul></div>`).join('')}
         <div class="pl-bill">
-          <div><span>Valor del proyecto</span><b>${cop(q.subtotal)}</b></div>
-          ${q.combo ? `<div><span>Gestión integral combo (+${Math.round(q.comboRate * 100)}%)</span><b>+ ${cop(q.combo)}</b></div>` : ''}
-          <div class="tot"><span>Total del proyecto</span><b>${cop(q.total)}</b></div>
-          ${q.monthly ? `<div><span>Mensualidad (mantenimiento${q.services ? ' y servicios' : ''})</span><b>${cop(q.monthly)} /mes</b></div>` : ''}
-          <div><span>Anticipo para iniciar (50%)</span><b>${cop(q.deposit)}</b></div>
+          <div><span>Precio del trabajo</span><b>${cop(q.subtotal)}</b></div>
+          ${q.combo ? `<div><span>Coordinación de todo (+${Math.round(q.comboRate * 100)}%)</span><b>+ ${cop(q.combo)}</b></div>` : ''}
+          <div class="tot"><span>Total a pagar</span><b>${cop(q.total)}</b></div>
+          ${q.monthly ? `<div><span>Cada mes (para mantener todo funcionando${q.services ? ' y tus redes' : ''})</span><b>${cop(q.monthly)} /mes</b></div>` : ''}
+          <div><span>Para empezar pagas la mitad</span><b>${cop(q.deposit)}</b></div>
         </div>
       </div>
       <form class="pl-form" novalidate>
-        <h4>¿A quién se lo enviamos?</h4>
+        <h4>¿A quién le escribimos?</h4>
         <div class="pl-fields">
           <label>Tu nombre<input name="name" required maxlength="100" autocomplete="name" /></label>
           <label>WhatsApp<input name="phone" required maxlength="30" inputmode="tel" autocomplete="tel" placeholder="+57 300 000 0000" /></label>
           <label>Correo<input name="email" type="email" required maxlength="150" autocomplete="email" /></label>
-          <label>Nombre de tu negocio<input name="business" maxlength="120" placeholder="Opcional" /></label>
+          <label>¿Cómo se llama tu negocio?<input name="business" maxlength="120" placeholder="Opcional" /></label>
         </div>
-        <p class="pl-legal muted">Al enviar aceptas que KstaStudio_ use estos datos para contactarte y enviarte tu propuesta (Ley 1581 de 2012).</p>
-        <button class="btn btn-lg" type="submit">${icons.send} Solicitar mi plan</button>
+        <p class="pl-legal muted">Usamos tus datos solo para escribirte sobre tu pedido. No se los damos a nadie (Ley 1581 de 2012).</p>
+        <button class="btn btn-lg" type="submit">${icons.send} Enviar mi pedido</button>
         <p class="pl-err" role="alert"></p>
       </form>`;
     box.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -123,7 +123,7 @@ export function initPlanner(root, onQuote) {
       e.preventDefault();
       const fd = Object.fromEntries(new FormData(form));
       const err = form.querySelector('.pl-err');
-      if (!fd.name?.trim() || (fd.phone || '').replace(/\D/g, '').length < 7 || !/^\S+@\S+\.\S+$/.test(fd.email || '')) { err.textContent = 'Completa tu nombre, un WhatsApp válido y tu correo.'; return; }
+      if (!fd.name?.trim() || (fd.phone || '').replace(/\D/g, '').length < 7 || !/^\S+@\S+\.\S+$/.test(fd.email || '')) { err.textContent = 'Nos falta tu nombre, tu WhatsApp o tu correo.'; return; }
       const btn = form.querySelector('button'); btn.disabled = true; btn.textContent = 'Enviando…'; err.textContent = '';
       const cats = CAT_ORDER.filter((k) => k in best.pick);
       const tierIds = Object.fromEntries(tiers.map(([k, t]) => [k, t.id]));
@@ -139,12 +139,12 @@ export function initPlanner(root, onQuote) {
         quote: q, quote_total: q.total,
       };
       const { error } = await supabase.from('leads').insert(lead);
-      if (error) { console.error(error); err.textContent = 'No pudimos enviar tu solicitud. Intenta de nuevo.'; btn.disabled = false; btn.innerHTML = `${icons.send} Solicitar mi plan`; return; }
+      if (error) { console.error(error); err.textContent = 'Algo falló al enviar. Inténtalo otra vez, por favor.'; btn.disabled = false; btn.innerHTML = `${icons.send} Enviar mi pedido`; return; }
       box.innerHTML = `
         <div class="pl-done">
           <span class="pl-done-badge">${icons.check}</span>
-          <h4>¡Listo, ${esc(lead.name.split(' ')[0])}! Tu plan ${esc(planName)} quedó solicitado.</h4>
-          <p class="muted">Te enviaremos la propuesta con el detalle a tu WhatsApp <b>${esc(lead.phone)}</b> y a <b>${esc(lead.email)}</b> apenas nuestros asesores sean notificados.</p>
+          <h4>¡Listo, ${esc(lead.name.split(' ')[0])}! Tu plan ${esc(planName)} ya está pedido.</h4>
+          <p class="muted">Muy pronto te escribimos a tu WhatsApp <b>${esc(lead.phone)}</b> y a <b>${esc(lead.email)}</b> con todos los detalles.</p>
         </div>
         <div id="plBooking">${bookingHTML()}</div>`;
       setupBooking(box.querySelector('#plBooking .booking'), lead, (m) => { const p = box.querySelector('.pl-done p'); if (p) p.textContent = m; });

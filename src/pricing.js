@@ -74,7 +74,9 @@ export const PRICES = {
   vigenciaDias: 15,
 };
 
-const SVC_NAMES = { branding: 'Branding e identidad', web: 'Web y software', audiovisual: 'Fotografía y video', marketing: 'Marketing digital', print: 'Publicidad física' };
+import { plain } from './plain.js';
+
+const SVC_NAMES = { branding: 'Logo e imagen', web: 'Página web', audiovisual: 'Fotos y videos', marketing: 'Publicidad en redes', print: 'Avisos e impresos' };
 
 export const cop = (n) => '$' + Math.round(n).toLocaleString('es-CO');
 
@@ -93,24 +95,24 @@ export function buildQuote(a) {
     const ans = d[s] || {};
     const g = SVC_NAMES[s];
     if (s === 'branding') {
-      pick(PRICES.branding.logo, ans.logo).forEach(([k, p]) => add(g, k === 'No tengo logo' ? 'Creación de logo e identidad básica' : k === 'Tengo, quiero rediseñarlo' ? 'Rediseño de logo' : 'Identidad visual sobre logo existente', p));
-      pick(PRICES.branding.piezas, ans.piezas).forEach(([k, p]) => add(g, k, p));
+      pick(PRICES.branding.logo, ans.logo).forEach(([k, p]) => add(g, k === 'No tengo logo' ? 'Creamos tu logo y tus colores' : k === 'Tengo, quiero rediseñarlo' ? 'Mejoramos tu logo' : 'Colores y estilo para tu logo actual', p));
+      pick(PRICES.branding.piezas, ans.piezas).forEach(([k, p]) => add(g, plain(k), p));
     }
     if (s === 'web') {
-      pick(PRICES.web.tipo, ans.tipo).forEach(([k, p]) => add(g, `Desarrollo: ${k}`, p));
-      pick(PRICES.web.funciones, ans.funciones).forEach(([k, p]) => add(g, `Función: ${k}`, p));
-      pick(PRICES.web.dominio, ans.dominio).forEach(([, p]) => add(g, 'Registro de dominio (1 año)', p));
-      if (a.template === 'custom') add(g, 'Diseño 100% personalizado', PRICES.web.disenoPersonalizado);
+      pick(PRICES.web.tipo, ans.tipo).forEach(([k, p]) => add(g, plain(k), p));
+      pick(PRICES.web.funciones, ans.funciones).forEach(([k, p]) => add(g, plain(k), p));
+      pick(PRICES.web.dominio, ans.dominio).forEach(([, p]) => add(g, 'Tu dirección en internet, tunegocio.com (1 año)', p));
+      if (a.template === 'custom') add(g, 'Diseño único hecho solo para ti', PRICES.web.disenoPersonalizado);
     }
     if (s === 'audiovisual') {
       const monthly = ans.frecuencia === 'Mensual';
-      pick(PRICES.audiovisual.contenido, ans.contenido).forEach(([k, p]) => add(g, k, p, monthly));
+      pick(PRICES.audiovisual.contenido, ans.contenido).forEach(([k, p]) => add(g, plain(k), p, monthly));
     }
     if (s === 'marketing') {
-      pick(PRICES.marketing.acciones, ans.acciones).forEach(([k, p]) => add(g, k, p, PRICES.marketing.mensual.includes(k)));
+      pick(PRICES.marketing.acciones, ans.acciones).forEach(([k, p]) => add(g, plain(k), p, PRICES.marketing.mensual.includes(k)));
     }
     if (s === 'print') {
-      pick(PRICES.print.impresos, ans.impresos).forEach(([k, p]) => add(g, `${k} (diseño + producción)`, p));
+      pick(PRICES.print.impresos, ans.impresos).forEach(([k, p]) => add(g, `${plain(k)} (diseño e impresión)`, p));
     }
   }
   return totals({ items, plan: a.plan, timing: a.timing });

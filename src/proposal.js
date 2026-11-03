@@ -19,52 +19,52 @@ function scopeFor(svc, ans = {}, lead) {
   const list = (v) => (Array.isArray(v) ? v : v ? [v] : []);
   switch (svc) {
     case 'web': return {
-      title: 'Desarrollo web',
+      title: 'Tu página web',
       what: [
         `Diseño y desarrollo de: ${ans.tipo || 'sitio web'}${lead.template ? `, tomando como base el estilo "${lead.template}"` : ''}.`,
         `Funciones incluidas: ${list(ans.funciones).join(', ') || 'las acordadas en la cotización'}.`,
-        'Diseño adaptable (responsive) para celular, tableta y computador.',
-        'Optimización básica para buscadores (SEO on-page): títulos, descripciones, estructura y velocidad de carga.',
-        'Certificado de seguridad SSL (https) y publicación en internet.',
-        ans.dominio === 'Sí, ya tengo' ? 'Conexión del sitio al dominio que ya tienes.' : 'Acompañamiento en el registro del dominio (tunegocio.com) a nombre del cliente.',
+        'Se ve bien en el celular, la tableta y el computador.',
+        'La preparamos para que Google la encuentre más fácil y para que cargue rápido.',
+        'Con candado de seguridad (https) y publicada en internet.',
+        ans.dominio === 'Sí, ya tengo' ? 'La conectamos a la dirección en internet que ya tienes.' : 'Te ayudamos a sacar tu dirección en internet (tunegocio.com) a tu nombre.',
         'Botones a redes sociales y enlace a WhatsApp.',
         'Política de privacidad y aviso de tratamiento de datos para el sitio, en versión base (ver sección de datos personales).',
       ],
-      deliver: ['Sitio web publicado y funcionando.', 'Accesos de administración (cuando aplique).', 'Guía corta de uso.', 'Hasta 2 rondas de ajustes sobre el diseño aprobado.'],
-      req: ['Hosting y dominio activos (o autorización para gestionarlos a tu nombre).', 'Navegadores soportados: versiones actuales de Chrome, Safari, Edge y Firefox.', 'Para pagos en línea: cuenta propia en la pasarela de pagos (Wompi, Mercado Pago, PayU u otra).'],
+      deliver: ['Sitio web publicado y funcionando.', 'Tu usuario y clave para cambiar cosas tú mismo (si lo pediste).', 'Guía corta de uso.', 'Puedes pedirnos cambios 2 veces.'],
+      req: ['Que la dirección en internet y el espacio donde vive la página estén a tu nombre (nosotros te ayudamos).', 'Funciona en los navegadores de siempre: Chrome, Safari, Edge y Firefox.', 'Para cobrar por internet necesitas una cuenta en Wompi, Mercado Pago u otra parecida (te ayudamos a abrirla).'],
     };
     case 'branding': return {
-      title: 'Diseño y marca',
+      title: 'Tu logo e imagen',
       what: [
         ans.logo ? `Punto de partida: ${ans.logo.toLowerCase()}.` : 'Construcción de la identidad visual de la marca.',
         `Piezas incluidas: ${list(ans.piezas).join(', ') || 'las acordadas en la cotización'}.`,
-        'Exploración de 2 a 3 propuestas iniciales y desarrollo de la elegida.',
-        'Definición de paleta de colores y tipografías.',
+        'Te mostramos 2 o 3 ideas y terminamos la que más te guste.',
+        'Escogemos los colores y el tipo de letra de tu negocio.',
       ],
-      deliver: ['Logo en formatos PNG (fondo transparente), JPG, PDF y SVG (vectorial).', 'Versiones a color, blanco y negro.', 'Manual o guía de marca en PDF (si está incluido).', 'Hasta 2 rondas de ajustes por pieza.'],
+      deliver: ['Tu logo en todos los formatos que vas a necesitar (para redes, para imprimir, para avisos).', 'Versiones a color, blanco y negro.', 'Manual o guía de marca en PDF (si está incluido).', 'Hasta 2 rondas de ajustes por pieza.'],
       req: [],
     };
     case 'audiovisual': return {
-      title: 'Fotografía y video',
+      title: 'Tus fotos y videos',
       what: [
         `Producción de: ${list(ans.contenido).join(', ') || 'el contenido acordado'}.`,
         `Frecuencia: ${ans.frecuencia || 'según lo acordado'}.`,
-        'Planeación de la sesión (guion o lista de tomas), grabación/fotografía y edición.',
-        'Corrección de color y música con licencia libre para uso comercial.',
+        'Planeamos qué vamos a grabar, lo grabamos y lo dejamos bonito.',
+        'Arreglamos los colores y ponemos música que se puede usar sin problemas.',
       ],
-      deliver: ['Fotos editadas en alta resolución (JPG).', 'Videos editados en MP4, en formatos vertical (9:16) y/o horizontal (16:9).', 'Hasta 2 rondas de ajustes de edición por pieza.', 'El material en bruto (sin editar) no se entrega salvo acuerdo previo.'],
+      deliver: ['Fotos editadas en alta resolución (JPG).', 'Videos listos para el celular (verticales) y/o para pantalla (horizontales).', 'Hasta 2 rondas de ajustes de edición por pieza.', 'El material en bruto (sin editar) no se entrega salvo acuerdo previo.'],
       req: ['Espacio, productos y personas disponibles el día de la sesión.', 'Autorización de uso de imagen firmada por cada persona que aparezca (te damos el formato).'],
     };
     case 'marketing': return {
-      title: 'Publicidad y marketing digital',
+      title: 'Tu publicidad en redes',
       what: [
         `Acciones: ${list(ans.acciones).join(', ') || 'las acordadas'}.`,
         'Calendario de publicaciones y diseño de piezas para redes.',
-        'Configuración y seguimiento de campañas en Meta (Facebook e Instagram) cuando esté incluido.',
-        'Informe mensual de resultados (alcance, interacción y mensajes).',
+        'Montamos y cuidamos tus anuncios en Facebook e Instagram (si lo pediste).',
+        'Cada mes te contamos cuánta gente vio y escribió.',
       ],
       deliver: ['Piezas gráficas listas para publicar.', 'Informe mensual.'],
-      req: ['Acceso como administrador a tus cuentas de Facebook e Instagram y a tu Business Manager.', `El presupuesto de pauta (lo que se paga a Meta) lo paga el cliente directamente y no está incluido. Referencia indicada: ${ans.pauta || 'por definir'}.`],
+      req: ['Que nos des acceso a tu Facebook e Instagram para poder publicar (te explicamos cómo).', `El presupuesto de pauta (lo que se paga a Meta) lo paga el cliente directamente y no está incluido. Referencia indicada: ${ans.pauta || 'por definir'}.`],
     };
     case 'print': return {
       title: 'Publicidad física e impresos',

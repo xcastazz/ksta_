@@ -19,18 +19,18 @@ document.getElementById('services').innerHTML = services.map((s, i) => `
 const PLAN_TABS = [...CAT_ORDER, 'combo'];
 const pkgEl = document.getElementById('packages');
 function renderPlans(active = 'web') {
-  const tabs = `<div class="plan-tabs vision" role="tablist">${PLAN_TABS.map((k) => `<button role="tab" class="${k === active ? 'on' : ''}" data-tab="${k}">${k === 'combo' ? `${icons.sparkles}Combos Premium` : `${icons[CATS[k].icon]}${CATS[k].label}`}</button>`).join('')}</div>`;
+  const tabs = `<div class="plan-tabs vision" role="tablist">${PLAN_TABS.map((k) => `<button role="tab" class="${k === active ? 'on' : ''}" data-tab="${k}">${k === 'combo' ? `${icons.sparkles}Varias cosas juntas` : `${icons[CATS[k].icon]}${CATS[k].label}`}</button>`).join('')}</div>`;
   let body;
   if (active === 'combo') {
     const mid = CAT_ORDER.map((k) => CATS[k].tiers.find((t) => t.featured));
     const sum = mid.reduce((s, t) => s + tierPrice(t).total, 0);
     body = `<div class="combo-grid">
-      ${[[2, 'Combo Dúo Premium', 'Elige 2 categorías', 'Asesor dedicado y coordinación integral entre ambas.'], [3, 'Combo Total Premium', 'Las 3 categorías', 'Web, marca y publicidad con un solo equipo y prioridad máxima.']].map(([n, name, sub, ex], i) => `
+      ${[[2, 'Dos cosas juntas', 'Por ejemplo, página web y logo', 'Una sola persona se encarga de que todo combine.'], [3, 'Todo junto', 'Página, logo y publicidad', 'Nos encargamos de todo tu negocio, de principio a fin.']].map(([n, name, sub, ex], i) => `
         <article class="package glass reveal ${n === 3 ? 'featured' : ''}" style="--d:${i * 120}ms">
           <div class="package-top"><div class="icon">${icons[n === 3 ? 'sparkles' : 'layers']}</div><span class="tag">Premium</span></div>
           <h3>${name}</h3><p class="muted">${sub}. ${ex}</p>
-          ${n === 3 ? `<p class="combo-example">Ej: ${mid.map((t) => t.name).join(' + ')}<br><b>${cop(sum * (1 + COMBO[3]))}</b> con gestión integral</p>` : ''}
-          <a href="#contacto" class="btn ${n === 3 ? '' : 'btn-ghost'}" data-pkg="combo">Armar mi combo</a>
+          ${n === 3 ? `<p class="combo-example">Ej: ${mid.map((t) => t.name).join(' + ')}<br><b>${cop(sum * (1 + COMBO[3]))}</b> con la coordinación incluida</p>` : ''}
+          <a href="#contacto" class="btn ${n === 3 ? '' : 'btn-ghost'}" data-pkg="combo">Quiero varias cosas</a>
         </article>`).join('')}
     </div>`;
   } else {
@@ -40,7 +40,7 @@ function renderPlans(active = 'web') {
         <h3>${t.name}</h3>
         <p class="price">${priceHTML(p, cop)}</p>
         <ul>${t.items.map((it) => `<li>${icons.check}${it}</li>`).join('')}</ul>
-        <a href="#contacto" class="btn ${t.featured ? '' : 'btn-ghost'}" data-pkg="${t.id}">Cotizar ${t.name}</a>
+        <a href="#contacto" class="btn ${t.featured ? '' : 'btn-ghost'}" data-pkg="${t.id}">Quiero este</a>
       </article>`; }).join('')}</div>`;
   }
   pkgEl.innerHTML = tabs + `<div class="plan-body">${body}</div>`;

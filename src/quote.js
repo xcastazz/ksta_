@@ -1,4 +1,5 @@
 import { icons } from './icons.js';
+import { plain } from './plain.js';
 import { supabase } from './supabase.js';
 import { TEMPLATES } from './templates.js';
 import { bookingHTML, setupBooking } from './booking.js';
@@ -6,124 +7,124 @@ import { buildQuote, cop } from './pricing.js';
 import { CATS, CAT_ORDER, COMBO, findTier, tierPrice, priceHTML, fromValue } from './plans.js';
 
 const SERVICES = {
-  branding: { label: 'Branding e identidad', icon: 'brand', desc: 'Logo, colores, tipografías y todo lo que hace reconocible a tu marca.' },
-  web: { label: 'Web y software', icon: 'code', desc: 'Tu página, tienda o sistema para vender y atender clientes 24/7.' },
-  audiovisual: { label: 'Fotografía y video', icon: 'video', desc: 'Fotos y videos profesionales que muestran tu producto como merece.' },
-  marketing: { label: 'Marketing digital', icon: 'megaphone', desc: 'Contenido y anuncios para que más personas te encuentren y te compren.' },
-  print: { label: 'Publicidad física', icon: 'sign', desc: 'Letreros, pendones, vinilos y todo lo impreso, con nuestra aliada de impresión.' },
+  branding: { label: 'Logo e imagen', icon: 'brand', desc: 'Tu logo, tus colores y todo lo que hace que la gente reconozca tu negocio.' },
+  web: { label: 'Página web', icon: 'code', desc: 'Tu negocio en internet, abierto las 24 horas, para que te encuentren desde el celular.' },
+  audiovisual: { label: 'Fotos y videos', icon: 'video', desc: 'Fotos y videos bonitos de tus productos o de tu negocio.' },
+  marketing: { label: 'Publicidad en redes', icon: 'megaphone', desc: 'Publicaciones y anuncios en Facebook e Instagram para que más gente te conozca.' },
+  print: { label: 'Avisos e impresos', icon: 'sign', desc: 'Letreros, pendones, volantes y todo lo que va impreso para tu local.' },
 };
 
 
 // Each option: [value, short explanation]
 const DETAILS = {
   branding: {
-    intro: 'Tu marca es la primera impresión. Estas respuestas nos dicen si partimos de cero o si mejoramos lo que ya tienes.',
+    intro: 'El logo es como la cara de tu negocio: es lo primero que la gente ve y recuerda.',
     qs: [
-      { key: 'logo', q: '¿Cómo está tu logo hoy?', help: 'Así sabemos si creamos desde cero o evolucionamos tu marca actual.', type: 'single', opts: [
-        ['No tengo logo', 'Creamos tu marca desde cero.'],
-        ['Tengo, quiero rediseñarlo', 'Lo modernizamos conservando su esencia.'],
-        ['Tengo, solo necesito la identidad', 'Construimos colores, tipografías y aplicaciones alrededor de tu logo.'],
+      { key: 'logo', q: '¿Tienes logo?', help: 'El logo es el dibujo o las letras que identifican tu negocio.', type: 'single', opts: [
+        ['No tengo logo', 'Te lo creamos desde cero.'],
+        ['Tengo, quiero rediseñarlo', 'Lo arreglamos para que se vea más moderno.'],
+        ['Tengo, solo necesito la identidad', 'Lo usamos tal cual y le damos colores y estilo.'],
       ] },
-      { key: 'piezas', q: '¿Qué piezas necesitas?', help: 'Elige todas las que quieras. Cada una suma a la cotización.', type: 'multi', opts: [
-        ['Logo', 'El símbolo y nombre de tu marca.'],
-        ['Manual de marca', 'Guía con reglas de uso: colores, tipografías, tamaños.'],
-        ['Tarjetas y papelería', 'Tarjetas, hojas membretadas, facturas.'],
-        ['Empaques / etiquetas', 'Diseño del empaque de tus productos.'],
-        ['Piezas para redes', 'Plantillas para posts e historias.'],
-        ['Mockups', 'Imágenes realistas de tu marca aplicada.'],
+      { key: 'piezas', q: '¿Qué más quieres con tu logo?', help: 'Puedes tocar varias. Cada una suma al precio.', type: 'multi', opts: [
+        ['Logo', 'El dibujo o letras de tu negocio.'],
+        ['Manual de marca', 'Unas reglas para que tu logo siempre se vea igual.'],
+        ['Tarjetas y papelería', 'Tarjetas para entregar a tus clientes.'],
+        ['Empaques / etiquetas', 'El diseño de tus bolsas, cajas o etiquetas.'],
+        ['Piezas para redes', 'Diseños listos para publicar en Facebook e Instagram.'],
+        ['Mockups', 'Imágenes de cómo se ve tu logo en camisetas, vasos, etc.'],
       ] },
     ],
   },
   web: {
-    intro: 'Tu web trabaja por ti las 24 horas. Cuéntanos qué debe hacer para recomendarte la mejor solución.',
+    intro: 'Una página web es como tener tu local abierto en internet todo el día. La gente entra desde el celular, ve lo que vendes y te escribe.',
     qs: [
-      { key: 'tipo', q: '¿Qué tipo de sitio necesitas?', help: 'Si no estás seguro, elige la más cercana; un asesor te orienta después.', type: 'single', opts: [
-        ['Landing page', 'Una sola página enfocada en vender o captar clientes.'],
-        ['Web corporativa', 'Varias páginas: inicio, nosotros, servicios, contacto.'],
-        ['Portafolio', 'Muestra tus trabajos o proyectos.'],
-        ['Catálogo', 'Lista de productos sin pago en línea.'],
-        ['Tienda virtual', 'Vende y cobra en línea.'],
-        ['Sistema / software a medida', 'Una herramienta hecha para tu operación.'],
+      { key: 'tipo', q: '¿Qué quieres que tenga tu página?', help: 'Si no estás seguro, toca la que más se parezca. Nosotros te ayudamos después.', type: 'single', opts: [
+        ['Landing page', 'Una sola página con lo más importante de tu negocio.'],
+        ['Web corporativa', 'Varias partes: inicio, quiénes somos, servicios y contacto.'],
+        ['Portafolio', 'Para mostrar fotos de lo que has hecho.'],
+        ['Catálogo', 'Para mostrar tus productos con fotos y precios.'],
+        ['Tienda virtual', 'Para que te compren y te paguen por internet.'],
+        ['Sistema / software a medida', 'Un programa hecho a la medida de tu negocio.'],
       ] },
-      { key: 'funciones', q: '¿Qué funciones debe tener?', help: 'Marca todas las que te imaginas usando.', type: 'multi', opts: [
-        ['Formulario de contacto', 'Recibe mensajes de clientes.'],
-        ['Botón de WhatsApp', 'Te escriben con un clic.'],
-        ['Reservas / citas', 'Agenda en línea.'],
-        ['Pagos en línea', 'Tarjeta, PSE, transferencias.'],
-        ['Blog', 'Publica noticias y artículos.'],
-        ['Panel administrativo', 'Edita contenido tú mismo.'],
+      { key: 'funciones', q: '¿Qué quieres que la gente pueda hacer en tu página?', help: 'Toca todo lo que te gustaría.', type: 'multi', opts: [
+        ['Formulario de contacto', 'Que te dejen su nombre y teléfono.'],
+        ['Botón de WhatsApp', 'Que te escriban al WhatsApp con un toque.'],
+        ['Reservas / citas', 'Que pidan una cita y escojan la hora.'],
+        ['Pagos en línea', 'Que te paguen con tarjeta o PSE.'],
+        ['Blog', 'Que puedas publicar noticias y novedades.'],
+        ['Panel administrativo', 'Que tú mismo cambies textos, fotos y precios.'],
       ] },
-      { key: 'dominio', q: '¿Tienes dominio?', help: 'El dominio es tu dirección en internet, por ejemplo tunegocio.com.', type: 'single', opts: [
-        ['Sí, ya tengo', 'Lo conectamos a tu nueva web.'],
-        ['No, necesito uno', 'Te ayudamos a registrarlo.'],
-        ['No sé qué es', 'Tranquilo, te lo explicamos.'],
+      { key: 'dominio', q: '¿Ya tienes tu dirección en internet?', help: 'Es el nombre que la gente escribe para encontrarte, por ejemplo: tunegocio.com', type: 'single', opts: [
+        ['Sí, ya tengo', 'La usamos para tu nueva página.'],
+        ['No, necesito uno', 'Te ayudamos a sacarla.'],
+        ['No sé qué es', 'Tranquilo, nosotros nos encargamos.'],
       ] },
     ],
   },
   audiovisual: {
-    intro: 'Las fotos y videos son lo que más vende en redes. Esto nos ayuda a planear la producción.',
+    intro: 'Las fotos y videos bonitos son lo que más hace que la gente se antoje y compre.',
     qs: [
-      { key: 'contenido', q: '¿Qué contenido necesitas?', help: 'Elige todo lo que te interese producir.', type: 'multi', opts: [
-        ['Fotografía de producto', 'Fondos limpios o ambientadas, para catálogo y redes.'],
-        ['Fotografía corporativa', 'Equipo, instalaciones, retratos.'],
-        ['Video publicitario', 'Comercial para anuncios y lanzamientos.'],
-        ['Reels para redes', 'Videos cortos verticales.'],
-        ['Video institucional', 'Quiénes son y qué hacen.'],
-        ['Cobertura de evento', 'Fotos y video de tu evento.'],
+      { key: 'contenido', q: '¿Qué fotos o videos quieres?', help: 'Toca todo lo que te interese.', type: 'multi', opts: [
+        ['Fotografía de producto', 'Fotos bonitas de lo que vendes.'],
+        ['Fotografía corporativa', 'Fotos de ti, tu equipo y tu local.'],
+        ['Video publicitario', 'Un video tipo comercial de televisión.'],
+        ['Reels para redes', 'Videos cortos para Instagram, TikTok o Facebook.'],
+        ['Video institucional', 'Un video contando la historia de tu negocio.'],
+        ['Cobertura de evento', 'Vamos a tu evento y lo grabamos.'],
       ] },
-      { key: 'frecuencia', q: '¿Con qué frecuencia?', help: 'Los planes mensuales suelen tener mejor precio por pieza.', type: 'single', opts: [
-        ['Una sola vez', 'Una producción puntual.'],
-        ['Mensual', 'Contenido constante cada mes.'],
-        ['Por campaña', 'Cuando lances algo nuevo.'],
+      { key: 'frecuencia', q: '¿Cada cuánto los necesitas?', help: 'Si es cada mes, cada foto o video te sale más barato.', type: 'single', opts: [
+        ['Una sola vez', 'Solo esta vez.'],
+        ['Mensual', 'Fotos y videos nuevos cada mes.'],
+        ['Por campaña', 'Cuando vayas a sacar algo nuevo.'],
       ] },
     ],
   },
   marketing: {
-    intro: 'Una buena estrategia convierte seguidores en clientes. Cuéntanos qué te gustaría lograr.',
+    intro: 'Tener redes no basta: hay que publicar seguido y mostrarse a la gente correcta para que te compren.',
     qs: [
-      { key: 'acciones', q: '¿Qué te gustaría hacer?', help: 'Puedes elegir varias.', type: 'multi', opts: [
-        ['Contenido para redes', 'Diseño de posts e historias.'],
-        ['Campañas en Meta Ads', 'Anuncios pagados en Facebook e Instagram.'],
-        ['Lanzamiento de marca/producto', 'Estrategia para salir con fuerza.'],
-        ['Promociones y ventas', 'Creatividades para ofertas.'],
-        ['Estrategia completa', 'Planeamos todo contigo.'],
+      { key: 'acciones', q: '¿En qué te ayudamos con tus redes?', help: 'Puedes tocar varias.', type: 'multi', opts: [
+        ['Contenido para redes', 'Te hacemos las publicaciones de Facebook e Instagram.'],
+        ['Campañas en Meta Ads', 'Pagamos anuncios para que te vea gente nueva de tu zona.'],
+        ['Lanzamiento de marca/producto', 'Un plan para que mucha gente se entere de algo nuevo.'],
+        ['Promociones y ventas', 'Diseños para anunciar tus ofertas.'],
+        ['Estrategia completa', 'Te decimos qué hacer y nos encargamos de todo.'],
       ] },
-      { key: 'pauta', q: 'Presupuesto mensual para anuncios', help: 'Es lo que se paga a Meta por mostrar tus anuncios, aparte de nuestro servicio.', type: 'single', opts: [
-        ['Aún no sé', 'Te recomendamos uno.'], ['Bajo', 'Para empezar a probar.'], ['Medio', 'Para crecer de forma constante.'], ['Alto', 'Para escalar rápido.'],
+      { key: 'pauta', q: '¿Cuánto podrías poner al mes para anuncios?', help: 'Es la plata que se le paga a Facebook para mostrar tus anuncios. Va aparte de nuestro trabajo.', type: 'single', opts: [
+        ['Aún no sé', 'Te aconsejamos cuánto.'], ['Bajo', 'Poquito, para empezar a probar.'], ['Medio', 'Algo más, para crecer.'], ['Alto', 'Bastante, para crecer rápido.'],
       ] },
     ],
   },
   print: {
-    intro: 'Con nuestra aliada de impresión llevamos tu marca a la calle. Dinos qué necesitas producir.',
+    intro: 'Lo impreso hace que te vean en la calle. Nosotros lo diseñamos y lo mandamos a imprimir.',
     qs: [
-      { key: 'impresos', q: '¿Qué material físico necesitas?', help: 'Diseñamos y coordinamos la producción e instalación.', type: 'multi', opts: [
-        ['Letrero / aviso', 'Para la fachada de tu local.'],
-        ['Afiches', 'Para promociones y eventos.'],
-        ['Pendones / banners', 'Portátiles, para ferias y puntos de venta.'],
-        ['Vinilos y adhesivos', 'Vitrinas, vehículos, paredes.'],
-        ['Señalización', 'Orientación dentro del negocio.'],
-        ['Tarjetas y material promocional', 'Volantes, stickers, tarjetas.'],
-        ['Branding del local', 'Ambientación completa del espacio.'],
+      { key: 'impresos', q: '¿Qué necesitas imprimir?', help: 'Lo diseñamos, lo imprimimos y te ayudamos a instalarlo.', type: 'multi', opts: [
+        ['Letrero / aviso', 'El aviso grande de la entrada de tu local.'],
+        ['Afiches', 'Para pegar y anunciar promociones.'],
+        ['Pendones / banners', 'Los que se paran en el piso, para ferias o la entrada.'],
+        ['Vinilos y adhesivos', 'Para vitrinas, carros o paredes.'],
+        ['Señalización', 'Letreros dentro del local (baños, salida, caja).'],
+        ['Tarjetas y material promocional', 'Volantes, stickers y tarjetas.'],
+        ['Branding del local', 'Decoramos tu local con tu marca.'],
       ] },
     ],
   },
 };
 
-const STYLES = [['Minimalista', 'Limpio, mucho espacio'], ['Elegante', 'Sobrio y premium'], ['Moderno', 'Actual y tecnológico'], ['Divertido', 'Colorido y cercano'], ['Corporativo', 'Serio y confiable'], ['Natural', 'Orgánico, tonos tierra'], ['Atrevido', 'Contraste y personalidad'], ['Clásico', 'Atemporal y tradicional']];
-const TIMING = [['Lo antes posible', 'Priorizamos tu proyecto'], ['En 2–4 semanas', 'Tiempo ideal'], ['En 1–2 meses', 'Planeación con calma'], ['Sin prisa', 'Cuando esté listo']];
-const BUDGET = [['Aún no lo sé', 'Te proponemos opciones'], ['Básico', 'Lo esencial'], ['Intermedio', 'Buen balance'], ['Completo / premium', 'Lo mejor para tu marca']];
+const STYLES = [['Minimalista', 'Limpio y ordenado'], ['Elegante', 'Fino y de lujo'], ['Moderno', 'Actual y fresco'], ['Divertido', 'Alegre y de colores'], ['Corporativo', 'Formal y confiable'], ['Natural', 'Tonos de tierra y plantas'], ['Atrevido', 'Llamativo y diferente'], ['Clásico', 'Tradicional, de toda la vida']];
+const TIMING = [['Lo antes posible', 'Lo necesito ya'], ['En 2–4 semanas', 'En unas semanas'], ['En 1–2 meses', 'Con calma'], ['Sin prisa', 'Cuando esté listo']];
+const BUDGET = [['Aún no lo sé', 'Ayúdenme a decidir'], ['Básico', 'Lo justo y necesario'], ['Intermedio', 'Algo bueno sin exagerar'], ['Completo / premium', 'Quiero lo mejor']];
 
 const INFO = {
-  cats: 'Puedes contratar una sola categoría o combinarlas. Los combos son nuestra experiencia premium: un asesor dedicado coordina tu web, tu marca y tu publicidad para que todo hable el mismo idioma, con prioridad en la entrega. Incluyen un cargo de gestión integral (+15% con 2 categorías, +25% con las 3).',
-  tiers: 'Cada plan es un punto de partida con lo que más recomendamos. En los siguientes pasos puedes ajustar todo y el precio final se calcula con tus respuestas.',
-  plan: 'Los paquetes combinan servicios con mejor precio que contratarlos por separado. Si eliges “a mi medida”, armas tu plan servicio por servicio.',
-  services: 'Cada servicio que marques añade unas preguntas cortas para entender exactamente lo que necesitas. Puedes cambiar lo que viene en tu paquete.',
-  template: 'Partir de una plantilla profesional reduce tiempo y costo. La personalizamos con tu logo, colores, textos y fotos, y te mostramos una demo antes de construir la versión final.',
-  business: 'Con esto entendemos tu mercado y tu competencia para proponerte algo que de verdad funcione para tu negocio.',
-  style: 'El estilo guía todas las decisiones de diseño: colores, tipografías, fotos y tono. No te preocupes por acertar; es un punto de partida.',
-  timing: 'Los tiempos y el presupuesto nos ayudan a armar una propuesta realista. Es solo una referencia, no un compromiso.',
-  contact: 'Un asesor de KstaStudio_ te escribirá por WhatsApp con tu cotización personalizada. No compartimos tus datos con nadie.',
-  summary: 'Revisa que todo esté bien. Puedes volver atrás para cambiar cualquier respuesta antes de enviar.',
+  cats: 'Puedes escoger una sola cosa o varias. Si escoges varias, una sola persona se encarga de todo para que tu página, tu logo y tu publicidad se vean iguales. Eso tiene un costo extra pequeño por la coordinación.',
+  tiers: 'Te dejamos listas las opciones que más recomendamos. Más adelante puedes cambiar lo que quieras.',
+  plan: 'Los paquetes juntan varias cosas a mejor precio.',
+  services: 'Por cada cosa que toques te haremos unas preguntas cortas. No te preocupes si no sabes algo: puedes tocar "No sé" y te ayudamos.',
+  template: 'Escoger un diseño ya hecho hace que tu página esté lista más rápido y cueste menos. Le ponemos tu nombre, tus fotos y tus colores.',
+  business: 'Con esto entendemos tu negocio para hacerte algo que de verdad te sirva.',
+  style: 'Es como escoger la ropa de tu negocio: ¿cómo quieres que se vea? No hay respuestas malas.',
+  timing: 'Esto nos ayuda a organizarnos. No es un compromiso.',
+  contact: 'Te escribiremos a este WhatsApp con el precio. Tus datos son solo para eso, no se los damos a nadie.',
+  summary: 'Revisa que todo esté bien. Si algo no te gusta, toca "Atrás" y lo cambias.',
 };
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -140,7 +141,7 @@ export function initQuote({ onStep }) {
   root.innerHTML = `
     <div class="quote-window vision">
       <div class="quote-top">
-        <span class="logo">KstaStudio<span class="cursor">_</span> <small class="mono muted">cotizador</small></span>
+        <span class="logo">KstaStudio<span class="cursor">_</span> <small class="mono muted">pide tu precio</small></span>
         <div class="quote-dots" id="qDots"></div>
         <button class="quote-close" id="qClose" aria-label="Cerrar">✕</button>
       </div>
@@ -157,7 +158,7 @@ export function initQuote({ onStep }) {
     </div>
     <div class="tpl-modal" id="tplModal">
       <div class="tpl-modal-bar vision"><b id="tplModalName"></b><span class="muted" id="tplModalTag"></span>
-        <button class="btn btn-sm" id="tplModalUse">Usar esta plantilla</button>
+        <button class="btn btn-sm" id="tplModalUse">Me gusta este</button>
         <button class="quote-close" id="tplModalClose" aria-label="Cerrar vista previa">✕</button></div>
       <iframe id="tplModalFrame" title="Vista previa de plantilla"></iframe>
     </div>`;
@@ -188,7 +189,7 @@ export function initQuote({ onStep }) {
     <div class="choices">${opts.map(([val, desc], i) => {
       const on = multi ? selected.includes(val) : selected === val;
       return `<button type="button" class="choice vision ${on ? 'on' : ''}" data-name="${name}" data-val="${esc(val)}" data-multi="${multi ? 1 : 0}" style="--i:${i}">
-        <span class="tick">${icons.check}</span><span class="choice-txt"><b>${esc(val)}</b>${desc ? `<small>${esc(desc)}</small>` : ''}</span>
+        <span class="tick">${icons.check}</span><span class="choice-txt"><b>${esc(plain(val))}</b>${desc ? `<small>${esc(desc)}</small>` : ''}</span>
       </button>`;
     }).join('')}</div>`;
 
@@ -201,14 +202,14 @@ export function initQuote({ onStep }) {
     }).join('')}</div>`;
 
   const R = {
-    cats: () => head('// paso 1 · qué necesitas', '¿En qué te ayudamos?', 'Elige una, dos o las tres. Los combos incluyen gestión integral premium.') + info('cats') + `
+    cats: () => head('// paso 1', '¿Con qué te ayudamos?', 'Toca una o varias opciones. Si tienes dudas, no pasa nada: después te explicamos todo.') + info('cats') + `
       <div class="choices big cats">${CAT_ORDER.map((k, i) => {
         const c = CATS[k], cheapest = c.tiers.map((t) => tierPrice(t)).sort((a, b) => fromValue(a) - fromValue(b))[0];
         return `<button type="button" class="choice vision ${state.cats.includes(k) ? 'on' : ''}" data-name="cats" data-val="${k}" data-multi="1" style="--i:${i}">
           <span class="icon">${icons[c.icon]}</span><b>${esc(c.label)}</b><small>${esc(c.desc)}</small><span class="from">desde <b>${priceHTML({ ...cheapest, monthly: cheapest.total ? 0 : cheapest.monthly }, cop)}</b></span><span class="tick corner">${icons.check}</span></button>`;
       }).join('')}</div>
       <div class="combo-meter vision" id="comboMeter">${comboMeter()}</div>`,
-    tiers: () => head('// tu plan', state.cats.length > 1 ? 'Elige un plan para cada categoría.' : 'Elige tu plan.', 'Cada plan ya trae lo recomendado. En los siguientes pasos puedes ajustarlo.') + info('tiers') +
+    tiers: () => head('// tu plan', state.cats.length > 1 ? 'Escoge una opción de cada una.' : 'Escoge la opción que más te guste.', 'Cada opción ya trae lo que más recomendamos. Después puedes cambiar lo que quieras.') + info('tiers') +
       state.cats.map((k) => `<div class="q-block"><h3 class="tier-head"><i>${icons[CATS[k].icon]}</i>${esc(CATS[k].label)}</h3>
         <div class="choices tiers">${CATS[k].tiers.map((t, i) => { const tp = tierPrice(t); return `
           <button type="button" class="choice vision tier ${state.tiers[k] === t.id ? 'on' : ''} ${t.featured ? 'feat' : ''}" data-name="tier:${k}" data-val="${t.id}" data-multi="0" style="--i:${i}">
@@ -218,48 +219,48 @@ export function initQuote({ onStep }) {
             <span class="tick corner">${icons.check}</span>
           </button>`; }).join('')}
           <button type="button" class="choice vision tier tier-custom ${state.tiers[k] === 'custom' ? 'on' : ''}" data-name="tier:${k}" data-val="custom" data-multi="0" style="--i:3">
-            <span class="tier-top"><b>A mi medida</b></span><small>Prefiero elegir yo cada cosa en las siguientes preguntas.</small><span class="tick corner">${icons.check}</span>
+            <span class="tier-top"><b>Quiero escoger yo</b></span><small>Prefiero ir escogiendo cada cosa en las siguientes preguntas.</small><span class="tick corner">${icons.check}</span>
           </button>
         </div></div>`).join(''),
-    services: () => head('// servicios', 'Arma tu combinación.', 'Ya marcamos lo que incluye tu plan. Agrega o quita lo que quieras.') +
+    services: () => head('// revisa', '¿Esto es lo que necesitas?', 'Ya marcamos lo que trae tu plan. Toca para agregar o quitar.') +
       info('services') + bigChoice('services', Object.entries(SERVICES).map(([id, s]) => ({ id, ...s })), state.services, true),
     detail: (svc) => head(`// ${SERVICES[svc].label.toLowerCase()}`, SERVICES[svc].label) + info(null, DETAILS[svc].intro) +
       DETAILS[svc].qs.map((d) => `<div class="q-block"><h3>${d.q}${d.type === 'multi' ? ' <span class="pill">varias</span>' : ''}</h3><p class="q-help">${d.help}</p>${choice(`d:${svc}:${d.key}`, d.opts, (state.details[svc] || {})[d.key] ?? (d.type === 'multi' ? [] : null), d.type === 'multi')}</div>`).join(''),
-    template: () => head('// diseño web', 'Elige un estilo base para tu web.', 'Toca “Vista previa” para navegarla completa. Luego la adaptamos a tu marca.') + info('template') + `
+    template: () => head('// ejemplos de páginas', '¿Cuál de estos diseños te gusta más?', 'Toca “Ver cómo se ve” para mirarlo completo. Después le ponemos tu nombre, tus fotos y tus colores.') + info('template') + `
       <div class="tpl-grid">${TEMPLATES.map((t, i) => `
         <div class="tpl vision ${state.template === t.id ? 'on' : ''}" data-tpl="${t.id}" style="--i:${i}">
           <div class="tpl-thumb"><iframe src="/templates/${t.id}/index.html" loading="lazy" tabindex="-1" title="${t.name}" aria-hidden="true"></iframe></div>
           <div class="tpl-body"><div><b>${t.name}</b><span class="pill">${t.tag}</span></div><p>${t.desc}</p>
-            <div class="tpl-actions"><button type="button" class="btn btn-sm btn-ghost" data-preview="${t.id}">Vista previa</button><button type="button" class="btn btn-sm" data-pick="${t.id}">${state.template === t.id ? '✓ Elegida' : 'Elegir'}</button></div></div>
+            <div class="tpl-actions"><button type="button" class="btn btn-sm btn-ghost" data-preview="${t.id}">Ver cómo se ve</button><button type="button" class="btn btn-sm" data-pick="${t.id}">${state.template === t.id ? '✓ Elegida' : 'Elegir'}</button></div></div>
         </div>`).join('')}
         <div class="tpl vision tpl-custom ${state.template === 'custom' ? 'on' : ''}" data-tpl="custom">
-          <div class="icon">${icons.sparkles}</div><b>Diseño 100% personalizado</b><p>Prefiero un diseño único desde cero, hecho solo para mi marca.</p>
+          <div class="icon">${icons.sparkles}</div><b>Quiero un diseño único</b><p>Prefiero que me hagan algo desde cero, solo para mi negocio.</p>
           <button type="button" class="btn btn-sm" data-pick="custom">${state.template === 'custom' ? '✓ Elegido' : 'Elegir'}</button>
         </div>
       </div>
       <p class="q-credit mono muted">Plantillas base por <a href="https://html5up.net" target="_blank" rel="noopener">HTML5 UP</a> (CC BY 3.0).</p>`,
-    business: () => head('// tu negocio', 'Preséntanos tu negocio.') + info('business') + `
+    business: () => head('// tu negocio', 'Cuéntanos de tu negocio.') + info('business') + `
       <div class="fields">
-        <label>Nombre del negocio *<input data-f="business.name" value="${esc(state.business.name)}" maxlength="120" placeholder="Ej: Café Aurora" /><small>Como quieres que aparezca en tu marca.</small></label>
-        <label>¿A qué se dedica? *<input data-f="business.sector" value="${esc(state.business.sector)}" maxlength="120" placeholder="Ej: cafetería de especialidad" /><small>En pocas palabras, qué vendes u ofreces.</small></label>
-        <label>Ciudad<input data-f="business.city" value="${esc(state.business.city)}" maxlength="80" /><small>Nos ayuda con la publicidad local.</small></label>
-        <label>Instagram o web actual<input data-f="business.link" value="${esc(state.business.link)}" maxlength="200" placeholder="@tunegocio" /><small>Si ya tienes, para ver de dónde partimos.</small></label>
-        <label class="span2">¿Quién es tu cliente ideal?<input data-f="business.audience" value="${esc(state.business.audience)}" maxlength="200" placeholder="Ej: jóvenes de 20 a 35 que trabajan cerca" /><small>Diseñamos pensando en las personas a las que les quieres vender.</small></label>
+        <label>¿Cómo se llama tu negocio? *<input data-f="business.name" value="${esc(state.business.name)}" maxlength="120" placeholder="Ej: Café Aurora" /><small>Tal como quieres que aparezca.</small></label>
+        <label>¿Qué vendes o a qué te dedicas? *<input data-f="business.sector" value="${esc(state.business.sector)}" maxlength="120" placeholder="Ej: cafetería de especialidad" /><small>Con tus palabras, por ejemplo: “vendo tortas para cumpleaños”.</small></label>
+        <label>Ciudad<input data-f="business.city" value="${esc(state.business.city)}" maxlength="80" /><small>Para mostrarte a la gente de tu zona.</small></label>
+        <label>¿Tienes Instagram o Facebook?<input data-f="business.link" value="${esc(state.business.link)}" maxlength="200" placeholder="@tunegocio" /><small>Si tienes, escríbelo. Si no, déjalo vacío.</small></label>
+        <label class="span2">¿Quiénes te compran normalmente?<input data-f="business.audience" value="${esc(state.business.audience)}" maxlength="200" placeholder="Ej: jóvenes de 20 a 35 que trabajan cerca" /><small>Así hacemos algo que le guste a tus clientes.</small></label>
       </div>`,
-    style: () => head('// estilo', '¿Cómo quieres que se sienta tu marca?', 'Elige hasta 3 estilos.') + info('style') +
+    style: () => head('// estilo', '¿Cómo te gustaría que se vea tu negocio?', 'Toca hasta 3 opciones.') + info('style') +
       choice('style', STYLES, state.style, true) + `
-      <div class="fields one"><label>Colores o marcas que te gusten<textarea data-f="business.refs" rows="3" maxlength="600" placeholder="Ej: tonos tierra, me gusta cómo se ve la marca X…">${esc(state.business.refs)}</textarea><small>Opcional, pero nos ayuda muchísimo.</small></label></div>`,
-    timing: () => head('// tiempos', '¿Para cuándo y con qué presupuesto?') + info('timing') +
+      <div class="fields one"><label>¿Hay colores o negocios que te gusten?<textarea data-f="business.refs" rows="3" maxlength="600" placeholder="Ej: tonos tierra, me gusta cómo se ve la marca X…">${esc(state.business.refs)}</textarea><small>No es obligatorio, pero nos ayuda mucho.</small></label></div>`,
+    timing: () => head('// tiempo y dinero', '¿Para cuándo lo necesitas y cuánto quieres gastar?') + info('timing') +
       `<div class="q-block"><h3>¿Para cuándo lo necesitas?</h3>${choice('timing', TIMING, state.timing, false)}</div>
-       <div class="q-block"><h3>Presupuesto aproximado</h3>${choice('budget', BUDGET, state.budget, false)}</div>`,
-    contact: () => head('// último paso', '¿A quién le enviamos la cotización?') + info('contact') + `
+       <div class="q-block"><h3>¿Cuánto quieres gastar más o menos?</h3>${choice('budget', BUDGET, state.budget, false)}</div>`,
+    contact: () => head('// último paso', '¿A dónde te mandamos el precio?') + info('contact') + `
       <div class="fields">
         <label>Tu nombre *<input data-f="contact.name" value="${esc(state.contact.name)}" maxlength="100" /></label>
-        <label>WhatsApp *<input data-f="contact.phone" value="${esc(state.contact.phone)}" maxlength="30" inputmode="tel" placeholder="+57 300 000 0000" /><small>Aquí te escribirá tu asesor.</small></label>
+        <label>WhatsApp *<input data-f="contact.phone" value="${esc(state.contact.phone)}" maxlength="30" inputmode="tel" placeholder="+57 300 000 0000" /><small>Aquí te escribimos con el precio.</small></label>
         <label class="span2">Email *<input data-f="contact.email" type="email" value="${esc(state.contact.email)}" maxlength="150" /></label>
-        <label class="span2">¿Algo más que debamos saber?<textarea data-f="contact.notes" rows="3" maxlength="1500">${esc(state.contact.notes)}</textarea></label>
+        <label class="span2">¿Quieres contarnos algo más?<textarea data-f="contact.notes" rows="3" maxlength="1500">${esc(state.contact.notes)}</textarea></label>
       </div>`,
-    summary: () => head('// resumen', 'Así quedó tu plan.') + info('summary') +
+    summary: () => head('// listo', 'Esto es lo que nos pediste.') + info('summary') +
       `<div class="summary vision">${summaryLines().map(([k, v]) => `<div><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('')}</div>`,
   };
 
@@ -268,7 +269,7 @@ export function initQuote({ onStep }) {
   function comboMeter() {
     const n = state.cats.length, off = COMBO[n] || 0;
     return `<div class="cm-steps">${[1, 2, 3].map((i) => `<span class="${n >= i ? 'on' : ''}">${i}</span>`).join('<i></i>')}</div>
-      <p>${n === 0 ? 'Elige al menos una categoría.' : n === 1 ? 'Agrega otra categoría para un <b>Combo Premium</b> con asesor dedicado.' : n === 2 ? '<b>Combo Dúo Premium:</b> asesor dedicado y coordinación integral (+15%).' : '<b>Combo Total Premium:</b> todo tu negocio con un solo equipo, prioridad máxima (+25%).'}</p>
+      <p>${n === 0 ? 'Toca al menos una opción.' : n === 1 ? 'Si quieres, puedes tocar otra opción más.' : n === 2 ? 'Escogiste 2 cosas: una sola persona se encarga de todo (+15% por la coordinación).' : 'Escogiste las 3: nos encargamos de todo tu negocio (+25% por la coordinación).'}</p>
       ${off ? `<span class="cm-badge">Premium</span>` : ''}`;
   }
   // When leaving the plan step: chosen tiers → services + pre-filled answers
@@ -293,7 +294,7 @@ export function initQuote({ onStep }) {
     state.services.forEach((s) => {
       DETAILS[s].qs.forEach((d) => {
         const v = (state.details[s] || {})[d.key];
-        if (v && (!Array.isArray(v) || v.length)) lines.push([d.q.replace(/[¿?]/g, ''), Array.isArray(v) ? v.join(', ') : v]);
+        if (v && (!Array.isArray(v) || v.length)) lines.push([d.q.replace(/[¿?]/g, ''), Array.isArray(v) ? v.map(plain).join(', ') : plain(v)]);
       });
       if (s === 'web' && state.template) lines.push(['Plantilla web', templateLabel()]);
     });
@@ -301,9 +302,9 @@ export function initQuote({ onStep }) {
     lines.push(['Negocio', [b.name, b.sector, b.city].filter(Boolean).join(' · ')]);
     if (b.link) lines.push(['Redes / web', b.link]);
     if (b.audience) lines.push(['Cliente ideal', b.audience]);
-    if (state.style.length) lines.push(['Estilo', state.style.join(', ')]);
+    if (state.style.length) lines.push(['Estilo', state.style.map(plain).join(', ')]);
     if (b.refs) lines.push(['Referencias', b.refs]);
-    lines.push(['Tiempo', state.timing], ['Presupuesto', state.budget]);
+    lines.push(['¿Para cuándo?', state.timing], ['Presupuesto', plain(state.budget)]);
     lines.push(['Contacto', `${state.contact.name} · ${state.contact.phone} · ${state.contact.email}`]);
     if (state.contact.notes) lines.push(['Notas', state.contact.notes]);
     return lines.filter(([, v]) => v);
@@ -544,15 +545,15 @@ export function initQuote({ onStep }) {
       <div class="done-badge">${icons.check}</div>
       <p class="eyebrow">// solicitud recibida</p>
       <h2>¡Listo, ${first}!</h2>
-      <p class="q-sub">Recibimos tu solicitud de <b>${esc(planLabel())}</b>. Tu cotización personalizada será enviada a tu WhatsApp y a tu correo apenas nuestros asesores sean notificados.</p>
+      <p class="q-sub">Ya nos llegó tu pedido de <b>${esc(planLabel())}</b>. Muy pronto te escribimos a tu WhatsApp y a tu correo con el precio y todos los detalles.</p>
       <div class="done-send vision">
         <div><span class="ds-icon">${icons.whatsapp}</span><span><small>WhatsApp</small><b>${esc(state.contact.phone)}</b></span></div>
         <div><span class="ds-icon">${icons.mail}</span><span><small>Correo electrónico</small><b>${esc(state.contact.email)}</b></span></div>
       </div>
       <div class="done-steps">
-        <div class="vision"><span>01</span><b>Te notificamos</b><small>Un asesor recibe tu solicitud al instante.</small></div>
-        <div class="vision"><span>02</span><b>Revisamos tu plan</b><small>Validamos tus respuestas y armamos tu cotización.</small></div>
-        <div class="vision"><span>03</span><b>La recibes</b><small>Por WhatsApp y correo, con el detalle en PDF.</small></div>
+        <div class="vision"><span>01</span><b>Nos llega tu pedido</b><small>Ya mismo lo estamos viendo.</small></div>
+        <div class="vision"><span>02</span><b>Lo revisamos</b><small>Miramos lo que necesitas y armamos tu precio.</small></div>
+        <div class="vision"><span>03</span><b>Te escribimos</b><small>Por WhatsApp y correo, con todo explicado.</small></div>
       </div>
       <div id="booking">${bookingHTML()}</div>
       <button class="btn btn-ghost" data-close>Volver al sitio</button>`, 1, 'done');
@@ -566,10 +567,10 @@ export function initQuote({ onStep }) {
 
   // ---------- motion-graphics intro ----------
   const INTRO = [
-    { icon: 'target', sats: ['code', 'rocket', 'building'], t: 'Elige qué necesitas', d: 'Web, diseño, publicidad… o las tres. O llévate un combo premium con todo integrado.' },
-    { icon: 'list', sats: ['brand', 'code', 'video'], t: 'Responde preguntas rápidas', d: 'Solo sobre lo que elegiste. Cada paso te explica para qué sirve.' },
-    { icon: 'palette', sats: ['images', 'code', 'sparkles'], t: 'Define tu estilo', d: 'Mira plantillas web reales y cuéntanos cómo quieres que se sienta tu marca.' },
-    { icon: 'handshake', sats: ['whatsapp', 'chat', 'calendar'], t: 'Un asesor te contacta', d: 'Te escribimos por WhatsApp con tu cotización personalizada. Sin compromiso.' },
+    { icon: 'target', sats: ['code', 'rocket', 'building'], t: 'Toca lo que necesitas', d: 'Una página, un logo, publicidad… o varias cosas. Solo tienes que tocar.' },
+    { icon: 'list', sats: ['brand', 'code', 'video'], t: 'Responde preguntas fáciles', d: 'Te explicamos todo con palabras sencillas. Si no sabes algo, no pasa nada.' },
+    { icon: 'palette', sats: ['images', 'code', 'sparkles'], t: 'Dinos qué te gusta', d: 'Mira ejemplos de páginas y cuéntanos cómo quieres que se vea tu negocio.' },
+    { icon: 'handshake', sats: ['whatsapp', 'chat', 'calendar'], t: 'Te escribimos', d: 'Te mandamos el precio por WhatsApp. Preguntar no te compromete a nada.' },
   ];
   const SCENE_MS = 3200;
   let introTimer = null, introIdx = 0;
@@ -578,7 +579,7 @@ export function initQuote({ onStep }) {
     root.classList.add('intro');
     const panel = swap(`
       <div class="intro-stories">${INTRO.map(() => '<span><i></i></span>').join('')}</div>
-      <p class="eyebrow intro-eyebrow">// así funciona · toma 2 minutos</p>
+      <p class="eyebrow intro-eyebrow">// así de fácil · son 2 minutos</p>
       <div class="intro-stage">${INTRO.map((s, i) => `
         <div class="intro-scene" data-i="${i}">
           <div class="mg">
@@ -594,8 +595,8 @@ export function initQuote({ onStep }) {
       </div>
       <div class="intro-track">${INTRO.map((s, i) => `<button type="button" data-scene="${i}"><b>${icons[s.icon]}</b><span>${s.t}</span></button>`).join('<i class="intro-link"></i>')}</div>
       <div class="intro-actions">
-        <button type="button" class="btn btn-ghost btn-sm" data-skip>Saltar intro</button>
-        <button type="button" class="btn btn-lg" data-start>Empezar ahora →</button>
+        <button type="button" class="btn btn-ghost btn-sm" data-skip>Ya entendí, saltar</button>
+        <button type="button" class="btn btn-lg" data-start>Empezar →</button>
       </div>`, 1, 'q-intro');
     panel.querySelector('[data-skip]').addEventListener('click', endIntro);
     panel.querySelector('[data-start]').addEventListener('click', endIntro);
