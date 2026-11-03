@@ -42,13 +42,17 @@ export function initShowcase() {
 
     devices.forEach((d, i) => {
       const o = i - f;                                       // <0 passed, 0 focused, >0 upcoming
-      // Minimal: soft crossfade with a small lift, no 3D rotation
-      const a = Math.max(-1, Math.min(1, o));
-      const vis = Math.max(0, 1 - Math.abs(o) * 1.8);
-      d.style.transform = `translate3d(0, ${a * (mobile ? 24 : 36)}px, 0) scale(${1 - Math.abs(a) * 0.03})`;
-      d.style.opacity = String(vis);
-      d.style.pointerEvents = vis > 0.5 ? 'auto' : 'none';
-      d.style.zIndex = String(100 - Math.round(Math.abs(o) * 10));
+      // Minimal "stack" reveal: the next window wipes up over the current one,
+      // the previous one steps back a little and dims
+      const up = Math.max(0, Math.min(1, o));                // 1 → hidden below, 0 → fully shown
+      const back = Math.max(0, Math.min(1, -o));             // how far it has been covered
+      const ease = (t) => 1 - Math.pow(1 - t, 3);
+      const cover = 1 - ease(1 - up);
+      d.style.clipPath = `inset(${cover * 100}% 0 0 0 round 22px)`;
+      d.style.transform = `translate3d(0, ${cover * (mobile ? 30 : 60)}px, 0) scale(${1 - back * 0.06})`;
+      d.style.opacity = String(o < -1 ? 0 : 1 - back * 0.55);
+      d.style.pointerEvents = Math.abs(o) < 0.5 ? 'auto' : 'none';
+      d.style.zIndex = String(10 + i);
       d.style.setProperty('--glare', '50%');
       d.classList.toggle('is-active', i === active);
     });
