@@ -146,14 +146,10 @@ export function initQuote({ onStep }) {
         <button class="quote-close" id="qClose" aria-label="Cerrar">✕</button>
       </div>
       <div class="quote-stage" id="qStage"></div>
-      <div class="q-arrows">
-        <button type="button" id="qUp" aria-label="Pregunta anterior">↑</button>
-        <button type="button" id="qDown" aria-label="Siguiente pregunta">↓</button>
-      </div>
       <div class="quote-nav">
-        <button class="btn btn-ghost" id="qBack">← Atrás</button>
+        <button class="btn btn-ghost" id="qBack">Atrás</button>
         <span class="seg mono" id="qCount"></span>
-        <button class="btn" id="qNext">Continuar →</button>
+        <button class="btn" id="qNext">Continuar</button>
       </div>
     </div>
     <div class="tpl-modal" id="tplModal">
@@ -202,14 +198,14 @@ export function initQuote({ onStep }) {
     }).join('')}</div>`;
 
   const R = {
-    cats: () => head('// paso 1', '¿Con qué te ayudamos?', 'Toca una o varias opciones. Si tienes dudas, no pasa nada: después te explicamos todo.') + info('cats') + `
+    cats: () => head('paso 1', '¿Con qué te ayudamos?', 'Toca una o varias opciones. Si tienes dudas, no pasa nada: después te explicamos todo.') + info('cats') + `
       <div class="choices big cats">${CAT_ORDER.map((k, i) => {
         const c = CATS[k], cheapest = c.tiers.map((t) => tierPrice(t)).sort((a, b) => fromValue(a) - fromValue(b))[0];
         return `<button type="button" class="choice vision ${state.cats.includes(k) ? 'on' : ''}" data-name="cats" data-val="${k}" data-multi="1" style="--i:${i}">
           <span class="icon">${icons[c.icon]}</span><b>${esc(c.label)}</b><small>${esc(c.desc)}</small><span class="from">desde <b>${priceHTML({ ...cheapest, monthly: cheapest.total ? 0 : cheapest.monthly }, cop)}</b></span><span class="tick corner">${icons.check}</span></button>`;
       }).join('')}</div>
       <div class="combo-meter vision" id="comboMeter">${comboMeter()}</div>`,
-    tiers: () => head('// tu plan', state.cats.length > 1 ? 'Escoge una opción de cada una.' : 'Escoge la opción que más te guste.', 'Cada opción ya trae lo que más recomendamos. Después puedes cambiar lo que quieras.') + info('tiers') +
+    tiers: () => head('tu plan', state.cats.length > 1 ? 'Escoge una opción de cada una.' : 'Escoge la opción que más te guste.', 'Cada opción ya trae lo que más recomendamos. Después puedes cambiar lo que quieras.') + info('tiers') +
       state.cats.map((k) => `<div class="q-block"><h3 class="tier-head"><i>${icons[CATS[k].icon]}</i>${esc(CATS[k].label)}</h3>
         <div class="choices tiers">${CATS[k].tiers.map((t, i) => { const tp = tierPrice(t); return `
           <button type="button" class="choice vision tier ${state.tiers[k] === t.id ? 'on' : ''} ${t.featured ? 'feat' : ''}" data-name="tier:${k}" data-val="${t.id}" data-multi="0" style="--i:${i}">
@@ -222,11 +218,11 @@ export function initQuote({ onStep }) {
             <span class="tier-top"><b>Quiero escoger yo</b></span><small>Prefiero ir escogiendo cada cosa en las siguientes preguntas.</small><span class="tick corner">${icons.check}</span>
           </button>
         </div></div>`).join(''),
-    services: () => head('// revisa', '¿Esto es lo que necesitas?', 'Ya marcamos lo que trae tu plan. Toca para agregar o quitar.') +
+    services: () => head('revisa', '¿Esto es lo que necesitas?', 'Ya marcamos lo que trae tu plan. Toca para agregar o quitar.') +
       info('services') + bigChoice('services', Object.entries(SERVICES).map(([id, s]) => ({ id, ...s })), state.services, true),
     detail: (svc) => head(`// ${SERVICES[svc].label.toLowerCase()}`, SERVICES[svc].label) + info(null, DETAILS[svc].intro) +
       DETAILS[svc].qs.map((d) => `<div class="q-block"><h3>${d.q}${d.type === 'multi' ? ' <span class="pill">varias</span>' : ''}</h3><p class="q-help">${d.help}</p>${choice(`d:${svc}:${d.key}`, d.opts, (state.details[svc] || {})[d.key] ?? (d.type === 'multi' ? [] : null), d.type === 'multi')}</div>`).join(''),
-    template: () => head('// ejemplos de páginas', '¿Cuál de estos diseños te gusta más?', 'Toca “Ver cómo se ve” para mirarlo completo. Después le ponemos tu nombre, tus fotos y tus colores.') + info('template') + `
+    template: () => head('ejemplos de páginas', '¿Cuál de estos diseños te gusta más?', 'Toca “Ver cómo se ve” para mirarlo completo. Después le ponemos tu nombre, tus fotos y tus colores.') + info('template') + `
       <div class="tpl-grid">${TEMPLATES.map((t, i) => `
         <div class="tpl vision ${state.template === t.id ? 'on' : ''}" data-tpl="${t.id}" style="--i:${i}">
           <div class="tpl-thumb"><iframe src="/templates/${t.id}/index.html" loading="lazy" tabindex="-1" title="${t.name}" aria-hidden="true"></iframe></div>
@@ -239,7 +235,7 @@ export function initQuote({ onStep }) {
         </div>
       </div>
       <p class="q-credit mono muted">Plantillas base por <a href="https://html5up.net" target="_blank" rel="noopener">HTML5 UP</a> (CC BY 3.0).</p>`,
-    business: () => head('// tu negocio', 'Cuéntanos de tu negocio.') + info('business') + `
+    business: () => head('tu negocio', 'Cuéntanos de tu negocio.') + info('business') + `
       <div class="fields">
         <label>¿Cómo se llama tu negocio? *<input data-f="business.name" value="${esc(state.business.name)}" maxlength="120" placeholder="Ej: Café Aurora" /><small>Tal como quieres que aparezca.</small></label>
         <label>¿Qué vendes o a qué te dedicas? *<input data-f="business.sector" value="${esc(state.business.sector)}" maxlength="120" placeholder="Ej: cafetería de especialidad" /><small>Con tus palabras, por ejemplo: “vendo tortas para cumpleaños”.</small></label>
@@ -247,20 +243,20 @@ export function initQuote({ onStep }) {
         <label>¿Tienes Instagram o Facebook?<input data-f="business.link" value="${esc(state.business.link)}" maxlength="200" placeholder="@tunegocio" /><small>Si tienes, escríbelo. Si no, déjalo vacío.</small></label>
         <label class="span2">¿Quiénes te compran normalmente?<input data-f="business.audience" value="${esc(state.business.audience)}" maxlength="200" placeholder="Ej: jóvenes de 20 a 35 que trabajan cerca" /><small>Así hacemos algo que le guste a tus clientes.</small></label>
       </div>`,
-    style: () => head('// estilo', '¿Cómo te gustaría que se vea tu negocio?', 'Toca hasta 3 opciones.') + info('style') +
+    style: () => head('estilo', '¿Cómo te gustaría que se vea tu negocio?', 'Toca hasta 3 opciones.') + info('style') +
       choice('style', STYLES, state.style, true) + `
       <div class="fields one"><label>¿Hay colores o negocios que te gusten?<textarea data-f="business.refs" rows="3" maxlength="600" placeholder="Ej: tonos tierra, me gusta cómo se ve la marca X…">${esc(state.business.refs)}</textarea><small>No es obligatorio, pero nos ayuda mucho.</small></label></div>`,
-    timing: () => head('// tiempo y dinero', '¿Para cuándo lo necesitas y cuánto quieres gastar?') + info('timing') +
+    timing: () => head('tiempo y dinero', '¿Para cuándo lo necesitas y cuánto quieres gastar?') + info('timing') +
       `<div class="q-block"><h3>¿Para cuándo lo necesitas?</h3>${choice('timing', TIMING, state.timing, false)}</div>
        <div class="q-block"><h3>¿Cuánto quieres gastar más o menos?</h3>${choice('budget', BUDGET, state.budget, false)}</div>`,
-    contact: () => head('// último paso', '¿A dónde te mandamos el precio?') + info('contact') + `
+    contact: () => head('último paso', '¿A dónde te mandamos el precio?') + info('contact') + `
       <div class="fields">
         <label>Tu nombre *<input data-f="contact.name" value="${esc(state.contact.name)}" maxlength="100" /></label>
         <label>WhatsApp *<input data-f="contact.phone" value="${esc(state.contact.phone)}" maxlength="30" inputmode="tel" placeholder="+57 300 000 0000" /><small>Aquí te escribimos con el precio.</small></label>
         <label class="span2">Email *<input data-f="contact.email" type="email" value="${esc(state.contact.email)}" maxlength="150" /></label>
         <label class="span2">¿Quieres contarnos algo más?<textarea data-f="contact.notes" rows="3" maxlength="1500">${esc(state.contact.notes)}</textarea></label>
       </div>`,
-    summary: () => head('// listo', 'Esto es lo que nos pediste.') + info('summary') +
+    summary: () => head('listo', 'Esto es lo que nos pediste.') + info('summary') +
       `<div class="summary vision">${summaryLines().map(([k, v]) => `<div><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('')}</div>`,
   };
 
@@ -382,11 +378,9 @@ export function initQuote({ onStep }) {
   function updateNav() {
     const lastBlock = bIdx >= blocks.length - 1;
     back.style.visibility = idx || bIdx ? 'visible' : 'hidden';
-    back.textContent = bIdx > 0 && !lite() ? '↑ Anterior' : '← Atrás';
-    next.innerHTML = steps[idx] === 'summary' ? `Enviar solicitud ${icons.send}` : !lastBlock && !lite() ? 'Siguiente ↓' : 'Continuar →';
+    back.textContent = bIdx > 0 && !lite() ? 'Anterior' : 'Atrás';
+    next.innerHTML = steps[idx] === 'summary' ? `Enviar solicitud ${icons.send}` : !lastBlock && !lite() ? 'Siguiente' : 'Continuar';
     if (lite()) back.style.visibility = idx ? 'visible' : 'hidden';
-    $('#qUp').disabled = !idx && !bIdx;
-    $('#qDown').disabled = steps[idx] === 'summary' && lastBlock;
   }
 
   function render(dir = 1) {
@@ -501,8 +495,6 @@ export function initQuote({ onStep }) {
   // On phones the bottom buttons move whole steps (questions are just scrolled)
   back.addEventListener('click', () => (lite() ? go(-1) : prevBlock()));
   next.addEventListener('click', () => (lite() ? go(1) : nextBlock()));
-  $('#qUp').addEventListener('click', prevBlock);
-  $('#qDown').addEventListener('click', nextBlock);
   // Clicking a dimmed question brings it into focus
   stage.addEventListener('pointerdown', (e) => {
     const b = e.target.closest('.q-focus');
@@ -543,7 +535,7 @@ export function initQuote({ onStep }) {
     const first = esc(state.contact.name.split(' ')[0]);
     swap(`
       <div class="done-badge">${icons.check}</div>
-      <p class="eyebrow">// solicitud recibida</p>
+      <p class="eyebrow">solicitud recibida</p>
       <h2>¡Listo, ${first}!</h2>
       <p class="q-sub">Ya nos llegó tu pedido de <b>${esc(planLabel())}</b>. Muy pronto te escribimos a tu WhatsApp y a tu correo con el precio y todos los detalles.</p>
       <div class="done-send vision">
@@ -579,7 +571,7 @@ export function initQuote({ onStep }) {
     root.classList.add('intro');
     const panel = swap(`
       <div class="intro-stories">${INTRO.map(() => '<span><i></i></span>').join('')}</div>
-      <p class="eyebrow intro-eyebrow">// así de fácil · son 2 minutos</p>
+      <p class="eyebrow intro-eyebrow">así de fácil · son 2 minutos</p>
       <div class="intro-stage">${INTRO.map((s, i) => `
         <div class="intro-scene" data-i="${i}">
           <div class="mg">
@@ -596,7 +588,7 @@ export function initQuote({ onStep }) {
       <div class="intro-track">${INTRO.map((s, i) => `<button type="button" data-scene="${i}"><b>${icons[s.icon]}</b><span>${s.t}</span></button>`).join('<i class="intro-link"></i>')}</div>
       <div class="intro-actions">
         <button type="button" class="btn btn-ghost btn-sm" data-skip>Ya entendí, saltar</button>
-        <button type="button" class="btn btn-lg" data-start>Empezar →</button>
+        <button type="button" class="btn btn-lg" data-start>Empezar</button>
       </div>`, 1, 'q-intro');
     panel.querySelector('[data-skip]').addEventListener('click', endIntro);
     panel.querySelector('[data-start]').addEventListener('click', endIntro);

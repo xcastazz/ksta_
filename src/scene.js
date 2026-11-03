@@ -91,6 +91,7 @@ export function initScene(canvas, getActive) {
   // Minimal wireframe objects floating in the side margins (attached to the camera so they frame the content)
   scene.add(camera);
   const wireMat = new THREE.LineBasicMaterial({ color: 0xc084fc, transparent: true, opacity: 0.35 });
+  const SHOW_SHAPES = false; // floating wireframes off: cleaner, less 'generated' look
   const shapes = [
     new THREE.IcosahedronGeometry(0.55, 0), new THREE.TorusGeometry(0.45, 0.14, 8, 24), new THREE.OctahedronGeometry(0.5),
     new THREE.BoxGeometry(0.6, 0.6, 0.6), new THREE.TetrahedronGeometry(0.5), new THREE.DodecahedronGeometry(0.45),
@@ -151,6 +152,7 @@ export function initScene(canvas, getActive) {
     const vh = Math.tan(THREE.MathUtils.degToRad(25));
     const scrollF = scrollY / innerHeight;
     shapes.forEach((m) => {
+      m.visible = SHOW_SHAPES;
       const u = m.userData, h = vh * -u.depth, w = h * camera.aspect;
       let y = ((u.base + scrollF * 0.35 * u.sc) % 2 + 2) % 2 - 1;     // -1..1 wrapped
       m.position.set(u.side * w * (mobile ? 1.08 : 0.86), y * h * 1.1, u.depth);

@@ -22,7 +22,7 @@ export function initShowcase() {
       <h3>${p.name}</h3>
       <p class="muted">${p.desc}</p>
       <div class="sc-tags">${p.tags.map((t) => `<span>${t}</span>`).join('')}</div>
-      <a class="btn btn-ghost btn-sm" href="${p.url}" target="_blank" rel="noopener">Ver sitio en vivo ${icons.arrow}</a>
+      <a class="btn btn-ghost btn-sm" href="${p.url}" target="_blank" rel="noopener">Ver la página</a>
     </div>`).join('');
   dotsEl.innerHTML = PROJECTS.map(() => '<span></span>').join('');
 

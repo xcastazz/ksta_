@@ -754,3 +754,38 @@
 .btn svg, .btn .ph { width: 18px !important; height: 18px !important; flex-shrink: 0; }
 .btn-lg svg, .btn-lg .ph { width: 20px !important; height: 20px !important; }
 
+
+/* =========================================================
+   HUMAN PASS — sober, crafted look (less "AI template")
+   ========================================================= */
+/* No gradient text: one solid accent color */
+.gradient { background: none !important; -webkit-background-clip: initial !important; background-clip: initial !important; color: #c4a5ff !important; }
+/* Small labels: plain, no code style */
+.eyebrow { font-family: var(--sans) !important; text-transform: none; letter-spacing: 0; font-size: .9rem !important; font-weight: 500; color: #c4a5ff !important; }
+/* No watermark numbers, no tech grid, calmer glow */
+.chapter-num, .grid { display: none !important; }
+.orb { opacity: .28 !important; filter: blur(140px) !important; }
+.orb-2 { opacity: .16 !important; }
+/* Icons: simple, no glossy gradient tiles */
+.icon, .service .icon, .package .icon, .step .icon, .choices.big .choice .icon, .tpl-custom .icon, .quote-cta-icon, .pl-ic, .mg-core, .ap-ic, .bk-logo {
+  background: rgba(196, 165, 255, .12) !important; border: 1px solid rgba(196, 165, 255, .22) !important; box-shadow: none !important; color: #d8c6ff !important;
+}
+.icon .ph path[opacity], .pl-ic .ph path[opacity], .mg-core .ph path[opacity], .bk-logo .ph path[opacity] { fill: currentColor !important; opacity: .18 !important; }
+/* Buttons: solid, no neon glow */
+.btn:not(.btn-ghost) { background: #7c3aed !important; box-shadow: none !important; }
+.btn:not(.btn-ghost):hover { background: #6d28d9 !important; box-shadow: none !important; }
+.btn:hover { transform: none !important; }
+/* Headlines: a touch less extreme */
+.hero-title { letter-spacing: -0.04em !important; }
+h2 { letter-spacing: -0.03em !important; }
+/* Cards: flatter, less shine */
+.vision, .glass, .glass-strong { box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 10px 30px -20px rgba(0,0,0,.7) !important; }
+.package.featured { box-shadow: none !important; }
+.tilt::after { display: none !important; }
+.marquee-track span:nth-child(even) { color: rgba(255,255,255,.35) !important; }
+/* Guided pill without arrow */
+.next { padding: .55rem 1.1rem !important; }
+
+/* Small labels in normal type, not code font */
+.pill, .tag, .seg, .next-label, .sc-tags span, .quote-top small, .about-role, .tier-top .pill { font-family: var(--sans) !important; letter-spacing: 0 !important; }
+

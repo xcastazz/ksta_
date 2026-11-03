@@ -17,7 +17,7 @@ export function initPlanner(root, onQuote) {
   root.innerHTML = `
     <div class="pl-grid">
       <div class="pl-controls vision">
-        <p class="eyebrow">// tu dinero</p>
+        <p class="eyebrow">tu dinero</p>
         <label class="pl-label" for="plRange">¿Cuánta plata tienes para empezar?</label>
         <div class="pl-amount"><span>$</span><input id="plInput" inputmode="numeric" value="${budget.toLocaleString('es-CO')}" aria-label="Presupuesto en pesos" /><small>COP</small></div>
         <input type="range" id="plRange" min="${MIN}" max="${MAX}" step="${STEP}" value="${budget}" />
@@ -73,7 +73,7 @@ export function initPlanner(root, onQuote) {
           <div><small>${left >= 0 ? 'Te sobra' : 'Te falta'}</small><b class="${left >= 0 ? 'ok' : ''}">${cop(Math.abs(left))}</b></div>
           ${best.q.monthly ? `<div><small>Después, cada mes</small><b>${cop(best.q.monthly)}</b></div>` : ''}
         </div>
-        <div class="pl-ctas"><button class="btn btn-lg pl-go" data-want>¡Quiero esto! →</button><button class="pl-link" data-go>Prefiero cambiar algunas cosas</button></div>
+        <div class="pl-ctas"><button class="btn btn-lg pl-go" data-want>¡Quiero esto!</button><button class="pl-link" data-go>Prefiero cambiar algunas cosas</button></div>
         <div class="pl-order" id="plOrder" hidden></div>
       </div>
       ${up ? `<div class="pl-up vision ${changed ? 'pop-in' : ''}"><span class="pl-ic">${icons.bolt}</span><p>Con <b>${cop(up.start)}</b> podrías tener <b>${up.tiers.map((t) => t.name).join(' + ')}</b>.</p><button class="btn btn-sm btn-ghost" data-set="${up.start}">Ver</button></div>` : ''}`;

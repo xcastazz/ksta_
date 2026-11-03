@@ -753,7 +753,7 @@ function renderDetail() {
   if (!l) { box.innerHTML = `<div class="a-empty">${icons.inbox}<p>Selecciona una solicitud para ver el detalle.</p></div>`; return; }
 
   box.innerHTML = `
-    <button class="a-back" id="back">← Volver a solicitudes</button>
+    <button class="a-back" id="back">Volver a solicitudes</button>
     <div class="a-d-head">
       <span class="avatar lg">${esc((l.name || '?')[0].toUpperCase())}</span>
       <div><h2>${esc(l.name)}</h2><p class="muted">${esc(l.business || '')} · ${new Date(l.created_at).toLocaleString('es')}</p></div>
