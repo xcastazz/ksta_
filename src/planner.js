@@ -143,7 +143,7 @@ export function initPlanner(root, onQuote) {
       box.innerHTML = `
         <div class="pl-done">
           <span class="pl-done-badge">${icons.check}</span>
-          <h4>¡Listo, ${esc(lead.name.split(' ')[0])}! 🎉 Tu plan ${esc(planName)} ya quedó pedido.</h4>
+          <h4>¡Listo, ${esc(lead.name.split(' ')[0])}! Tu plan ${esc(planName)} ya quedó pedido.</h4>
           <p class="muted">Muy pronto te escribimos a tu WhatsApp <b>${esc(lead.phone)}</b> y a <b>${esc(lead.email)}</b> con todos los detalles.</p>
         </div>
         <div id="plBooking">${bookingHTML()}</div>`;

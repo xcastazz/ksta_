@@ -198,7 +198,7 @@ export function initQuote({ onStep }) {
     }).join('')}</div>`;
 
   const R = {
-    cats: () => head('paso 1', '¡Hola! 👋 ¿Qué necesitas?', 'Toca una o varias. ¿Tienes dudas? Tranqui, más adelante te explicamos todo.') + info('cats') + `
+    cats: () => head('paso 1', '¡Hola! ¿Qué necesitas?', 'Toca una o varias. ¿Tienes dudas? Tranqui, más adelante te explicamos todo.') + info('cats') + `
       <div class="choices big cats">${CAT_ORDER.map((k, i) => {
         const c = CATS[k], cheapest = c.tiers.map((t) => tierPrice(t)).sort((a, b) => fromValue(a) - fromValue(b))[0];
         return `<button type="button" class="choice vision ${state.cats.includes(k) ? 'on' : ''}" data-name="cats" data-val="${k}" data-multi="1" style="--i:${i}">
@@ -222,7 +222,7 @@ export function initQuote({ onStep }) {
       info('services') + bigChoice('services', Object.entries(SERVICES).filter(([id]) => ['web', 'branding'].includes(id)).map(([id, s]) => ({ id, ...s })), state.services, true),
     detail: (svc) => head(`// ${SERVICES[svc].label.toLowerCase()}`, SERVICES[svc].label) + info(null, DETAILS[svc].intro) +
       DETAILS[svc].qs.map((d) => `<div class="q-block"><h3>${d.q}${d.type === 'multi' ? ' <span class="pill">varias</span>' : ''}</h3><p class="q-help">${d.help}</p>${choice(`d:${svc}:${d.key}`, d.opts, (state.details[svc] || {})[d.key] ?? (d.type === 'multi' ? [] : null), d.type === 'multi')}</div>`).join(''),
-    template: () => head('ejemplos de páginas', '¿Cuál te enamora más? 😍', 'Toca “Ver cómo se ve” para mirarlo completo. Después le ponemos tu nombre, tus fotos y tus colores.') + info('template') + `
+    template: () => head('ejemplos de páginas', '¿Cuál te enamora más?', 'Toca “Ver cómo se ve” para mirarlo completo. Después le ponemos tu nombre, tus fotos y tus colores.') + info('template') + `
       <div class="tpl-grid">${TEMPLATES.map((t, i) => `
         <div class="tpl vision ${state.template === t.id ? 'on' : ''}" data-tpl="${t.id}" style="--i:${i}">
           <div class="tpl-thumb"><iframe src="/templates/${t.id}/index.html" loading="lazy" tabindex="-1" title="${t.name}" aria-hidden="true"></iframe></div>
@@ -310,13 +310,13 @@ export function initQuote({ onStep }) {
   function validate() {
     const s = steps[idx];
     const need = (ok, msg) => { if (!ok) toast(msg); return ok; };
-    if (s === 'cats') return need(state.cats.length, 'Toca al menos una opción para seguir 🙌');
-    if (s === 'tiers') return need(state.cats.every((k) => state.tiers[k]), 'Escoge un plan y seguimos 😉');
+    if (s === 'cats') return need(state.cats.length, 'Toca al menos una opción para seguir');
+    if (s === 'tiers') return need(state.cats.every((k) => state.tiers[k]), 'Escoge un plan y seguimos');
     if (s === 'services') return need(state.services.length, 'Ups, toca al menos una opción');
     if (s === 'template') return need(state.template, 'Escoge un diseño, ¡o pide uno a tu medida!');
     if (s.startsWith('detail:')) {
       const svc = s.split(':')[1];
-      return need(DETAILS[svc].qs.every((d) => { const v = (state.details[svc] || {})[d.key]; return d.type === 'multi' ? v?.length : v; }), 'Te faltan unas preguntitas 👀');
+      return need(DETAILS[svc].qs.every((d) => { const v = (state.details[svc] || {})[d.key]; return d.type === 'multi' ? v?.length : v; }), 'Te faltan unas preguntitas');
     }
     if (s === 'business') return need(state.business.name && state.business.sector, 'Cuéntanos cómo se llama tu negocio y a qué se dedica');
     if (s === 'timing') return need(state.timing && state.budget, 'Te falta decirnos para cuándo y con cuánta plata');
@@ -399,7 +399,7 @@ export function initQuote({ onStep }) {
   // Move one question; at the edges, move one whole step
   function nextBlock() {
     if (bIdx < blocks.length - 1) {
-      if (!blockAnswered(blocks[bIdx])) { shakeBlock(); return toast('Respóndenos esta y seguimos 😉'); }
+      if (!blockAnswered(blocks[bIdx])) { shakeBlock(); return toast('Respóndenos esta y seguimos'); }
       return setBlock(bIdx + 1);
     }
     go(1);
@@ -445,7 +445,7 @@ export function initQuote({ onStep }) {
   }
   const closePreview = () => { modal.classList.remove('open'); setTimeout(() => { $('#tplModalFrame').src = 'about:blank'; }, 500); };
   $('#tplModalClose').addEventListener('click', closePreview);
-  $('#tplModalUse').addEventListener('click', (e) => { pickTemplate(e.currentTarget.dataset.id); closePreview(); toast('¡Buena elección! 🙌'); });
+  $('#tplModalUse').addEventListener('click', (e) => { pickTemplate(e.currentTarget.dataset.id); closePreview(); toast('¡Buena elección!'); });
 
   // ---------- input handling ----------
   stage.addEventListener('click', (e) => {
@@ -466,7 +466,7 @@ export function initQuote({ onStep }) {
     } else if (name.startsWith('tier:')) state.tiers[name.slice(5)] = val;
     else if (name === 'services') state.services = toggle(state.services);
     else if (name === 'style') {
-      if (!state.style.includes(val) && state.style.length >= 3) return toast('Hasta 3 no más, ¡no te emociones! 😄');
+      if (!state.style.includes(val) && state.style.length >= 3) return toast('Hasta 3 no más, ¡no te emociones!');
       state.style = toggle(state.style);
     } else if (name === 'timing' || name === 'budget') state[name] = val;
     else if (name.startsWith('d:')) {
@@ -535,7 +535,7 @@ export function initQuote({ onStep }) {
     const first = esc(state.contact.name.split(' ')[0]);
     swap(`
       <div class="done-badge">${icons.check}</div>
-      <p class="eyebrow">¡nos llegó! 🎉</p>
+      <p class="eyebrow">¡nos llegó!</p>
       <h2>¡Listo, ${first}! Ya estamos en esas.</h2>
       <p class="q-sub">Ya tenemos tu pedido de <b>${esc(planLabel())}</b>. Prepárate, que muy pronto te escribimos al WhatsApp y al correo con tu precio y todo explicado.</p>
       <div class="done-send vision">

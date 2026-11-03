@@ -60,14 +60,14 @@ export async function setupBooking(box, lead, toast) {
     });
     if (error) {
       console.error(error);
-      toast(error.code === '23505' ? 'Uy, alguien te ganó ese horario. Escoge otro 🙏' : 'Uy, no pudimos agendar. ¿Lo intentas otra vez?');
+      toast(error.code === '23505' ? 'Uy, alguien te ganó ese horario. Escoge otro' : 'Uy, no pudimos agendar. ¿Lo intentas otra vez?');
       btn.disabled = false; btn.innerHTML = `${icons.teams} Apartar mi cita`;
       if (error.code === '23505') setupBooking(box, lead, toast);
       return;
     }
     box.classList.add('booked');
     box.innerHTML = `<div class="bk-done"><span class="bk-logo">${icons.teams}</span>
-      <div><b>¡Listo! Tu cita quedó apartada 🎉</b><p>${prettyDay(day)} a las ${prettyHour(hour)} (hora de Colombia), por videollamada. Te mandamos el enlace para entrar a <b>${esc(lead.email)}</b> y a tu WhatsApp.</p></div></div>`;
+      <div><b>¡Listo! Tu cita quedó apartada</b><p>${prettyDay(day)} a las ${prettyHour(hour)} (hora de Colombia), por videollamada. Te mandamos el enlace para entrar a <b>${esc(lead.email)}</b> y a tu WhatsApp.</p></div></div>`;
     dispatchEvent(new Event('scene:kick'));
   });
 }
