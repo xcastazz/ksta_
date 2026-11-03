@@ -59,9 +59,9 @@ function renderLogin(error = '', signedIn = false) {
     <div class="login-wrap">
       <form class="login vision" id="loginForm">
         <a href="/" class="logo" aria-label="KstaStudio_"><svg class="logo-mark" viewBox="0 0 724 432" aria-hidden="true"><path fill="var(--k1,#6a1fd0)" d="M5 20C62 20 112 62 112 125V205L380 4H452L5 430Z"/><path fill="var(--k2,#a259f5)" d="M478 4H720L642 82Q624 98 596 98H432Q402 102 372 128L298 176Z"/><path fill="var(--k1,#6a1fd0)" d="M432 98Q350 135 352 188Q358 228 412 236L592 266Q630 272 632 298Q630 326 592 328H406L500 412Q520 426 552 426H592Q684 420 716 336Q734 258 660 206Q632 190 592 186L424 156Q396 146 406 114Z"/><path fill="var(--k2,#a259f5)" d="M248 222Q259 212 271 222L492 426H314L173 290Z"/></svg><span class="logo-word">Ksta<em>Studio</em><span class="cursor">_</span></span></a>
-        <p class="eyebrow">// panel de asesores</p>
+        <p class="eyebrow">tu panel de clientes</p>
         <h1>Inicia sesión</h1>
-        <p class="muted">Te enviaremos un enlace mágico a tu correo. Sin contraseñas.</p>
+        <p class="muted">Te mando un enlace a tu correo. Lo tocas y entras, sin contraseñas.</p>
         ${signedIn ? '' : `<label>Correo<input type="email" name="email" required autocomplete="email" placeholder="tu@correo.com" /></label>
         <button class="btn" type="submit">Enviarme el enlace ${icons.send}</button>`}
         ${signedIn ? '<button class="btn btn-ghost" type="button" id="logoutBtn">Cerrar sesión</button>' : ''}

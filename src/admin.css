@@ -428,3 +428,7 @@ body.admin { min-height: 100vh; }
 .ap-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
 .ap-prev summary { cursor: pointer; font-size: .82rem; color: var(--muted); }
 .ap-prev pre { margin-top: .6rem; max-height: 360px; overflow: auto; white-space: pre-wrap; word-break: break-word; font-family: var(--mono); font-size: .74rem; line-height: 1.55; padding: 1rem; border-radius: 14px; background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.08); color: #e2e8f0; }
+
+/* Logo en el inicio de sesión */
+.login .logo { justify-self: start; display: inline-flex; align-items: center; gap: .55em; font-size: 1.3rem; max-width: 100%; }
+.login .logo-mark, .a-top .logo-mark, header .logo-mark { height: 1.35em !important; width: auto !important; flex: none; }
