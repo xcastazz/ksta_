@@ -820,3 +820,5 @@ html:not(.lite) .sc-item.on { transform: none; }
 .showcase-copy { position: relative; z-index: 2; min-width: 0; }
 .showcase-copy h2 { font-size: clamp(2rem, 3.6vw, 3.4rem); line-height: 1.02; }
 html:not(.lite) .sc-device { transition: none; will-change: clip-path, transform; }
+html:not(.lite) .sc-device { transition: box-shadow .3s ease; will-change: clip-path, transform, filter, opacity; }
+html:not(.lite) .sc-device.opening { box-shadow: 0 0 0 1px rgba(192,132,252,.6), 0 0 80px 10px rgba(168,85,247,.45); }

@@ -41,18 +41,20 @@ export function initShowcase() {
     const active = Math.min(n - 1, Math.max(0, Math.round(f)));
 
     devices.forEach((d, i) => {
-      const o = i - f;                                       // <0 passed, 0 focused, >0 upcoming
-      // Minimal "stack" reveal: the next window wipes up over the current one,
-      // the previous one steps back a little and dims
-      const up = Math.max(0, Math.min(1, o));                // 1 → hidden below, 0 → fully shown
-      const back = Math.max(0, Math.min(1, -o));             // how far it has been covered
-      const ease = (t) => 1 - Math.pow(1 - t, 3);
-      const cover = 1 - ease(1 - up);
-      d.style.clipPath = `inset(${cover * 100}% 0 0 0 round 22px)`;
-      d.style.transform = `translate3d(0, ${cover * (mobile ? 30 : 60)}px, 0) scale(${1 - back * 0.06})`;
-      d.style.opacity = String(o < -1 ? 0 : 1 - back * 0.55);
+      const o = i ? i - f : Math.min(0, -f);                                    // <0 passed, 0 focused, >0 upcoming
+      // "Portal": the next project opens as a circle of light from the center and
+      // settles in; the current one rushes toward you, blurs and dissolves (you pass through it)
+      const ease = (t) => t * t * (3 - 2 * t);
+      const inT = ease(1 - Math.max(0, Math.min(1, o)));    // 0 → closed, 1 → fully open
+      const outT = ease(Math.max(0, Math.min(1, -o)));       // 0 → here, 1 → gone past you
+      d.style.clipPath = o > 0 ? `circle(${inT * 75}% at 50% 50%)` : 'none';
+      d.style.transform = `scale(${o > 0 ? 1.12 - inT * 0.12 : 1 + outT * 0.35})`;
+      d.style.filter = outT > 0.01 ? `blur(${outT * 14}px)` : 'none';
+      d.style.opacity = String(o > 0 ? Math.min(1, inT * 1.6) : 1 - outT);
       d.style.pointerEvents = Math.abs(o) < 0.5 ? 'auto' : 'none';
-      d.style.zIndex = String(10 + i);
+      d.style.zIndex = String(o > 0 ? 20 + i : 10 + i);
+      d.style.setProperty('--ring', String(o > 0 ? inT : 1));
+      d.classList.toggle('opening', o > 0.02 && o < 0.98);
       d.style.setProperty('--glare', '50%');
       d.classList.toggle('is-active', i === active);
     });
