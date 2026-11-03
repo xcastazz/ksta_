@@ -183,9 +183,9 @@ document.getElementById('year').textContent = new Date().getFullYear();
 {
   const wa = HAS_WHATSAPP ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('¡Hola Jerónimo! Vi tu página y quiero saber más.')}` : '';
   const links = [
-    wa && `<a class="glass" href="${wa}" target="_blank" rel="noopener">${icons.whatsapp}WhatsApp</a>`,
-    INSTAGRAM && `<a class="glass" href="https://instagram.com/${INSTAGRAM}" target="_blank" rel="noopener">${icons.instagram}@${INSTAGRAM}</a>`,
-    EMAIL && `<a class="glass" href="mailto:${EMAIL}">${icons.mail}${EMAIL}</a>`,
+    wa && `<a class="glass" href="${wa}" target="_blank" rel="noopener"><i>${icons.whatsapp}</i>WhatsApp</a>`,
+    INSTAGRAM && `<a class="glass" href="https://instagram.com/${INSTAGRAM}" target="_blank" rel="noopener"><i>${icons.instagram}</i>@${INSTAGRAM}</a>`,
+    EMAIL && `<a class="glass" href="mailto:${EMAIL}"><i>${icons.mail}</i>${EMAIL}</a>`,
   ].filter(Boolean);
   const el = document.getElementById('contactLinks');
   if (el) el.innerHTML = links.join('');
