@@ -806,3 +806,7 @@ h2 { letter-spacing: -0.03em !important; }
 .plan-tabs button.soon small { margin-left: .4em; font-size: .7em; opacity: .8; }
 .choice.soon { opacity: .45; cursor: not-allowed; pointer-events: none; filter: saturate(.4); }
 .choice.soon .pill { margin-top: .4rem; align-self: flex-start; }
+
+/* Showcase: items stacked in one grid cell so the container grows with the tallest one (dots never overlap the button) */
+html:not(.lite) .showcase-info { display: grid; min-height: 0; }
+html:not(.lite) .sc-item { position: relative; inset: auto; grid-area: 1 / 1; }
