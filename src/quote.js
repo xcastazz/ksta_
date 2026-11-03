@@ -4,7 +4,7 @@ import { supabase } from './supabase.js';
 import { TEMPLATES } from './templates.js';
 import { bookingHTML, setupBooking } from './booking.js';
 import { buildQuote, cop } from './pricing.js';
-import { CATS, CAT_ORDER, COMBO, findTier, tierPrice, priceHTML, fromValue } from './plans.js';
+import { CATS, CAT_ORDER, CAT_SOON, COMBO, findTier, tierPrice, priceHTML, fromValue } from './plans.js';
 
 const SERVICES = {
   branding: { label: 'Logo e imagen', icon: 'brand', desc: 'Tu logo, tus colores y todo lo que hace que la gente reconozca tu negocio.' },
@@ -203,8 +203,8 @@ export function initQuote({ onStep }) {
         const c = CATS[k], cheapest = c.tiers.map((t) => tierPrice(t)).sort((a, b) => fromValue(a) - fromValue(b))[0];
         return `<button type="button" class="choice vision ${state.cats.includes(k) ? 'on' : ''}" data-name="cats" data-val="${k}" data-multi="1" style="--i:${i}">
           <span class="icon">${icons[c.icon]}</span><b>${esc(c.label)}</b><small>${esc(c.desc)}</small><span class="from">desde <b>${priceHTML({ ...cheapest, monthly: cheapest.total ? 0 : cheapest.monthly }, cop)}</b></span><span class="tick corner">${icons.check}</span></button>`;
-      }).join('')}</div>
-      <div class="combo-meter vision" id="comboMeter">${comboMeter()}</div>`,
+      }).join('')}${CAT_SOON.map((k) => `<div class="choice vision soon" aria-disabled="true"><span class="icon">${icons[CATS[k].icon]}</span><b>${esc(CATS[k].label)}</b><small>Muy pronto podrás pedirnos esto también.</small><span class="pill">Próximamente</span></div>`).join('')}</div>
+      ${CAT_ORDER.length > 1 ? `<div class="combo-meter vision" id="comboMeter">${comboMeter()}</div>` : ''}`,
     tiers: () => head('tu plan', state.cats.length > 1 ? 'Escoge una opción de cada una.' : 'Escoge la opción que más te guste.', 'Cada opción ya trae lo que más recomendamos. Después puedes cambiar lo que quieras.') + info('tiers') +
       state.cats.map((k) => `<div class="q-block"><h3 class="tier-head"><i>${icons[CATS[k].icon]}</i>${esc(CATS[k].label)}</h3>
         <div class="choices tiers">${CATS[k].tiers.map((t, i) => { const tp = tierPrice(t); return `
@@ -219,7 +219,7 @@ export function initQuote({ onStep }) {
           </button>
         </div></div>`).join(''),
     services: () => head('revisa', '¿Esto es lo que necesitas?', 'Ya marcamos lo que trae tu plan. Toca para agregar o quitar.') +
-      info('services') + bigChoice('services', Object.entries(SERVICES).map(([id, s]) => ({ id, ...s })), state.services, true),
+      info('services') + bigChoice('services', Object.entries(SERVICES).filter(([id]) => id === 'web').map(([id, s]) => ({ id, ...s })), state.services, true),
     detail: (svc) => head(`// ${SERVICES[svc].label.toLowerCase()}`, SERVICES[svc].label) + info(null, DETAILS[svc].intro) +
       DETAILS[svc].qs.map((d) => `<div class="q-block"><h3>${d.q}${d.type === 'multi' ? ' <span class="pill">varias</span>' : ''}</h3><p class="q-help">${d.help}</p>${choice(`d:${svc}:${d.key}`, d.opts, (state.details[svc] || {})[d.key] ?? (d.type === 'multi' ? [] : null), d.type === 'multi')}</div>`).join(''),
     template: () => head('ejemplos de páginas', '¿Cuál de estos diseños te gusta más?', 'Toca “Ver cómo se ve” para mirarlo completo. Después le ponemos tu nombre, tus fotos y tus colores.') + info('template') + `

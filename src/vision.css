@@ -796,3 +796,13 @@ h2 { letter-spacing: -0.03em !important; }
 .logo-word em { font-style: normal; color: #b57bff; }
 .logo .cursor { color: #7b2ff0; }
 .a-rail-logo img { display: block; border-radius: 8px; }
+
+/* Servicios que aún no ofrecemos: "Próximamente" */
+.service { position: relative; }
+.soon-tag { position: absolute; top: 1.1rem; right: 1.1rem; font-size: .72rem; font-weight: 600; padding: .25rem .6rem; border-radius: 99px; background: rgba(255,255,255,.07); color: var(--muted); border: 1px solid rgba(255,255,255,.1); }
+.soon-tag.on { background: rgba(134,239,172,.12); color: #86efac; border-color: rgba(134,239,172,.3); }
+.service.soon { opacity: .55; filter: saturate(.4); }
+.plan-tabs button.soon { opacity: .45; cursor: not-allowed; }
+.plan-tabs button.soon small { margin-left: .4em; font-size: .7em; opacity: .8; }
+.choice.soon { opacity: .45; cursor: not-allowed; pointer-events: none; filter: saturate(.4); }
+.choice.soon .pill { margin-top: .4rem; align-self: flex-start; }

@@ -1,4 +1,4 @@
-export const services = [
+const allServices = [
   {
     icon: 'brand', title: 'Logo e imagen de tu negocio',
     items: ['Te creamos o mejoramos tu logo', 'Escogemos tus colores y letras', 'Una guía para que tu logo siempre se vea igual', 'Tarjetas de presentación', 'Empaques y etiquetas para tus productos', 'Diseños para tus redes sociales'],
@@ -20,6 +20,8 @@ export const services = [
     items: ['El aviso de la entrada de tu local', 'Afiches y volantes', 'Pendones para ferias o la entrada', 'Calcomanías para vitrinas y carros', 'Letreros dentro del local', 'Decoramos tu local con tu marca'],
   },
 ];
+// Páginas web primero (lo que ya ofrecemos); el resto sale como 'Próximamente'
+export const services = [...allServices.filter((s) => s.icon === 'code'), ...allServices.filter((s) => s.icon !== 'code')];
 
 export const packages = [
   {

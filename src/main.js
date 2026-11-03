@@ -1,5 +1,5 @@
 import { services } from './data.js';
-import { CATS, CAT_ORDER, COMBO, tierPrice, priceHTML } from './plans.js';
+import { CATS, CAT_ORDER, CAT_SOON, COMBO, tierPrice, priceHTML } from './plans.js';
 import { cop } from './pricing.js';
 import { icons } from './icons.js';
 import { initQuote } from './quote.js';
@@ -9,17 +9,17 @@ import { WHATSAPP_NUMBER } from './config.js';
 
 // Render services & packages
 document.getElementById('services').innerHTML = services.map((s, i) => `
-  <article class="service glass reveal" style="--d:${i * 90}ms">
-    <div class="icon">${icons[s.icon]}</div>
+  <article class="service glass reveal ${s.icon === 'code' ? '' : 'soon'}" style="--d:${i * 90}ms">
+    <div class="icon">${icons[s.icon]}</div>${s.icon === 'code' ? '<span class="soon-tag on">Disponible</span>' : '<span class="soon-tag">Próximamente</span>'}
     <h3>${s.title}</h3>
     <ul>${s.items.map((it) => `<li>${it}</li>`).join('')}</ul>
   </article>`).join('');
 
 // Plans by category (tabs) + combo
-const PLAN_TABS = [...CAT_ORDER, 'combo'];
+const PLAN_TABS = CAT_ORDER.length > 1 ? [...CAT_ORDER, 'combo'] : CAT_ORDER;
 const pkgEl = document.getElementById('packages');
 function renderPlans(active = 'web') {
-  const tabs = `<div class="plan-tabs vision" role="tablist">${PLAN_TABS.map((k) => `<button role="tab" class="${k === active ? 'on' : ''}" data-tab="${k}">${k === 'combo' ? `${icons.sparkles}Varias cosas juntas` : `${icons[CATS[k].icon]}${CATS[k].label}`}</button>`).join('')}</div>`;
+  const tabs = `<div class="plan-tabs vision" role="tablist">${PLAN_TABS.map((k) => `<button role="tab" class="${k === active ? 'on' : ''}" data-tab="${k}">${k === 'combo' ? `${icons.sparkles}Varias cosas juntas` : `${icons[CATS[k].icon]}${CATS[k].label}`}</button>`).join('')}${CAT_SOON.map((k) => `<button role="tab" class="soon" disabled>${icons[CATS[k].icon]}${CATS[k].label}<small>Próximamente</small></button>`).join('')}</div>`;
   let body;
   if (active === 'combo') {
     const mid = CAT_ORDER.map((k) => CATS[k].tiers.find((t) => t.featured));
