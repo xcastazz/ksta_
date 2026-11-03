@@ -855,3 +855,11 @@ html:not(.lite) .sc-device.opening { box-shadow: 0 0 0 1px rgba(192,132,252,.6),
 .contact-links a { justify-content: flex-start; }
 .contact-links i { display: grid; place-items: center; width: 40px; height: 40px; flex: none; border-radius: 12px; background: rgba(168,85,247,.14); }
 .contact-links i svg { width: 22px; height: 22px; }
+
+/* Vistas por pestañas */
+.view-off { display: none !important; }
+#rail, #nextBtn { display: none !important; }
+.nav-links a.on:not(.btn) { color: var(--text); }
+.nav-links a.on:not(.btn)::after { content: ''; display: block; height: 2px; margin-top: 3px; border-radius: 2px; background: linear-gradient(90deg, var(--violet), #e879f9); }
+body:not([data-view="inicio"]) main > :not(.chapter) { display: none !important; }
+body:not([data-view="inicio"]) main { padding-top: 2rem; }

@@ -191,3 +191,38 @@ document.getElementById('year').textContent = new Date().getFullYear();
   if (el) el.innerHTML = links.join('');
   if (wa) document.body.insertAdjacentHTML('beforeend', `<a class="wa-float" href="${wa}" target="_blank" rel="noopener" aria-label="Escríbeme por WhatsApp">${icons.whatsapp}<span>¿Hablamos?</span></a>`);
 }
+
+// ---------- Pestañas: el inicio muestra solo lo necesario, el resto va en su propia vista ----------
+{
+  const VIEWS = {
+    inicio: ['inicio', 'servicios', 'proyectos'],
+    precios: ['paquetes', 'presupuesto'],
+    ejemplos: ['plantillas'],
+    'como-trabajo': ['proceso', 'faq'],
+    'quien-soy': ['nosotros'],
+  };
+  const ALWAYS = ['contacto'];
+  const viewOf = (id) => Object.keys(VIEWS).find((v) => VIEWS[v].includes(id)) || 'inicio';
+  let current = null;
+  function show(view) {
+    if (view === current) return false;
+    current = view;
+    chapters.forEach((c) => c.classList.toggle('view-off', !(VIEWS[view].includes(c.id) || ALWAYS.includes(c.id))));
+    document.querySelectorAll('.nav-links a[href^="#/"]').forEach((a) => a.classList.toggle('on', a.getAttribute('href') === `#/${view === 'inicio' ? '' : view}`));
+    document.body.dataset.view = view;
+    dispatchEvent(new Event('resize'));
+    return true;
+  }
+  function route() {
+    const h = decodeURIComponent(location.hash.slice(1));
+    if (/^cotizar/.test(h)) return;                          // lo maneja el cotizador
+    if (h.startsWith('/') || !h) { show(VIEWS[h.slice(1)] ? h.slice(1) : 'inicio'); scrollTo({ top: 0 }); return; }
+    const el = document.getElementById(h);
+    if (!el || !el.classList.contains('chapter')) return;
+    const changed = show(viewOf(h));
+    if (changed && !ALWAYS.includes(h) && VIEWS[viewOf(h)][0] === h) scrollTo({ top: 0 });
+    else requestAnimationFrame(() => el.scrollIntoView({ behavior: changed ? 'auto' : 'smooth', block: 'start' }));
+  }
+  addEventListener('hashchange', route);
+  route();
+}
