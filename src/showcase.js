@@ -41,7 +41,8 @@ export function initShowcase() {
     const active = Math.min(n - 1, Math.max(0, Math.round(f)));
 
     devices.forEach((d, i) => {
-      const o = i ? i - f : Math.min(0, -f);                                    // <0 passed, 0 focused, >0 upcoming
+      let o = i - f;                                         // <0 passed, 0 focused, >0 upcoming
+      if (i === 0) o = Math.min(0, o); if (i === n - 1) o = Math.max(0, o); // first starts open, last stays
       // "Portal": the next project opens as a circle of light from the center and
       // settles in; the current one rushes toward you, blurs and dissolves (you pass through it)
       const ease = (t) => t * t * (3 - 2 * t);
