@@ -789,3 +789,10 @@ h2 { letter-spacing: -0.03em !important; }
 /* Small labels in normal type, not code font */
 .pill, .tag, .seg, .next-label, .sc-tags span, .quote-top small, .about-role, .tier-top .pill { font-family: var(--sans) !important; letter-spacing: 0 !important; }
 
+
+/* Brand logo (KS mark + wordmark) */
+.logo { display: inline-flex; align-items: center; gap: .55em; font-family: 'Poppins', var(--sans, system-ui), sans-serif; font-weight: 700; letter-spacing: -0.03em; text-decoration: none; color: var(--text); }
+.logo-mark { height: 1.35em; width: auto; flex: none; --k1: #7b2ff0; --k2: #b57bff; }
+.logo-word em { font-style: normal; color: #b57bff; }
+.logo .cursor { color: #7b2ff0; }
+.a-rail-logo img { display: block; border-radius: 8px; }

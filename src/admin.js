@@ -58,7 +58,7 @@ function renderLogin(error = '', signedIn = false) {
   app.innerHTML = `
     <div class="login-wrap">
       <form class="login vision" id="loginForm">
-        <a href="/" class="logo">KstaStudio<span class="cursor">_</span></a>
+        <a href="/" class="logo" aria-label="KstaStudio_"><svg class="logo-mark" viewBox="0 0 724 432" aria-hidden="true"><path fill="var(--k1,#6a1fd0)" d="M5 20C62 20 112 62 112 125V205L380 4H452L5 430Z"/><path fill="var(--k2,#a259f5)" d="M478 4H720L642 82Q624 98 596 98H432Q402 102 372 128L298 176Z"/><path fill="var(--k1,#6a1fd0)" d="M432 98Q350 135 352 188Q358 228 412 236L592 266Q630 272 632 298Q630 326 592 328H406L500 412Q520 426 552 426H592Q684 420 716 336Q734 258 660 206Q632 190 592 186L424 156Q396 146 406 114Z"/><path fill="var(--k2,#a259f5)" d="M248 222Q259 212 271 222L492 426H314L173 290Z"/></svg><span class="logo-word">Ksta<em>Studio</em><span class="cursor">_</span></span></a>
         <p class="eyebrow">// panel de asesores</p>
         <h1>Inicia sesión</h1>
         <p class="muted">Te enviaremos un enlace mágico a tu correo. Sin contraseñas.</p>
@@ -85,7 +85,7 @@ function renderLogin(error = '', signedIn = false) {
 function renderShell() {
   app.innerHTML = `
     <aside class="a-rail vision">
-      <a href="/" class="a-rail-logo" title="Ver sitio">K_</a>
+      <a href="/" class="a-rail-logo" title="Ver sitio"><img src="/favicon.svg" alt="KstaStudio_" width="28" height="28"></a>
       ${VIEWS.map(([k, label, ic]) => `<button data-view="${k}" title="${label}" aria-label="${label}">${icons[ic]}<span class="a-tip">${label}</span></button>`).join('')}
       <span class="a-rail-sep"></span>
       <button id="notifBtn" title="Activar notificaciones">${icons.bell}<span class="a-tip">Notificaciones</span></button>

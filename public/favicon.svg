@@ -1,1 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#0a0612"/><text x="50%" y="56%" text-anchor="middle" dominant-baseline="middle" font-family="monospace" font-weight="700" font-size="34" fill="#a855f7">K_</text></svg>
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="-90 -230 904 904"><rect x="-90" y="-230" width="904" height="904" rx="190" fill="#0a0612"/><path fill="#6a1fd0" d="M5 20C62 20 112 62 112 125V205L380 4H452L5 430Z"/>
+<path fill="#a259f5" d="M478 4H720L642 82Q624 98 596 98H432Q402 102 372 128L298 176Z"/>
+<path fill="#6a1fd0" d="M432 98Q350 135 352 188Q358 228 412 236L592 266Q630 272 632 298Q630 326 592 328H406L500 412Q520 426 552 426H592Q684 420 716 336Q734 258 660 206Q632 190 592 186L424 156Q396 146 406 114Z"/>
+<path fill="#a259f5" d="M248 222Q259 212 271 222L492 426H314L173 290Z"/></svg>
