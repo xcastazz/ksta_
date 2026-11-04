@@ -13,201 +13,310 @@
   <style>
     :root {
       --navy: #0a1628; --navy-2: #0e2044; --navy-3: #1a3a6b;
-      --gold: #c9a227; --gold-2: #f5d07a;
-      --ink: #f4f1ea; --muted: #9aa6bb; --line: rgba(255,255,255,.09);
-      --glass: rgba(255,255,255,.035);
+      --gold: #c9a227; --gold-2: #f5d07a; --gold-ink: #8a6a10;
+      --ivory: #f7f3ea; --ivory-2: #efe8d8; --ink-d: #101b2e; --muted-d: #5d6577;
+      --ink: #f4f1ea; --muted: #9aa6bb; --line: rgba(255,255,255,.09); --line-d: rgba(16,27,46,.1);
       --serif: 'Cormorant Garamond', Georgia, serif;
       --sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
       --ease: cubic-bezier(.2,.7,.2,1);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+    html { scroll-behavior: smooth; scroll-padding-top: 84px; }
     body { font-family: var(--sans); background: var(--navy); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
     a { color: inherit; text-decoration: none; }
     img, video { max-width: 100%; display: block; }
-    .wrap { width: min(1160px, 100% - 40px); margin-inline: auto; }
+    svg.i { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .wrap { width: min(1180px, 100% - 40px); margin-inline: auto; }
 
-    /* Apple-like mesh gradient background */
-    .mesh { position: fixed; inset: 0; z-index: -1; overflow: hidden; background: radial-gradient(120% 80% at 50% -10%, #12284d 0%, var(--navy) 55%); }
-    .mesh i { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .55; animation: drift 22s ease-in-out infinite alternate; }
-    .mesh i:nth-child(1) { width: 620px; height: 620px; left: -160px; top: -120px; background: #1a3a6b; }
-    .mesh i:nth-child(2) { width: 520px; height: 520px; right: -140px; top: 18%; background: rgba(201,162,39,.35); animation-duration: 28s; }
-    .mesh i:nth-child(3) { width: 480px; height: 480px; left: 30%; bottom: -220px; background: #0e2044; animation-duration: 32s; }
-    @keyframes drift { to { transform: translate3d(60px, 40px, 0) scale(1.08); } }
+    .mesh { position: fixed; inset: 0; z-index: -1; overflow: hidden; background: radial-gradient(120% 80% at 50% -10%, #132a52 0%, var(--navy) 58%); }
+    .mesh i { position: absolute; border-radius: 50%; filter: blur(100px); opacity: .5; animation: drift 24s ease-in-out infinite alternate; }
+    .mesh i:nth-child(1) { width: 640px; height: 640px; left: -180px; top: -160px; background: #1a3a6b; }
+    .mesh i:nth-child(2) { width: 520px; height: 520px; right: -160px; top: 12%; background: rgba(201,162,39,.32); animation-duration: 30s; }
+    .mesh i:nth-child(3) { width: 520px; height: 520px; left: 35%; bottom: -260px; background: #0e2044; animation-duration: 34s; }
+    .mesh::after { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px); background-size: 72px 72px; -webkit-mask-image: radial-gradient(70% 60% at 50% 20%, #000 20%, transparent 75%); mask-image: radial-gradient(70% 60% at 50% 20%, #000 20%, transparent 75%); }
+    @keyframes drift { to { transform: translate3d(70px, 40px, 0) scale(1.08); } }
 
-    /* Preview ribbon */
-    .ribbon { position: relative; z-index: 60; text-align: center; font-size: .78rem; padding: .5rem 1rem; background: linear-gradient(90deg, #7c3aed, #a855f7); color: #fff; }
-    .ribbon b { font-weight: 600; }
+    .ribbon { position: relative; z-index: 60; text-align: center; font-size: .76rem; padding: .45rem 1rem; background: linear-gradient(90deg, #6d28d9, #a855f7); color: #fff; }
 
-    /* Nav */
-    .nav { position: sticky; top: 0; z-index: 50; backdrop-filter: saturate(160%) blur(18px); -webkit-backdrop-filter: saturate(160%) blur(18px); background: rgba(10,22,40,.62); border-bottom: 1px solid var(--line); }
-    .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 1rem; }
-    .brand { display: flex; align-items: center; gap: .7rem; font-weight: 600; letter-spacing: -.01em; }
-    .brand img { width: 38px; height: 38px; border-radius: 10px; object-fit: cover; }
-    .brand span small { display: block; font-size: .68rem; font-weight: 500; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
-    .links { display: flex; gap: 1.6rem; font-size: .88rem; color: var(--muted); }
+    .nav { position: sticky; top: 0; z-index: 50; transition: background .4s, border-color .4s; border-bottom: 1px solid transparent; }
+    .nav.solid { backdrop-filter: saturate(160%) blur(18px); -webkit-backdrop-filter: saturate(160%) blur(18px); background: rgba(10,22,40,.9); border-color: var(--line); }
+    .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 72px; gap: 1rem; }
+    .brand { display: flex; align-items: center; gap: .75rem; }
+    .brand img { width: 40px; height: 40px; border-radius: 11px; object-fit: cover; box-shadow: 0 0 0 1px rgba(245,208,122,.3); }
+    .brand b { font-family: var(--serif); font-size: 1.32rem; font-weight: 600; line-height: 1; display: block; }
+    .brand small { display: block; font-size: .64rem; font-weight: 600; color: var(--muted); letter-spacing: .16em; text-transform: uppercase; margin-top: 3px; }
+    .links { display: flex; gap: 2rem; font-size: .87rem; color: var(--muted); }
+    .links a { position: relative; transition: color .3s; }
+    .links a::after { content: ''; position: absolute; left: 0; right: 0; bottom: -6px; height: 1px; background: var(--gold-2); transform: scaleX(0); transition: transform .4s var(--ease); }
     .links a:hover { color: var(--ink); }
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; padding: .8rem 1.4rem; border-radius: 999px; font: 600 .92rem var(--sans); border: 0; cursor: pointer; transition: transform .3s var(--ease), box-shadow .3s var(--ease), background .3s; }
-    .btn-gold { background: linear-gradient(180deg, var(--gold-2), var(--gold)); color: #1b1404; box-shadow: 0 8px 30px rgba(201,162,39,.25), inset 0 1px 0 rgba(255,255,255,.5); }
-    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(201,162,39,.35), inset 0 1px 0 rgba(255,255,255,.5); }
-    .btn-ghost { background: rgba(255,255,255,.06); color: var(--ink); border: 1px solid var(--line); }
-    .btn-ghost:hover { background: rgba(255,255,255,.1); }
-    .btn-sm { padding: .6rem 1.1rem; font-size: .85rem; }
-    .burger { display: none; background: none; border: 0; color: var(--ink); font-size: 1.4rem; cursor: pointer; }
+    .links a:hover::after { transform: scaleX(1); }
+    .burger { display: none; background: none; border: 0; color: var(--ink); cursor: pointer; padding: 6px; }
 
-    /* Type */
-    .eyebrow { font-size: .74rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--gold-2); }
-    h1, h2 { font-family: var(--serif); font-weight: 500; letter-spacing: -.015em; line-height: 1.02; }
-    h1 { font-size: clamp(3rem, 6vw, 5.3rem); line-height: .98; }
-    h2 { font-size: clamp(2.3rem, 4.6vw, 3.8rem); }
-    h3 { font-size: 1.12rem; font-weight: 600; letter-spacing: -.01em; }
-    .gold { background: linear-gradient(100deg, #fff3cf 0%, var(--gold-2) 35%, var(--gold) 70%, #fff3cf 100%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 8s linear infinite; }
-    @keyframes shine { to { background-position: 200% center; } }
-    .lead { font-size: 1.12rem; color: var(--muted); max-width: 560px; }
-    .muted { color: var(--muted); }
-    section { padding: 110px 0; position: relative; }
-    .head { text-align: center; max-width: 720px; margin: 0 auto 56px; display: grid; gap: 14px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: .55rem; padding: .85rem 1.45rem; border-radius: 999px; font: 600 .92rem var(--sans); border: 0; cursor: pointer; transition: transform .35s var(--ease), box-shadow .35s var(--ease), background .3s; white-space: nowrap; }
+    .btn svg.i { width: 18px; height: 18px; }
+    .btn-gold { background: linear-gradient(180deg, #f8dc92, var(--gold)); color: #1b1404; box-shadow: 0 10px 30px -8px rgba(201,162,39,.55), inset 0 1px 0 rgba(255,255,255,.55); }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 16px 40px -8px rgba(201,162,39,.65), inset 0 1px 0 rgba(255,255,255,.55); }
+    .btn-ghost { background: rgba(255,255,255,.06); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+    .btn-ghost:hover { background: rgba(255,255,255,.11); }
+    .btn-sm { padding: .62rem 1.15rem; font-size: .84rem; }
 
-    /* Hero */
-    .hero { padding: 90px 0 70px; }
-    .hero .wrap { display: grid; grid-template-columns: 1.15fr .85fr; gap: 56px; align-items: center; }
-    .hero-copy { display: grid; gap: 26px; }
-    .pill { display: inline-flex; align-items: center; gap: .5rem; width: fit-content; padding: .42rem .9rem; border-radius: 999px; font-size: .8rem; color: var(--gold-2); background: rgba(201,162,39,.08); border: 1px solid rgba(201,162,39,.25); }
-    .pill i { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 0 4px rgba(74,222,128,.15); }
+    .eyebrow { display: inline-flex; align-items: center; gap: .6rem; font-size: .72rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--gold-2); }
+    .eyebrow::before { content: ''; width: 22px; height: 1px; background: currentColor; opacity: .7; }
+    .light .eyebrow { color: var(--gold-ink); }
+    h1, h2 { font-family: var(--serif); font-weight: 500; letter-spacing: -.012em; line-height: 1; }
+    h1 { font-size: clamp(3.1rem, 6.2vw, 5.6rem); }
+    h2 { font-size: clamp(2.4rem, 4.4vw, 3.9rem); }
+    h3 { font-size: 1.08rem; font-weight: 700; letter-spacing: -.01em; }
+    em.g { font-style: italic; background: linear-gradient(100deg, #fff1c8 0%, var(--gold-2) 30%, var(--gold) 65%, #fff1c8 100%); background-size: 220% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 9s linear infinite; padding-right: .06em; }
+    .light em.g { background-image: linear-gradient(100deg, #b8891a, var(--gold-ink) 50%, #b8891a); }
+    @keyframes shine { to { background-position: 220% center; } }
+    .lead { font-size: 1.12rem; color: var(--muted); max-width: 540px; }
+    section { padding: 120px 0; position: relative; }
+    .head { max-width: 760px; margin: 0 0 60px; display: grid; gap: 16px; }
+    .head.center { text-align: center; margin-inline: auto; justify-items: center; }
+    .head p { color: var(--muted); font-size: 1.05rem; }
+    .light .head p { color: var(--muted-d); }
+    .light { background: var(--ivory); color: var(--ink-d); }
+    .light::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(60% 50% at 85% 0%, rgba(201,162,39,.14), transparent 70%), radial-gradient(50% 40% at 0% 100%, rgba(26,58,107,.08), transparent 70%); }
+    .light > .wrap { position: relative; }
+
+    .hero { padding: 80px 0 90px; }
+    .hero .wrap { display: grid; grid-template-columns: 1.12fr .88fr; gap: 64px; align-items: center; }
+    .hero-copy { display: grid; gap: 28px; }
+    .badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    .badge { display: inline-flex; align-items: center; gap: .5rem; padding: .45rem .85rem .45rem .65rem; border-radius: 999px; font-size: .8rem; font-weight: 500; color: #e9dfc4; background: rgba(255,255,255,.04); box-shadow: inset 0 0 0 1px rgba(245,208,122,.22); }
+    .badge svg.i { width: 16px; height: 16px; color: var(--gold-2); }
     .cta { display: flex; gap: .8rem; flex-wrap: wrap; }
-    .video-card { position: relative; border-radius: 28px; padding: 10px; background: linear-gradient(160deg, rgba(245,208,122,.35), rgba(255,255,255,.05) 40%, rgba(26,58,107,.5)); box-shadow: 0 40px 100px -30px rgba(0,0,0,.7); }
-    .video-card video { border-radius: 20px; width: 100%; aspect-ratio: 4/5; object-fit: cover; background: #000; }
-    .video-tag { position: absolute; left: 24px; bottom: 24px; right: 24px; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .8rem 1rem; border-radius: 16px; background: rgba(10,22,40,.6); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--line); font-size: .85rem; pointer-events: none; }
-    .video-tag b { display: block; }
+    .hero-note { display: flex; align-items: center; gap: 14px; font-size: .85rem; color: var(--muted); }
+    .avatars { display: flex; }
+    .avatars span { width: 30px; height: 30px; border-radius: 50%; margin-left: -8px; border: 2px solid var(--navy); background: linear-gradient(135deg, var(--navy-3), #2a4f8a); display: grid; place-items: center; color: var(--gold-2); }
+    .avatars span:first-child { margin-left: 0; }
+    .avatars svg.i { width: 14px; height: 14px; }
+    .video-card { position: relative; border-radius: 30px; padding: 1px; background: linear-gradient(160deg, rgba(245,208,122,.55), rgba(255,255,255,.06) 35%, rgba(26,58,107,.6)); box-shadow: 0 50px 120px -40px rgba(0,0,0,.8), 0 0 0 10px rgba(255,255,255,.02); }
+    .video-card .inner { border-radius: 29px; overflow: hidden; position: relative; background: #000; }
+    .video-card video { width: 100%; aspect-ratio: 4/5; object-fit: cover; }
+    .play { position: absolute; inset: 0; display: grid; place-items: center; background: linear-gradient(180deg, transparent 45%, rgba(5,12,24,.8)); cursor: pointer; border: 0; transition: opacity .4s; }
+    .play > span { width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.16); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.35); transition: transform .4s var(--ease); }
+    .play:hover > span { transform: scale(1.08); }
+    .play > span svg.i { width: 26px; height: 26px; fill: #fff; stroke: none; margin-left: 4px; }
+    .play.gone { opacity: 0; pointer-events: none; }
+    .video-cap { position: absolute; left: 24px; right: 24px; bottom: 22px; text-align: left; }
+    .video-cap b { display: block; font-family: var(--serif); font-size: 1.55rem; font-weight: 600; color: #fff; }
+    .video-cap small { color: #c9d1de; font-size: .82rem; font-family: var(--sans); }
 
-    /* Trust bar */
-    .trust { padding: 0 0 40px; }
-    .trust .wrap { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 24px; background: var(--glass); overflow: hidden; }
-    .trust div { padding: 26px 24px; border-right: 1px solid var(--line); }
-    .trust div:last-child { border-right: 0; }
-    .trust b { font-family: var(--serif); font-size: 2.3rem; font-weight: 400; display: block; line-height: 1; margin-bottom: 6px; }
-    .trust small { color: var(--muted); font-size: .85rem; }
+    .stats { padding: 0 0 30px; }
+    .stats .grid { display: grid; grid-template-columns: repeat(4, 1fr); border-radius: 26px; background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015)); box-shadow: inset 0 0 0 1px var(--line); }
+    .stat { padding: 28px 26px; display: flex; gap: 16px; align-items: center; }
+    .stat + .stat { border-left: 1px solid var(--line); }
+    .tile { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: rgba(201,162,39,.1); color: var(--gold-2); box-shadow: inset 0 0 0 1px rgba(201,162,39,.25); flex: none; }
+    .stat b { font-family: var(--serif); font-size: 2.2rem; font-weight: 600; display: block; line-height: 1; }
+    .stat small { color: var(--muted); font-size: .82rem; }
+    .allies { display: flex; align-items: center; justify-content: center; gap: 46px; flex-wrap: wrap; padding: 36px 0 0; color: var(--muted); font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; }
+    .allies img { height: 34px; width: auto; border-radius: 6px; filter: grayscale(1) brightness(1.5); opacity: .55; transition: opacity .3s, filter .3s; }
+    .allies img:hover { opacity: 1; filter: none; }
 
-    /* Problem finder */
-    .finder { display: grid; grid-template-columns: 300px 1fr; gap: 24px; }
+    .finder { display: grid; grid-template-columns: 340px 1fr; gap: 22px; }
     .probs { display: grid; gap: 8px; align-content: start; }
-    .probs button { text-align: left; padding: 15px 18px; border-radius: 16px; border: 1px solid var(--line); background: var(--glass); color: var(--muted); font: 500 .95rem var(--sans); cursor: pointer; transition: all .3s var(--ease); }
-    .probs button:hover { color: var(--ink); border-color: rgba(255,255,255,.18); }
-    .probs button.on { color: #1b1404; background: linear-gradient(180deg, var(--gold-2), var(--gold)); border-color: transparent; }
-    .answer { border-radius: 28px; padding: 40px; border: 1px solid var(--line); background: linear-gradient(160deg, rgba(26,58,107,.45), rgba(255,255,255,.02)); display: grid; gap: 18px; align-content: start; min-height: 360px; }
-    .answer h3 { font-family: var(--serif); font-weight: 400; font-size: 2.2rem; }
-    .answer ul { list-style: none; display: grid; gap: 10px; }
-    .answer li { display: flex; gap: 10px; color: var(--muted); }
-    .answer li::before { content: ''; flex: none; width: 18px; height: 18px; margin-top: 3px; border-radius: 50%; background: radial-gradient(circle, var(--gold-2) 0 3px, rgba(201,162,39,.18) 4px); }
-    .answer .tag { font-size: .8rem; color: var(--gold-2); }
-    .fade-in { animation: fadeUp .5s var(--ease); }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } }
+    .probs button { display: flex; align-items: center; gap: 12px; text-align: left; padding: 12px 16px 12px 12px; border-radius: 16px; border: 0; background: #fff; color: var(--ink-d); font: 600 .93rem var(--sans); cursor: pointer; box-shadow: inset 0 0 0 1px var(--line-d); transition: all .35s var(--ease); }
+    .probs .tile { width: 38px; height: 38px; border-radius: 11px; background: var(--ivory-2); color: var(--gold-ink); box-shadow: none; }
+    .probs .tile svg.i { width: 18px; height: 18px; }
+    .probs button:hover { transform: translateX(4px); }
+    .probs button.on { background: var(--ink-d); color: var(--ivory); box-shadow: 0 20px 40px -20px rgba(16,27,46,.5); }
+    .probs button.on .tile { background: rgba(245,208,122,.14); color: var(--gold-2); }
+    .answer { border-radius: 30px; padding: 44px; background: var(--ink-d); color: var(--ink); display: grid; align-content: start; position: relative; overflow: hidden; min-height: 430px; box-shadow: 0 40px 80px -40px rgba(16,27,46,.6); }
+    .answer::before { content: ''; position: absolute; width: 440px; height: 440px; right: -150px; top: -170px; border-radius: 50%; background: radial-gradient(circle, rgba(201,162,39,.3), transparent 65%); }
+    .answer > * { position: relative; }
+    .answer .tag { display: inline-flex; align-items: center; gap: 8px; font-size: .74rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-2); }
+    .answer .tag svg.i { width: 17px; height: 17px; }
+    .answer h3 { font-family: var(--serif); font-weight: 500; font-size: 2.5rem; line-height: 1.05; }
+    .answer ul { list-style: none; display: grid; gap: 12px; }
+    .answer li { display: flex; gap: 12px; color: #c6cedb; }
+    .answer li svg.i { color: var(--gold-2); width: 19px; height: 19px; margin-top: 3px; }
+    .docs { display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: 16px; background: rgba(255,255,255,.05); box-shadow: inset 0 0 0 1px var(--line); font-size: .92rem; color: #c6cedb; }
+    .docs b { color: #fff; }
+    .docs svg.i { color: var(--gold-2); margin-top: 2px; }
+    .fade-in { animation: fadeUp .55s var(--ease); }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } }
 
-    /* Areas grid */
-    .areas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 56px; }
-    .area { padding: 26px; border-radius: 22px; border: 1px solid var(--line); background: var(--glass); transition: transform .4s var(--ease), border-color .4s, background .4s; }
-    .area:hover { transform: translateY(-4px); border-color: rgba(201,162,39,.35); background: rgba(255,255,255,.05); }
-    .area .n { font-family: var(--serif); color: var(--gold-2); font-size: 1.1rem; }
-    .area h3 { margin: 10px 0 6px; }
-    .area p { color: var(--muted); font-size: .92rem; }
+    .areas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line-d); border-radius: 28px; overflow: hidden; box-shadow: inset 0 0 0 1px var(--line-d); }
+    .area { padding: 32px; background: var(--ivory); position: relative; transition: background .4s; }
+    .area:hover { background: #fffdf7; }
+    .area .tile { width: 48px; height: 48px; background: #fff; color: var(--gold-ink); box-shadow: 0 6px 20px -10px rgba(16,27,46,.25), inset 0 0 0 1px var(--line-d); margin-bottom: 22px; transition: transform .4s var(--ease); }
+    .area:hover .tile { transform: translateY(-3px) rotate(-4deg); }
+    .area .n { position: absolute; top: 30px; right: 30px; font-family: var(--serif); font-size: 1.05rem; color: rgba(16,27,46,.28); }
+    .area h3 { margin-bottom: 8px; }
+    .area p { color: var(--muted-d); font-size: .92rem; }
 
-    /* Steps */
-    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; counter-reset: s; }
-    .step { padding: 28px; border-radius: 22px; border: 1px solid var(--line); background: var(--glass); counter-increment: s; }
-    .step::before { content: counter(s, decimal-leading-zero); font-family: var(--serif); font-size: 2.6rem; display: block; line-height: 1; margin-bottom: 18px; background: linear-gradient(180deg, var(--gold-2), rgba(201,162,39,.25)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-    .step p { color: var(--muted); font-size: .92rem; margin-top: 6px; }
+    .band { padding: 130px 0 110px; text-align: center; }
+    .band blockquote { font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.4rem); line-height: 1.12; max-width: 980px; margin: 0 auto; font-weight: 500; }
+    .band cite { display: block; margin-top: 26px; font-style: normal; color: var(--muted); font-size: .85rem; letter-spacing: .12em; text-transform: uppercase; }
+    .band svg.i { width: 48px; height: 48px; margin: 0 auto 26px; color: var(--gold-2); stroke-width: 1.2; }
 
-    /* Team */
-    .team { display: grid; grid-template-columns: .9fr 1.1fr; gap: 56px; align-items: center; }
-    .portrait { aspect-ratio: 4/5; border-radius: 28px; border: 1px dashed rgba(245,208,122,.35); background: linear-gradient(160deg, rgba(26,58,107,.5), rgba(10,22,40,.4)); display: grid; place-items: center; text-align: center; color: var(--muted); font-size: .9rem; padding: 24px; }
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; position: relative; }
+    .steps::before { content: ''; position: absolute; top: 34px; left: 8%; right: 8%; height: 1px; background: linear-gradient(90deg, transparent, rgba(245,208,122,.45), transparent); }
+    .step { position: relative; display: grid; gap: 10px; padding: 0 8px; justify-items: start; }
+    .step .tile { width: 68px; height: 68px; border-radius: 50%; background: var(--navy); box-shadow: inset 0 0 0 1px rgba(245,208,122,.35), 0 0 0 8px var(--navy); margin-bottom: 10px; }
+    .step .tile svg.i { width: 24px; height: 24px; }
+    .step small { font-size: .72rem; letter-spacing: .18em; color: var(--gold-2); font-weight: 700; }
+    .step p { color: var(--muted); font-size: .92rem; }
+
+    .team { display: grid; grid-template-columns: .9fr 1.1fr; gap: 70px; align-items: center; }
+    .portrait { aspect-ratio: 4/5; border-radius: 30px; background: linear-gradient(160deg, var(--ivory-2), #e4dac4); display: grid; place-items: center; text-align: center; color: var(--muted-d); font-size: .9rem; padding: 24px; position: relative; overflow: hidden; box-shadow: inset 0 0 0 1px var(--line-d); }
+    .portrait > div svg.i { width: 54px; height: 54px; color: var(--gold-ink); opacity: .6; margin: 0 auto 12px; stroke-width: 1.2; }
+    .seal { position: absolute; right: 22px; bottom: 22px; display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 14px; background: rgba(255,255,255,.8); backdrop-filter: blur(10px); font-size: .8rem; color: var(--ink-d); font-weight: 600; box-shadow: 0 10px 30px -14px rgba(16,27,46,.4); }
+    .seal svg.i { width: 18px; height: 18px; color: var(--gold-ink); }
     .creds { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
-    .creds div { padding: 16px 18px; border-radius: 16px; border: 1px solid var(--line); background: var(--glass); font-size: .9rem; }
-    .creds b { display: block; font-weight: 600; margin-bottom: 2px; }
-    .ph { color: var(--gold-2); }
+    .cred { display: flex; gap: 12px; padding: 16px; border-radius: 18px; background: #fff; box-shadow: inset 0 0 0 1px var(--line-d); font-size: .88rem; color: var(--muted-d); }
+    .cred svg.i { color: var(--gold-ink); margin-top: 2px; }
+    .cred b { display: block; color: var(--ink-d); font-weight: 700; }
+    .ph { color: var(--gold-ink); font-weight: 700; }
 
-    /* Plans */
-    .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: stretch; }
-    .plan { padding: 34px; border-radius: 26px; border: 1px solid var(--line); background: var(--glass); display: grid; gap: 16px; align-content: start; }
-    .plan.feat { background: linear-gradient(170deg, rgba(245,208,122,.14), rgba(26,58,107,.35) 60%); border-color: rgba(201,162,39,.4); box-shadow: 0 30px 80px -40px rgba(201,162,39,.45); }
-    .plan .price { font-family: var(--serif); font-size: 3rem; line-height: 1; }
-    .plan .price small { font-family: var(--sans); font-size: .85rem; color: var(--muted); }
-    .plan ul { list-style: none; display: grid; gap: 9px; color: var(--muted); font-size: .93rem; }
-    .plan li::before { content: '✓'; color: var(--gold-2); margin-right: 8px; }
-    .plan .btn { margin-top: auto; }
-    .note { text-align: center; color: var(--muted); font-size: .85rem; margin-top: 22px; }
+    .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: stretch; }
+    .plan { padding: 36px; border-radius: 28px; background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015)); box-shadow: inset 0 0 0 1px var(--line); display: grid; gap: 18px; align-content: start; position: relative; transition: transform .45s var(--ease); }
+    .plan:hover { transform: translateY(-6px); }
+    .plan.feat { background: linear-gradient(170deg, rgba(245,208,122,.16), rgba(26,58,107,.4) 60%); box-shadow: inset 0 0 0 1px rgba(245,208,122,.45), 0 40px 90px -50px rgba(201,162,39,.6); }
+    .plan .top { display: flex; justify-content: space-between; align-items: center; }
+    .chip { font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: .35rem .75rem; border-radius: 999px; background: var(--gold-2); color: #1b1404; }
+    .plan .price { font-family: var(--serif); font-size: 3.2rem; font-weight: 600; line-height: 1; }
+    .plan .price small { font-family: var(--sans); font-size: .8rem; font-weight: 500; color: var(--muted); margin-left: 6px; }
+    .plan ul { list-style: none; display: grid; gap: 10px; color: #c6cedb; font-size: .93rem; padding-top: 18px; border-top: 1px solid var(--line); }
+    .plan li { display: flex; gap: 10px; }
+    .plan li svg.i { color: var(--gold-2); width: 18px; height: 18px; margin-top: 3px; }
+    .pay { display: flex; justify-content: center; align-items: center; gap: 10px 26px; flex-wrap: wrap; margin-top: 34px; color: var(--muted); font-size: .86rem; }
+    .pay span { display: inline-flex; align-items: center; gap: 8px; }
+    .pay svg.i { width: 17px; height: 17px; color: var(--gold-2); }
 
-    /* Testimonials placeholder */
-    .quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-    .quote { padding: 28px; border-radius: 22px; border: 1px dashed rgba(255,255,255,.16); color: var(--muted); font-size: .92rem; display: grid; gap: 14px; }
-    .quote p { font-family: var(--serif); font-size: 1.35rem; color: var(--ink); line-height: 1.3; opacity: .55; }
+    .quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .tq { padding: 32px; border-radius: 26px; background: #fff; box-shadow: inset 0 0 0 1px var(--line-d), 0 20px 50px -30px rgba(16,27,46,.25); display: grid; gap: 22px; align-content: space-between; }
+    .stars { display: flex; gap: 3px; color: var(--gold); }
+    .stars svg.i { width: 16px; height: 16px; fill: currentColor; stroke: none; }
+    .tq p { font-family: var(--serif); font-size: 1.45rem; line-height: 1.25; color: rgba(16,27,46,.42); }
+    .who { display: flex; align-items: center; gap: 12px; font-size: .85rem; color: var(--muted-d); }
+    .who .tile { width: 40px; height: 40px; border-radius: 50%; background: var(--ivory-2); color: var(--gold-ink); box-shadow: none; }
+    .who svg.i { width: 18px; height: 18px; }
+    .tq-note { text-align: center; margin-top: 22px; font-size: .85rem; color: var(--muted-d); }
 
-    /* FAQ */
-    .faq { max-width: 820px; margin: 0 auto; display: grid; gap: 10px; }
-    details { border-radius: 18px; border: 1px solid var(--line); background: var(--glass); }
-    summary { cursor: pointer; list-style: none; padding: 20px 24px; font-weight: 500; display: flex; justify-content: space-between; gap: 1rem; }
+    .faq-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 60px; align-items: start; }
+    .faq { display: grid; gap: 10px; }
+    details { border-radius: 18px; background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.015)); box-shadow: inset 0 0 0 1px var(--line); }
+    details[open] { background: rgba(255,255,255,.06); }
+    summary { cursor: pointer; list-style: none; padding: 20px 22px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
     summary::-webkit-details-marker { display: none; }
-    summary::after { content: '+'; color: var(--gold-2); font-size: 1.3rem; line-height: 1; transition: transform .3s; }
-    details[open] summary::after { transform: rotate(45deg); }
-    details p { padding: 0 24px 20px; color: var(--muted); }
+    .pm { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; flex: none; box-shadow: inset 0 0 0 1px var(--line); color: var(--gold-2); transition: transform .35s var(--ease), background .3s; }
+    .pm svg.i { width: 16px; height: 16px; }
+    details[open] .pm { transform: rotate(45deg); background: rgba(245,208,122,.12); }
+    details p { padding: 0 22px 22px; color: var(--muted); }
 
-    /* Contact */
-    .contact { display: grid; grid-template-columns: .95fr 1.05fr; gap: 28px; }
-    .info { display: grid; gap: 14px; align-content: start; }
-    .info .row { padding: 18px 20px; border-radius: 18px; border: 1px solid var(--line); background: var(--glass); }
-    .info .row small { color: var(--muted); display: block; font-size: .8rem; }
-    .map { border-radius: 18px; overflow: hidden; border: 1px solid var(--line); height: 230px; filter: grayscale(.6) contrast(1.05); }
-    .map iframe { width: 100%; height: 100%; border: 0; }
-    form { padding: 34px; border-radius: 28px; border: 1px solid var(--line); background: linear-gradient(170deg, rgba(26,58,107,.45), rgba(255,255,255,.02)); display: grid; gap: 14px; }
-    label { display: grid; gap: 6px; font-size: .85rem; color: var(--muted); }
-    input, select, textarea { font: inherit; color: var(--ink); background: rgba(0,0,0,.25); border: 1px solid var(--line); border-radius: 14px; padding: .85rem 1rem; outline: none; transition: border-color .3s, box-shadow .3s; }
+    .contact { display: grid; grid-template-columns: .9fr 1.1fr; gap: 26px; }
+    .info { display: grid; gap: 12px; align-content: start; }
+    .row { display: flex; gap: 14px; align-items: center; padding: 16px 18px; border-radius: 18px; background: rgba(255,255,255,.035); box-shadow: inset 0 0 0 1px var(--line); }
+    .row .tile { width: 42px; height: 42px; border-radius: 12px; }
+    .row small { color: var(--muted); display: block; font-size: .76rem; }
+    .map { border-radius: 18px; overflow: hidden; box-shadow: inset 0 0 0 1px var(--line); height: 230px; }
+    .map iframe { width: 100%; height: 100%; border: 0; filter: grayscale(1) invert(.9) hue-rotate(185deg) contrast(.9); }
+    form { padding: 36px; border-radius: 30px; background: linear-gradient(170deg, rgba(26,58,107,.55), rgba(255,255,255,.02)); box-shadow: inset 0 0 0 1px var(--line), 0 40px 90px -50px rgba(0,0,0,.7); display: grid; gap: 14px; }
+    form h3 { font-family: var(--serif); font-size: 1.9rem; font-weight: 500; }
+    label { display: grid; gap: 7px; font-size: .82rem; color: var(--muted); font-weight: 500; }
+    input, select, textarea { font: inherit; font-size: .95rem; color: var(--ink); background: rgba(5,12,24,.45); border: 1px solid var(--line); border-radius: 14px; padding: .85rem 1rem; outline: none; transition: border-color .3s, box-shadow .3s; width: 100%; }
     input:focus, select:focus, textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(201,162,39,.15); }
     select option { background: var(--navy); }
     .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .consent { display: flex; gap: 10px; align-items: flex-start; font-size: .82rem; }
-    .consent input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--gold); padding: 0; }
-    .form-msg { font-size: .85rem; min-height: 1.2em; color: var(--gold-2); }
+    .consent { display: flex; gap: 10px; align-items: flex-start; font-size: .8rem; }
+    .consent input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--gold); padding: 0; flex: none; }
+    .secure { display: flex; align-items: center; gap: 8px; font-size: .78rem; color: var(--muted); justify-content: center; }
+    .secure svg.i { width: 15px; height: 15px; color: var(--gold-2); }
+    .form-msg { font-size: .85rem; min-height: 1.2em; color: var(--gold-2); text-align: center; }
 
-    footer { padding: 50px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: .85rem; }
-    footer .wrap { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: center; }
-    .socials { display: flex; gap: 14px; }
-    .socials a:hover { color: var(--ink); }
+    footer { padding: 56px 0 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: .85rem; }
+    footer .wrap { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 30px; }
+    footer h4 { color: var(--ink); font-size: .74rem; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 12px; }
+    footer a:hover { color: var(--ink); }
+    footer .col { display: grid; gap: 8px; align-content: start; }
+    .legal { grid-column: 1 / -1; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding-top: 24px; border-top: 1px solid var(--line); font-size: .78rem; }
 
-    /* Reveal */
-    .rv { opacity: 0; transform: translateY(24px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+    .mcta { display: none; }
+    .spot { --mx: 50%; --my: 50%; }
+    .spot::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .4s; background: radial-gradient(380px circle at var(--mx) var(--my), rgba(245,208,122,.12), transparent 45%); }
+    .spot:hover::after { opacity: 1; }
+
+    .rv { opacity: 0; transform: translateY(26px); transition: opacity 1s var(--ease), transform 1s var(--ease); }
     .rv.in { opacity: 1; transform: none; }
-    @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; transition: none; } .mesh i, .gold { animation: none; } }
+    @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; transition: none; } .mesh i, em.g { animation: none; } html { scroll-behavior: auto; } }
 
-    @media (max-width: 900px) {
-      .links { display: none; position: absolute; top: 68px; left: 0; right: 0; flex-direction: column; gap: 0; background: rgba(10,22,40,.97); border-bottom: 1px solid var(--line); }
+    @media (max-width: 960px) {
+      .links { display: none; position: absolute; top: 72px; left: 0; right: 0; flex-direction: column; gap: 0; background: rgba(10,22,40,.97); border-bottom: 1px solid var(--line); }
       .links.open { display: flex; }
       .links a { padding: 16px 20px; border-top: 1px solid var(--line); }
+      .links a::after { display: none; }
       .burger { display: block; }
       .nav .btn { display: none; }
-      .hero .wrap, .finder, .team, .contact { grid-template-columns: 1fr; }
-      .trust .wrap { grid-template-columns: 1fr 1fr; }
-      .trust div:nth-child(2) { border-right: 0; }
-      .trust div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .hero .wrap, .finder, .team, .contact, .faq-grid { grid-template-columns: 1fr; gap: 40px; }
+      .stats .grid { grid-template-columns: 1fr 1fr; }
+      .stat:nth-child(3) { border-left: 0; }
+      .stat:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
       .areas, .plans, .quotes { grid-template-columns: 1fr; }
-      .steps { grid-template-columns: 1fr 1fr; }
-      .probs { grid-template-columns: 1fr 1fr; }
-      section { padding: 80px 0; }
-      .answer { padding: 28px; min-height: 0; }
+      .steps { grid-template-columns: 1fr 1fr; row-gap: 34px; }
+      .steps::before { display: none; }
+      section { padding: 84px 0; }
+      .answer { padding: 30px; min-height: 0; }
+      .answer h3 { font-size: 2rem; }
+      .mcta { display: flex; position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 70; gap: 8px; padding: 8px; border-radius: 999px; background: rgba(10,22,40,.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: inset 0 0 0 1px var(--line), 0 20px 40px -10px rgba(0,0,0,.6); }
+      .mcta .btn { flex: 1; padding: .8rem .6rem; font-size: .85rem; }
+      footer { padding-bottom: 100px; }
+      footer .wrap { grid-template-columns: 1fr; }
     }
-    @media (max-width: 520px) { .steps, .probs, .two, .creds { grid-template-columns: 1fr; } }
+    @media (max-width: 560px) { .steps, .two, .creds { grid-template-columns: 1fr; } .stat { padding: 22px 16px; gap: 12px; } .stat b { font-size: 1.8rem; } .tile { width: 40px; height: 40px; } }
   </style>
 </head>
 <body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect width="16" height="10" x="4" y="11" rx="2.5"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></symbol>
+    <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3v18M7 21h10M4 7h16"/><path d="m4 7-2.5 6a3 3 0 0 0 5 0Z"/><path d="m20 7-2.5 6a3 3 0 0 0 5 0Z"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 18.5V20"/><circle cx="10" cy="8" r="3.5"/><path d="M20 20v-1.5a3.5 3.5 0 0 0-2.5-3.35M15.5 4.65a3.5 3.5 0 0 1 0 6.7"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect width="18" height="17" x="3" y="4.5" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></symbol>
+    <symbol id="i-briefcase" viewBox="0 0 24 24"><rect width="18" height="13" x="3" y="7" rx="2.5"/><path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7M3 12.5h18"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/><path d="M3.5 12h6l1-2 2 4.5 1.5-3h6.5"/></symbol>
+    <symbol id="i-landmark" viewBox="0 0 24 24"><path d="M3 21h18M5 18v-7M9.5 18v-7M14.5 18v-7M19 18v-7"/><path d="M12 3 21 8H3Z"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14.5 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7.5Z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v9.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5Z"/><path d="M9.5 21v-6.5h5V21"/></symbol>
+    <symbol id="i-building" viewBox="0 0 24 24"><rect width="12" height="18" x="6" y="3" rx="1.5"/><path d="M10 7h4M10 11h4M10 15h4M10 21v-2.5h4V21"/></symbol>
+    <symbol id="i-umbrella" viewBox="0 0 24 24"><path d="M22 12a10 10 0 0 0-20 0Z"/><path d="M12 12v7a2 2 0 0 0 4 0M12 2v1"/></symbol>
+    <symbol id="i-trend" viewBox="0 0 24 24"><path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/></symbol>
+    <symbol id="i-card" viewBox="0 0 24 24"><rect width="19" height="14" x="2.5" y="5" rx="2.5"/><path d="M2.5 10h19M6.5 15h3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-check-c" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2.5 21.5Z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H17a3.5 3.5 0 0 0 0-7H7a3.5 3.5 0 0 1 0-7h8.5"/></symbol>
+    <symbol id="i-handshake" viewBox="0 0 24 24"><path d="m11 17 2 2a1 1 0 0 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 0 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 0 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2M3 3 2 14l6.5 6.5a1 1 0 0 0 3-3M3 4h8"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M19.5 10c0 6-7.5 11.5-7.5 11.5S4.5 16 4.5 10a7.5 7.5 0 0 1 15 0Z"/><circle cx="12" cy="10" r="2.6"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M21.5 16.4v2.8a2 2 0 0 1-2.2 2 19.5 19.5 0 0 1-8.5-3 19.2 19.2 0 0 1-6-6 19.5 19.5 0 0 1-3-8.5 2 2 0 0 1 2-2.2h2.8a2 2 0 0 1 2 1.7c.12.9.35 1.8.68 2.7a2 2 0 0 1-.45 2.1L7.6 9.2a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.45c.9.33 1.8.56 2.7.68a2 2 0 0 1 1.9 2.07Z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12.5-7.5Z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="m8.5 14-1.5 8 5-3 5 3-1.5-8"/></symbol>
+    <symbol id="i-cap" viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c3 2.5 9 2.5 12 0v-5"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9Z"/></symbol>
+    <symbol id="i-quote" viewBox="0 0 24 24"><path d="M10 7H6a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h2v1a3 3 0 0 1-3 3M20 7h-4a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h2v1a3 3 0 0 1-3 3"/></symbol>
+    <symbol id="i-qr" viewBox="0 0 24 24"><rect width="6" height="6" x="3" y="3" rx="1"/><rect width="6" height="6" x="15" y="3" rx="1"/><rect width="6" height="6" x="3" y="15" rx="1"/><path d="M15 15h2v2h-2zM19 15h2M15 19h2M19 19h2v2"/></symbol>
+    <symbol id="i-bank" viewBox="0 0 24 24"><path d="M3 21h18M4 10h16M12 3l9 5H3Z"/><path d="M6 10v8M10 10v8M14 10v8M18 10v8"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 8h16M4 16h16"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M21.5 2.5 10 14M21.5 2.5 15 21l-5-7-7-5Z"/></symbol>
+  </svg>
+
   <div class="mesh" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="ribbon"><b>Vista previa de rediseño</b> preparada por KstaStudio_ para Compañía Soluciones Legales · No es el sitio oficial</div>
 
-  <header class="nav">
+  <header class="nav" id="nav">
     <div class="wrap">
-      <a href="#inicio" class="brand"><img src="logo.jpg" alt="Compañía Soluciones Legales" /><span>Soluciones Legales<small>Abogados · Bogotá</small></span></a>
+      <a href="#inicio" class="brand"><img src="logo.jpg" alt="Compañía Soluciones Legales" /><span><b>Soluciones Legales</b><small>Abogados · Bogotá</small></span></a>
       <nav class="links" id="links">
-        <a href="#problema">¿Qué te pasa?</a><a href="#areas">Áreas</a><a href="#proceso">Cómo trabajamos</a><a href="#equipo">Equipo</a><a href="#planes">Planes</a><a href="#preguntas">Preguntas</a>
+        <a href="#problema">Tu caso</a><a href="#areas">Áreas</a><a href="#proceso">Cómo trabajamos</a><a href="#equipo">Equipo</a><a href="#planes">Planes</a><a href="#preguntas">Preguntas</a>
       </nav>
-      <a href="#contacto" class="btn btn-gold btn-sm">Agenda tu consulta</a>
-      <button class="burger" id="burger" aria-label="Abrir menú">☰</button>
+      <a href="#contacto" class="btn btn-gold btn-sm"><svg class="i"><use href="#i-calendar"/></svg>Agenda tu consulta</a>
+      <button class="burger" id="burger" aria-label="Abrir menú"><svg class="i" style="width:26px;height:26px"><use href="#i-menu"/></svg></button>
     </div>
   </header>
 
@@ -215,36 +324,49 @@
     <section class="hero" id="inicio">
       <div class="wrap">
         <div class="hero-copy">
-          <span class="pill rv"><i></i>Primera consulta sin costo · Respuesta el mismo día</span>
-          <h1 class="rv">Tus derechos,<br /><span class="gold">en buenas manos.</span></h1>
+          <div class="badges rv">
+            <span class="badge"><svg class="i"><use href="#i-shield"/></svg>Primera consulta sin costo</span>
+            <span class="badge"><svg class="i"><use href="#i-clock"/></svg>Respuesta el mismo día</span>
+          </div>
+          <h1 class="rv">Tus derechos,<br />en <em class="g">buenas manos.</em></h1>
           <p class="lead rv">Abogados en Bogotá para trabajadores, familias y empresas. Te explicamos tu caso en palabras claras, te decimos qué opciones tienes y lo defendemos contigo hasta el final.</p>
           <div class="cta rv">
-            <a href="#contacto" class="btn btn-gold">Cuéntanos tu caso</a>
-            <a href="#problema" class="btn btn-ghost">¿En qué te podemos ayudar?</a>
+            <a href="#contacto" class="btn btn-gold"><svg class="i"><use href="#i-chat"/></svg>Cuéntanos tu caso</a>
+            <a href="#problema" class="btn btn-ghost"><svg class="i"><use href="#i-search"/></svg>¿En qué te ayudamos?</a>
           </div>
+          <div class="hero-note rv"><span class="avatars"><span><svg class="i"><use href="#i-user"/></svg></span><span><svg class="i"><use href="#i-user"/></svg></span><span><svg class="i"><use href="#i-user"/></svg></span></span>Más de 80 personas ya han recibido nuestra asesoría</div>
         </div>
         <div class="video-card rv">
-          <video src="https://www.companiasolucioneslegales.com/video/Video-Soluciones-Legales-Coy.mp4" controls playsinline preload="metadata"></video>
-          <div class="video-tag"><span><b>Conoce a tu abogado</b><span class="muted">1 minuto · Mensaje del equipo</span></span><span class="gold">▶</span></div>
+          <div class="inner">
+            <video id="vid" src="https://www.companiasolucioneslegales.com/video/Video-Soluciones-Legales-Coy.mp4" playsinline preload="metadata"></video>
+            <button class="play" id="play" aria-label="Ver el video"><span><svg class="i"><use href="#i-play"/></svg></span>
+              <div class="video-cap"><b>Conoce a tu abogado</b><small>1 minuto · Mensaje del equipo</small></div></button>
+          </div>
         </div>
       </div>
     </section>
 
-    <div class="trust">
-      <div class="wrap rv">
-        <div><b>80+</b><small>personas asesoradas</small></div>
-        <div><b>9</b><small>áreas del derecho</small></div>
-        <div><b>2023</b><small>firma fundada en Bogotá</small></div>
-        <div><b>100%</b><small>confidencial, desde la primera consulta</small></div>
+    <div class="stats">
+      <div class="wrap grid rv">
+        <div class="stat"><span class="tile"><svg class="i"><use href="#i-users"/></svg></span><div><b data-count="80">80+</b><small>personas asesoradas</small></div></div>
+        <div class="stat"><span class="tile"><svg class="i"><use href="#i-scale"/></svg></span><div><b data-count="9">9</b><small>áreas del derecho</small></div></div>
+        <div class="stat"><span class="tile"><svg class="i"><use href="#i-award"/></svg></span><div><b>2023</b><small>firma fundada en Bogotá</small></div></div>
+        <div class="stat"><span class="tile"><svg class="i"><use href="#i-lock"/></svg></span><div><b>100%</b><small>confidencial</small></div></div>
+      </div>
+      <div class="wrap allies rv">
+        <span>Aliados</span>
+        <img src="https://www.companiasolucioneslegales.com/img/logos/charliewest-logo.PNG" alt="CharlieWest" loading="lazy" />
+        <img src="https://www.companiasolucioneslegales.com/img/logos/classcars-logo.jpg" alt="ClassCars" loading="lazy" />
+        <img src="https://www.companiasolucioneslegales.com/img/logos/m-logo.PNG" alt="Aliado" loading="lazy" />
       </div>
     </div>
 
-    <section id="problema">
+    <section id="problema" class="light">
       <div class="wrap">
         <div class="head rv">
           <span class="eyebrow">Empieza por aquí</span>
-          <h2>¿Qué te está <span class="gold">pasando?</span></h2>
-          <p class="muted">Escoge tu situación y te contamos cómo te ayudamos y qué necesitas tener a mano.</p>
+          <h2>¿Qué te está <em class="g">pasando?</em></h2>
+          <p>Escoge tu situación. Te contamos cómo te ayudamos y qué documentos tener a mano.</p>
         </div>
         <div class="finder rv">
           <div class="probs" id="probs"></div>
@@ -253,43 +375,52 @@
       </div>
     </section>
 
-    <section id="areas">
+    <section id="areas" class="light" style="padding-top:20px">
       <div class="wrap">
         <div class="head rv">
           <span class="eyebrow">Áreas de práctica</span>
-          <h2>Nueve áreas, <span class="gold">un solo equipo.</span></h2>
+          <h2>Nueve áreas, <em class="g">un solo equipo.</em></h2>
         </div>
-        <div class="areas" id="areaGrid"></div>
+        <div class="areas rv" id="areaGrid"></div>
       </div>
     </section>
 
-    <section id="proceso">
+    <div class="band">
+      <div class="wrap rv">
+        <svg class="i"><use href="#i-quote"/></svg>
+        <blockquote>“Los expertos son como grandes faros: iluminan el camino de la oscuridad hacia la <em class="g">solución.</em>”</blockquote>
+        <cite>Coy, Prieto · Compañía Soluciones Legales</cite>
+      </div>
+    </div>
+
+    <section id="proceso" style="padding-top:20px">
       <div class="wrap">
-        <div class="head rv">
+        <div class="head center rv">
           <span class="eyebrow">Cómo trabajamos</span>
-          <h2>Claro desde el <span class="gold">primer día.</span></h2>
+          <h2>Claro desde el <em class="g">primer día.</em></h2>
         </div>
         <div class="steps">
-          <div class="step rv"><h3>Nos cuentas tu caso</h3><p>Por el formulario o WhatsApp. Todo lo que nos digas es confidencial.</p></div>
-          <div class="step rv"><h3>Lo analizamos</h3><p>Revisamos tus documentos y te explicamos tus opciones sin palabras raras.</p></div>
-          <div class="step rv"><h3>Te damos un plan</h3><p>Sabes qué vamos a hacer, cuánto cuesta y cuánto se demora antes de empezar.</p></div>
-          <div class="step rv"><h3>Te acompañamos</h3><p>Te contamos cada avance de tu proceso hasta que se resuelva.</p></div>
+          <div class="step rv"><span class="tile"><svg class="i"><use href="#i-chat"/></svg></span><small>PASO 01</small><h3>Nos cuentas tu caso</h3><p>Por el formulario o WhatsApp. Todo lo que nos digas es confidencial.</p></div>
+          <div class="step rv"><span class="tile"><svg class="i"><use href="#i-search"/></svg></span><small>PASO 02</small><h3>Lo analizamos</h3><p>Revisamos tus documentos y te explicamos tus opciones sin palabras raras.</p></div>
+          <div class="step rv"><span class="tile"><svg class="i"><use href="#i-route"/></svg></span><small>PASO 03</small><h3>Te damos un plan</h3><p>Sabes qué vamos a hacer, cuánto cuesta y cuánto se demora antes de empezar.</p></div>
+          <div class="step rv"><span class="tile"><svg class="i"><use href="#i-handshake"/></svg></span><small>PASO 04</small><h3>Te acompañamos</h3><p>Te contamos cada avance de tu proceso hasta que se resuelva.</p></div>
         </div>
       </div>
     </section>
 
-    <section id="equipo">
+    <section id="equipo" class="light">
       <div class="wrap team">
-        <div class="portrait rv">Foto profesional del abogado<br />(en su oficina, luz natural)</div>
-        <div class="rv" style="display:grid;gap:18px">
+        <div class="portrait rv"><div><svg class="i"><use href="#i-user"/></svg>Foto profesional del abogado<br />en su oficina, con luz natural</div>
+          <span class="seal"><svg class="i"><use href="#i-shield"/></svg>Abogado titulado · T.P. vigente</span></div>
+        <div class="rv" style="display:grid;gap:20px">
           <span class="eyebrow">Quién te atiende</span>
-          <h2>Personas reales, <span class="gold">no un chat.</span></h2>
-          <p class="muted">Aquí va una presentación corta del abogado o del equipo: quién es, dónde estudió y por qué fundó la firma. Es lo que más confianza genera en un despacho de abogados.</p>
+          <h2>Personas reales, <em class="g">no un chat.</em></h2>
+          <p style="color:var(--muted-d);font-size:1.05rem">Aquí va una presentación corta del abogado o del equipo: quién es, dónde estudió y por qué fundó la firma. En un despacho de abogados, es lo que más confianza genera.</p>
           <div class="creds">
-            <div><b>Dr. <span class="ph">[Nombre completo]</span></b>Abogado fundador</div>
-            <div><b>T.P. <span class="ph">[número]</span></b>Tarjeta profesional · C.S. de la Judicatura</div>
-            <div><b><span class="ph">[Universidad]</span></b>Abogado · Especialista en <span class="ph">[área]</span></div>
-            <div><b>Calle 12 #7-32</b>Centro de Bogotá</div>
+            <div class="cred"><svg class="i"><use href="#i-user"/></svg><div><b>Dr. <span class="ph">[Nombre completo]</span></b>Abogado fundador</div></div>
+            <div class="cred"><svg class="i"><use href="#i-award"/></svg><div><b>T.P. <span class="ph">[número]</span></b>Consejo Superior de la Judicatura</div></div>
+            <div class="cred"><svg class="i"><use href="#i-cap"/></svg><div><b><span class="ph">[Universidad]</span></b>Especialista en <span class="ph">[área]</span></div></div>
+            <div class="cred"><svg class="i"><use href="#i-pin"/></svg><div><b>Calle 12 #7-32</b>Centro de Bogotá</div></div>
           </div>
         </div>
       </div>
@@ -297,73 +428,78 @@
 
     <section id="planes">
       <div class="wrap">
-        <div class="head rv">
+        <div class="head center rv">
           <span class="eyebrow">Planes</span>
-          <h2>Sabes cuánto pagas <span class="gold">antes de empezar.</span></h2>
+          <h2>Sabes cuánto pagas <em class="g">antes de empezar.</em></h2>
         </div>
         <div class="plans">
-          <div class="plan rv"><span class="eyebrow">Para empezar</span><h3>Orientación inicial</h3><div class="price">$0</div>
-            <ul><li>Escuchamos tu caso</li><li>Te decimos si tienes opciones</li><li>Te explicamos los siguientes pasos</li></ul>
-            <a href="#contacto" class="btn btn-ghost" data-plan="Orientación inicial">Agendar</a></div>
-          <div class="plan feat rv"><span class="eyebrow">Recomendado</span><h3>Asesoría con abogado</h3><div class="price">$350.000 <small>COP · por caso</small></div>
-            <ul><li>Análisis completo de tu caso</li><li>Redacción de documentos</li><li>Acompañamiento en el proceso</li></ul>
+          <div class="plan spot rv"><div class="top"><span class="tile"><svg class="i"><use href="#i-chat"/></svg></span></div><h3>Orientación inicial</h3><div class="price">$0</div>
+            <ul><li><svg class="i"><use href="#i-check"/></svg>Escuchamos tu caso</li><li><svg class="i"><use href="#i-check"/></svg>Te decimos si tienes opciones</li><li><svg class="i"><use href="#i-check"/></svg>Te explicamos los siguientes pasos</li></ul>
+            <a href="#contacto" class="btn btn-ghost" data-plan="Orientación inicial">Agendar orientación</a></div>
+          <div class="plan feat spot rv"><div class="top"><span class="tile"><svg class="i"><use href="#i-scale"/></svg></span><span class="chip">Recomendado</span></div><h3>Asesoría con abogado</h3><div class="price">$350.000<small>COP · por caso</small></div>
+            <ul><li><svg class="i"><use href="#i-check"/></svg>Análisis completo de tu caso</li><li><svg class="i"><use href="#i-check"/></svg>Redacción de documentos</li><li><svg class="i"><use href="#i-check"/></svg>Acompañamiento en el proceso</li></ul>
             <a href="#contacto" class="btn btn-gold" data-plan="Asesoría con abogado">Hablar con un abogado</a></div>
-          <div class="plan rv"><span class="eyebrow">Casos complejos</span><h3>Asesoría especializada</h3><div class="price">$500.000 <small>COP · por caso</small></div>
-            <ul><li>Estrategia legal detallada</li><li>Documentos avanzados</li><li>Defensa en litigios complejos</li></ul>
+          <div class="plan spot rv"><div class="top"><span class="tile"><svg class="i"><use href="#i-shield"/></svg></span></div><h3>Asesoría especializada</h3><div class="price">$500.000<small>COP · por caso</small></div>
+            <ul><li><svg class="i"><use href="#i-check"/></svg>Estrategia legal detallada</li><li><svg class="i"><use href="#i-check"/></svg>Documentos avanzados</li><li><svg class="i"><use href="#i-check"/></svg>Defensa en litigios complejos</li></ul>
             <a href="#contacto" class="btn btn-ghost" data-plan="Asesoría especializada">Proteger mi caso</a></div>
         </div>
-        <p class="note rv">Pagos con tarjeta, PSE, Nequi, Bancolombia o efectivo en corresponsales. Valores de referencia: confirmar si son por caso o por mes.</p>
+        <div class="pay rv">
+          <span><svg class="i"><use href="#i-card"/></svg>Visa, Mastercard, Amex</span>
+          <span><svg class="i"><use href="#i-bank"/></svg>PSE · Bancolombia</span>
+          <span><svg class="i"><use href="#i-phone"/></svg>Nequi</span>
+          <span><svg class="i"><use href="#i-qr"/></svg>Código QR</span>
+          <span><svg class="i"><use href="#i-lock"/></svg>Pagos seguros</span>
+        </div>
       </div>
     </section>
 
-    <section id="opiniones">
+    <section id="opiniones" class="light">
       <div class="wrap">
-        <div class="head rv">
-          <span class="eyebrow">Lo que dicen nuestros clientes</span>
-          <h2>Casos que ya <span class="gold">resolvimos.</span></h2>
-          <p class="muted">Espacio para 3 testimonios reales, con el permiso de cada cliente (nombre y tipo de caso).</p>
+        <div class="head center rv">
+          <span class="eyebrow">Opiniones</span>
+          <h2>Casos que ya <em class="g">resolvimos.</em></h2>
         </div>
-        <div class="quotes">
-          <div class="quote rv"><p>“Testimonio real de un cliente de derecho laboral.”</p><span>Nombre del cliente · Caso laboral</span></div>
-          <div class="quote rv"><p>“Testimonio real de un cliente de derecho de familia.”</p><span>Nombre del cliente · Caso de familia</span></div>
-          <div class="quote rv"><p>“Testimonio real de una empresa aliada.”</p><span>Empresa aliada · Derecho mercantil</span></div>
-        </div>
+        <div class="quotes" id="quotes"></div>
+        <p class="tq-note rv">Espacio para 3 testimonios reales, publicados con el permiso de cada cliente.</p>
       </div>
     </section>
 
     <section id="preguntas">
-      <div class="wrap">
-        <div class="head rv"><span class="eyebrow">Preguntas frecuentes</span><h2>Antes de <span class="gold">escribirnos.</span></h2></div>
-        <div class="faq rv">
-          <details><summary>¿La primera consulta de verdad no tiene costo?</summary><p>Sí. En la orientación inicial escuchamos tu caso y te decimos si tienes opciones. Si decides seguir, te explicamos el plan y el valor antes de empezar.</p></details>
-          <details><summary>¿Qué documentos debo llevar?</summary><p>Depende de tu caso. En la sección “¿Qué te está pasando?” te decimos qué tener a mano. Si no los tienes todos, igual escríbenos.</p></details>
-          <details><summary>¿Atienden fuera de Bogotá?</summary><p>Sí. Muchas consultas se pueden hacer por videollamada y los documentos se pueden firmar de forma digital.</p></details>
-          <details><summary>¿Mi información es confidencial?</summary><p>Siempre. El secreto profesional nos obliga a guardar reserva de todo lo que nos cuentes, contrates o no.</p></details>
-          <details><summary>¿Cuánto se demora mi proceso?</summary><p>Cada caso es distinto. Después de revisar tus documentos te damos un tiempo estimado y te avisamos cada avance.</p></details>
+      <div class="wrap faq-grid">
+        <div class="head rv" style="margin:0">
+          <span class="eyebrow">Preguntas frecuentes</span>
+          <h2>Antes de <em class="g">escribirnos.</em></h2>
+          <p>Si tu duda no está aquí, escríbenos. Te respondemos el mismo día.</p>
+          <a href="#contacto" class="btn btn-ghost" style="width:fit-content"><svg class="i"><use href="#i-chat"/></svg>Hacer una pregunta</a>
         </div>
+        <div class="faq rv" id="faq"></div>
       </div>
     </section>
 
-    <section id="contacto">
+    <section id="contacto" style="padding-top:40px">
       <div class="wrap">
-        <div class="head rv"><span class="eyebrow">Contacto</span><h2>Cuéntanos tu caso. <span class="gold">Te respondemos hoy.</span></h2></div>
+        <div class="head center rv"><span class="eyebrow">Contacto</span><h2>Cuéntanos tu caso. <em class="g">Te respondemos hoy.</em></h2></div>
         <div class="contact">
           <div class="info rv">
-            <div class="row"><small>Oficina</small>Calle 12 #7-32, Bogotá</div>
-            <div class="row"><small>Teléfono y WhatsApp</small>+57 321 437 1351</div>
-            <div class="row"><small>Horario</small><span class="ph">[Lunes a viernes, 8:00 a.m. – 6:00 p.m.]</span></div>
+            <div class="row"><span class="tile"><svg class="i"><use href="#i-pin"/></svg></span><div><small>Oficina</small>Calle 12 #7-32, Bogotá</div></div>
+            <div class="row"><span class="tile"><svg class="i"><use href="#i-phone"/></svg></span><div><small>Teléfono y WhatsApp</small>+57 321 437 1351</div></div>
+            <div class="row"><span class="tile"><svg class="i"><use href="#i-clock"/></svg></span><div><small>Horario</small><span style="color:var(--gold-2)">[Lunes a viernes · 8:00 a.m. – 6:00 p.m.]</span></div></div>
             <div class="map"><iframe title="Mapa de la oficina" loading="lazy" src="https://www.google.com/maps?q=Calle+12+%237-32,+Bogot%C3%A1&output=embed"></iframe></div>
           </div>
           <form id="form" class="rv" novalidate>
+            <h3>Consulta sin costo</h3>
             <div class="two">
-              <label>Tu nombre<input name="nombre" required maxlength="80" autocomplete="name" /></label>
+              <label>Tu nombre<input name="nombre" required maxlength="80" autocomplete="name" placeholder="Nombre y apellido" /></label>
               <label>Tu celular<input name="celular" required maxlength="20" inputmode="tel" autocomplete="tel" placeholder="300 000 0000" /></label>
             </div>
-            <label>¿Sobre qué es tu caso?<select name="area" id="areaSel"></select></label>
-            <label>Plan de interés<select name="plan" id="planSel"><option>Orientación inicial</option><option>Asesoría con abogado</option><option>Asesoría especializada</option><option>Aún no sé</option></select></label>
+            <div class="two">
+              <label>¿Sobre qué es tu caso?<select name="area" id="areaSel"></select></label>
+              <label>Plan de interés<select name="plan" id="planSel"><option>Orientación inicial</option><option>Asesoría con abogado</option><option>Asesoría especializada</option><option>Aún no sé</option></select></label>
+            </div>
             <label>Cuéntanos brevemente qué pasó<textarea name="caso" rows="4" maxlength="800" placeholder="Ej: me despidieron sin justa causa después de 3 años y no me han pagado la liquidación."></textarea></label>
             <label class="consent"><input type="checkbox" name="ok" /> <span>Acepto el tratamiento de mis datos para que me contacten sobre mi caso (Ley 1581 de 2012).</span></label>
-            <button class="btn btn-gold" type="submit">Enviar mi caso</button>
+            <button class="btn btn-gold" type="submit"><svg class="i"><use href="#i-send"/></svg>Enviar mi caso</button>
+            <p class="secure"><svg class="i"><use href="#i-lock"/></svg>Tu información está protegida por el secreto profesional</p>
             <p class="form-msg" id="formMsg" role="status"></p>
           </form>
         </div>
@@ -373,49 +509,59 @@
 
   <footer>
     <div class="wrap">
-      <span>© 2026 Compañía Soluciones Legales · Bogotá, Colombia</span>
-      <div class="socials">
-        <a href="https://www.instagram.com/companiasolucioneslegales" target="_blank" rel="noopener">Instagram</a>
-        <a href="https://www.facebook.com/profile.php?id=100090136012714" target="_blank" rel="noopener">Facebook</a>
-        <a href="https://www.tiktok.com/@soluciones.legales.s.a.s" target="_blank" rel="noopener">TikTok</a>
-      </div>
-      <span>Diseño propuesto por <a href="https://ksta.jc-casta00.workers.dev" style="color:var(--gold-2)">KstaStudio_</a></span>
+      <div class="col"><a href="#inicio" class="brand"><img src="logo.jpg" alt="" /><span><b>Soluciones Legales</b><small>Abogados · Bogotá</small></span></a><p style="max-width:320px;margin-top:10px">Firma jurídica comprometida con la defensa de los derechos fundamentales desde 2023.</p></div>
+      <div class="col"><h4>Navegación</h4><a href="#problema">Tu caso</a><a href="#areas">Áreas</a><a href="#planes">Planes</a><a href="#preguntas">Preguntas</a></div>
+      <div class="col"><h4>Síguenos</h4><a href="https://www.instagram.com/companiasolucioneslegales" target="_blank" rel="noopener">Instagram</a><a href="https://www.facebook.com/profile.php?id=100090136012714" target="_blank" rel="noopener">Facebook</a><a href="https://www.tiktok.com/@soluciones.legales.s.a.s" target="_blank" rel="noopener">TikTok</a></div>
+      <div class="legal"><span>© 2026 Compañía Soluciones Legales · Bogotá, Colombia · Aviso de privacidad</span><span>Diseño propuesto por <a href="https://ksta.jc-casta00.workers.dev" style="color:var(--gold-2)">KstaStudio_</a></span></div>
     </div>
   </footer>
 
+  <div class="mcta"><a href="#contacto" class="btn btn-gold"><svg class="i"><use href="#i-chat"/></svg>Consulta gratis</a><a href="https://wa.me/573214371351" target="_blank" rel="noopener" class="btn btn-ghost"><svg class="i"><use href="#i-phone"/></svg>WhatsApp</a></div>
+
   <script>
     const WA = '573214371351';
+    const ic = (n) => `<svg class="i"><use href="#i-${n}"/></svg>`;
     const AREAS = [
-      ['Derecho laboral', 'Despidos, contratos, liquidaciones, indemnizaciones y conflictos con tu empleador o tus trabajadores.'],
-      ['Seguridad y salud en el trabajo', 'Accidentes laborales, incapacidades y cumplimiento de las normas de salud ocupacional.'],
-      ['Contratación estatal', 'Licitaciones, contratos con entidades públicas y cumplimiento normativo.'],
-      ['Derecho civil', 'Contratos, deudas, arriendos, propiedades y disputas entre personas.'],
-      ['Derecho de familia', 'Divorcios, custodia, cuota alimentaria y sucesiones.'],
-      ['Derecho mercantil', 'Crear tu empresa, contratos comerciales y conflictos entre socios.'],
-      ['Derecho de seguros', 'Reclamaciones a aseguradoras, pólizas negadas y coberturas.'],
-      ['Derecho financiero', 'Créditos, inversiones y regulación financiera.'],
-      ['Derecho bancario', 'Cobros indebidos, reportes en centrales y disputas con bancos.'],
+      ['Derecho laboral', 'Despidos, contratos, liquidaciones, indemnizaciones y conflictos con tu empleador o tus trabajadores.', 'briefcase'],
+      ['Seguridad y salud en el trabajo', 'Accidentes laborales, incapacidades y cumplimiento de las normas de salud ocupacional.', 'heart'],
+      ['Contratación estatal', 'Licitaciones, contratos con entidades públicas y cumplimiento normativo.', 'landmark'],
+      ['Derecho civil', 'Contratos, deudas, arriendos, propiedades y disputas entre personas.', 'file'],
+      ['Derecho de familia', 'Divorcios, custodia, cuota alimentaria y sucesiones.', 'home'],
+      ['Derecho mercantil', 'Crear tu empresa, contratos comerciales y conflictos entre socios.', 'building'],
+      ['Derecho de seguros', 'Reclamaciones a aseguradoras, pólizas negadas y coberturas.', 'umbrella'],
+      ['Derecho financiero', 'Créditos, inversiones y regulación financiera.', 'trend'],
+      ['Derecho bancario', 'Cobros indebidos, reportes en centrales y disputas con bancos.', 'card'],
     ];
     const PROBLEMS = [
-      { t: 'Me despidieron', a: 0, help: ['Revisamos si el despido fue justo y si te deben indemnización.', 'Calculamos tu liquidación: cesantías, primas, vacaciones e intereses.', 'Reclamamos lo que te deben, primero de forma directa y si hace falta ante un juez.'], docs: 'Contrato, carta de despido, últimos desprendibles de pago.' },
-      { t: 'Tuve un accidente de trabajo', a: 1, help: ['Verificamos que la ARL y tu empleador cumplan con lo que te corresponde.', 'Te acompañamos en la calificación de pérdida de capacidad laboral.', 'Reclamamos incapacidades y prestaciones pendientes.'], docs: 'Reporte del accidente, historia clínica, incapacidades.' },
-      { t: 'Me voy a separar', a: 4, help: ['Te explicamos cómo funciona el divorcio de mutuo acuerdo o contencioso.', 'Protegemos la custodia y la cuota alimentaria de tus hijos.', 'Organizamos la repartición de bienes.'], docs: 'Registro civil de matrimonio y de los hijos, lista de bienes.' },
+      { t: 'Me despidieron', a: 0, help: ['Revisamos si el despido fue justo y si te deben indemnización.', 'Calculamos tu liquidación: cesantías, primas, vacaciones e intereses.', 'Reclamamos lo que te deben, primero de forma directa y, si hace falta, ante un juez.'], docs: 'Contrato, carta de despido y últimos desprendibles de pago.' },
+      { t: 'Tuve un accidente de trabajo', a: 1, help: ['Verificamos que la ARL y tu empleador cumplan con lo que te corresponde.', 'Te acompañamos en la calificación de pérdida de capacidad laboral.', 'Reclamamos incapacidades y prestaciones pendientes.'], docs: 'Reporte del accidente, historia clínica e incapacidades.' },
+      { t: 'Me voy a separar', a: 4, help: ['Te explicamos cómo funciona el divorcio de mutuo acuerdo o contencioso.', 'Protegemos la custodia y la cuota alimentaria de tus hijos.', 'Organizamos la repartición de bienes.'], docs: 'Registro civil de matrimonio y de los hijos, y lista de bienes.' },
       { t: 'Me deben plata', a: 3, help: ['Revisamos el contrato, pagaré o letra que respalda la deuda.', 'Enviamos un cobro formal antes de ir a juicio.', 'Iniciamos el proceso ejecutivo si no te pagan.'], docs: 'Contrato, pagaré, facturas o mensajes donde se acepta la deuda.' },
-      { t: 'Quiero crear mi empresa', a: 5, help: ['Te decimos qué tipo de sociedad te conviene (SAS, por ejemplo).', 'Redactamos los estatutos y te acompañamos en el registro ante la Cámara de Comercio.', 'Preparamos tus contratos con clientes, proveedores y empleados.'], docs: 'Cédulas de los socios, nombre de la empresa, actividad.' },
-      { t: 'El banco o el seguro no me responde', a: 8, help: ['Revisamos tu póliza o tu contrato con el banco.', 'Presentamos la reclamación formal y, si no responden, ante la Superintendencia Financiera.', 'Te ayudamos a salir de reportes negativos injustos.'], docs: 'Póliza o contrato, extractos, respuestas recibidas.' },
+      { t: 'Quiero crear mi empresa', a: 5, help: ['Te decimos qué tipo de sociedad te conviene (por ejemplo, una SAS).', 'Redactamos los estatutos y te acompañamos en el registro ante la Cámara de Comercio.', 'Preparamos tus contratos con clientes, proveedores y empleados.'], docs: 'Cédulas de los socios, nombre de la empresa y actividad.' },
+      { t: 'El banco o el seguro no me responde', a: 8, help: ['Revisamos tu póliza o tu contrato con el banco.', 'Presentamos la reclamación formal y, si no responden, ante la Superintendencia Financiera.', 'Te ayudamos a salir de reportes negativos injustos.'], docs: 'Póliza o contrato, extractos y respuestas recibidas.' },
     ];
+    const FAQ = [
+      ['¿La primera consulta de verdad no tiene costo?', 'Sí. En la orientación inicial escuchamos tu caso y te decimos si tienes opciones. Si decides seguir, te explicamos el plan y el valor antes de empezar.'],
+      ['¿Qué documentos debo llevar?', 'Depende de tu caso. En “¿Qué te está pasando?” te decimos qué tener a mano. Si no los tienes todos, igual escríbenos.'],
+      ['¿Atienden fuera de Bogotá?', 'Sí. Muchas consultas se pueden hacer por videollamada, y los documentos se pueden firmar de forma digital.'],
+      ['¿Mi información es confidencial?', 'Siempre. El secreto profesional nos obliga a guardar reserva de todo lo que nos cuentes, contrates o no.'],
+      ['¿Cuánto se demora mi proceso?', 'Cada caso es distinto. Después de revisar tus documentos te damos un tiempo estimado y te avisamos cada avance.'],
+    ];
+    const QUOTES = [['laboral', 'Caso laboral', 'user'], ['de familia', 'Caso de familia', 'user'], ['empresarial', 'Empresa aliada · Derecho mercantil', 'building']];
     const $ = (s) => document.querySelector(s);
-    $('#areaGrid').innerHTML = AREAS.map(([n, d], i) => `<div class="area rv"><span class="n">${String(i + 1).padStart(2, '0')}</span><h3>${n}</h3><p>${d}</p></div>`).join('');
+    $('#areaGrid').innerHTML = AREAS.map(([n, d, i], k) => `<div class="area spot"><span class="n">${String(k + 1).padStart(2, '0')}</span><span class="tile">${ic(i)}</span><h3>${n}</h3><p>${d}</p></div>`).join('');
     $('#areaSel').innerHTML = AREAS.map(([n]) => `<option>${n}</option>`).join('') + '<option>No estoy seguro</option>';
+    $('#faq').innerHTML = FAQ.map(([q, a], i) => `<details${i ? '' : ' open'}><summary>${q}<span class="pm">${ic('plus')}</span></summary><p>${a}</p></details>`).join('');
+    $('#quotes').innerHTML = QUOTES.map(([k, who, i]) => `<div class="tq rv"><div class="stars">${ic('star').repeat(5)}</div><p>“Aquí va el testimonio real de un cliente ${k}.”</p><div class="who"><span class="tile">${ic(i)}</span>Nombre del cliente · ${who}</div></div>`).join('');
     const probs = $('#probs'), answer = $('#answer');
-    probs.innerHTML = PROBLEMS.map((p, i) => `<button type="button" data-i="${i}">${p.t}</button>`).join('');
+    probs.innerHTML = PROBLEMS.map((p, i) => `<button type="button" data-i="${i}"><span class="tile">${ic(AREAS[p.a][2])}</span>${p.t}</button>`).join('');
     function pick(i) {
       const p = PROBLEMS[i];
       probs.querySelectorAll('button').forEach((b) => b.classList.toggle('on', +b.dataset.i === i));
-      answer.innerHTML = `<div class="fade-in" style="display:grid;gap:18px"><span class="tag">${AREAS[p.a][0]}</span><h3>${p.t}. Esto hacemos por ti:</h3>
-        <ul>${p.help.map((h) => `<li>${h}</li>`).join('')}</ul>
-        <p class="muted"><b style="color:var(--ink)">Ten a mano:</b> ${p.docs}</p>
-        <div class="cta"><a href="#contacto" class="btn btn-gold" data-area="${AREAS[p.a][0]}">Quiero ayuda con esto</a></div></div>`;
+      answer.innerHTML = `<div class="fade-in" style="display:grid;gap:22px"><span class="tag">${ic(AREAS[p.a][2])}${AREAS[p.a][0]}</span><h3>${p.t}. Esto hacemos por ti.</h3>
+        <ul>${p.help.map((h) => `<li>${ic('check-c')}${h}</li>`).join('')}</ul>
+        <div class="docs">${ic('file')}<span><b>Ten a mano:</b> ${p.docs}</span></div>
+        <div class="cta"><a href="#contacto" class="btn btn-gold" data-area="${AREAS[p.a][0]}">${ic('chat')}Quiero ayuda con esto</a></div></div>`;
     }
     probs.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) pick(+b.dataset.i); });
     pick(0);
@@ -423,7 +569,8 @@
       const a = e.target.closest('[data-area]'); if (a) $('#areaSel').value = a.dataset.area;
       const pl = e.target.closest('[data-plan]'); if (pl) $('#planSel').value = pl.dataset.plan;
     });
-    // Form: sends an organized message so the lawyer receives the case ready to read
+    const vid = $('#vid'), play = $('#play');
+    play.addEventListener('click', () => { vid.controls = true; vid.play(); play.classList.add('gone'); });
     $('#form').addEventListener('submit', (e) => {
       e.preventDefault();
       const f = Object.fromEntries(new FormData(e.target));
@@ -434,9 +581,17 @@
       msg.textContent = 'Listo. Te llevamos a WhatsApp con tu caso ya escrito.';
       window.open(`https://wa.me/${WA}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
     });
+    const nav = $('#nav'); const onS = () => nav.classList.toggle('solid', scrollY > 40); addEventListener('scroll', onS, { passive: true }); onS();
     $('#burger').addEventListener('click', () => $('#links').classList.toggle('open'));
     document.querySelectorAll('#links a').forEach((a) => a.addEventListener('click', () => $('#links').classList.remove('open')));
-    const io = new IntersectionObserver((es) => es.forEach((x) => { if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } }), { threshold: .12 });
+    document.addEventListener('pointermove', (e) => { const c = e.target.closest('.spot'); if (!c) return; const r = c.getBoundingClientRect(); c.style.setProperty('--mx', `${e.clientX - r.left}px`); c.style.setProperty('--my', `${e.clientY - r.top}px`); });
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const io = new IntersectionObserver((es) => es.forEach((x) => {
+      if (!x.isIntersecting) return;
+      x.target.classList.add('in'); io.unobserve(x.target);
+      if (reduce) return;
+      x.target.querySelectorAll('[data-count]').forEach((el) => { const to = +el.dataset.count, suf = to === 80 ? '+' : '', t0 = performance.now(); const step = (t) => { const k = Math.min(1, (t - t0) / 1200); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))) + suf; if (k < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); });
+    }), { threshold: .12 });
     document.querySelectorAll('.rv').forEach((el) => io.observe(el));
   </script>
 </body>
