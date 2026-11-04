@@ -6,7 +6,7 @@ import { bookingHTML, setupBooking } from './booking.js';
 import { buildQuote, cop } from './pricing.js';
 import { CATS, CAT_ORDER, CAT_SOON, COMBO, findTier, tierPrice, priceHTML, fromValue } from './plans.js';
 
-const SERVICES = {
+export const SERVICES = {
   branding: { label: 'Logo e imagen', icon: 'brand', desc: 'Tu logo, tus colores y todo lo que hace que la gente reconozca tu negocio.' },
   web: { label: 'Página web', icon: 'code', desc: 'Tu negocio en internet, abierto las 24 horas, para que te encuentren desde el celular.' },
   audiovisual: { label: 'Fotos y videos', icon: 'video', desc: 'Fotos y videos bonitos de tus productos o de tu negocio.' },
@@ -16,7 +16,7 @@ const SERVICES = {
 
 
 // Each option: [value, short explanation]
-const DETAILS = {
+export const DETAILS = {
   branding: {
     intro: 'El logo es como la cara de tu negocio: es lo primero que la gente ve y recuerda.',
     qs: [
@@ -110,9 +110,9 @@ const DETAILS = {
   },
 };
 
-const STYLES = [['Minimalista', 'Limpio y ordenado'], ['Elegante', 'Fino y de lujo'], ['Moderno', 'Actual y fresco'], ['Divertido', 'Alegre y de colores'], ['Corporativo', 'Formal y confiable'], ['Natural', 'Tonos de tierra y plantas'], ['Atrevido', 'Llamativo y diferente'], ['Clásico', 'Tradicional, de toda la vida']];
-const TIMING = [['Lo antes posible', 'Lo necesito ya'], ['En 2–4 semanas', 'En unas semanas'], ['En 1–2 meses', 'Con calma'], ['Sin prisa', 'Cuando esté listo']];
-const BUDGET = [['Aún no lo sé', 'Ayúdenme a decidir'], ['Básico', 'Lo justo y necesario'], ['Intermedio', 'Algo bueno sin exagerar'], ['Completo / premium', 'Quiero lo mejor']];
+export const STYLES = [['Minimalista', 'Limpio y ordenado'], ['Elegante', 'Fino y de lujo'], ['Moderno', 'Actual y fresco'], ['Divertido', 'Alegre y de colores'], ['Corporativo', 'Formal y confiable'], ['Natural', 'Tonos de tierra y plantas'], ['Atrevido', 'Llamativo y diferente'], ['Clásico', 'Tradicional, de toda la vida']];
+export const TIMING = [['Lo antes posible', 'Lo necesito ya'], ['En 2–4 semanas', 'En unas semanas'], ['En 1–2 meses', 'Con calma'], ['Sin prisa', 'Cuando esté listo']];
+export const BUDGET = [['Aún no lo sé', 'Ayúdenme a decidir'], ['Básico', 'Lo justo y necesario'], ['Intermedio', 'Algo bueno sin exagerar'], ['Completo / premium', 'Quiero lo mejor']];
 
 const INFO = {
   cats: 'Puedes escoger una sola cosa o varias. Si escoges varias, una sola persona se encarga de todo para que tu página, tu logo y tu publicidad se vean iguales. Eso tiene un costo extra pequeño por la coordinación.',

@@ -1,6 +1,16 @@
-name = "ksta"
+﻿name = "ksta"
+main = "src/worker.js"
 compatibility_date = "2026-10-01"
+compatibility_flags = ["nodejs_compat"]
 
 [assets]
 directory = "./dist"
+binding = "ASSETS"
 not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
+
+# Datos públicos de Supabase (los mismos que ya usa la página). La clave de Claude va como secreto:
+#   npx wrangler secret put ANTHROPIC_API_KEY
+[vars]
+SUPABASE_URL = "https://wotvygcvkjsysydlymvm.supabase.co"
+SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvdHZ5Z2N2a2pzeXN5ZGx5bXZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzMzEyODQsImV4cCI6MjEwODkwNzI4NH0.XWjg_rewrz53SSTdk2IxVhO4uuJVm6FDfg8k8m0JuqE"

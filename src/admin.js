@@ -19,7 +19,7 @@ const INACTIVE = ['cerrado', 'perdido'];                                     // 
 const PRIORITIES = [['alta', 'Alta'], ['media', 'Media'], ['baja', 'Baja']];
 const statusLabel = (s) => (STATUSES.find(([k]) => k === s) || [, s])[1];
 const VIEWS = [
-  ['dashboard', 'Inicio', 'grid'], ['solicitudes', 'Solicitudes', 'inbox'], ['tablero', 'Tablero', 'layers'],
+  ['dashboard', 'Inicio', 'grid'], ['texto', 'Desde texto', 'sparkles'], ['solicitudes', 'Solicitudes', 'inbox'], ['tablero', 'Tablero', 'layers'],
   ['agenda', 'Agenda', 'teams'], ['seguimientos', 'Seguimientos', 'calendar'], ['ajustes', 'Ajustes', 'list'],
 ];
 
@@ -266,7 +266,8 @@ function renderAll(flashId) {
   app.querySelectorAll('[data-view]').forEach((b) => b.classList.toggle('active', b.dataset.view === view));
   const el = document.getElementById('view');
   if (!el) return;
-  ({ dashboard: viewDashboard, solicitudes: viewLeads, tablero: viewBoard, agenda: viewAgenda, seguimientos: viewFollow, ajustes: viewSettings })[view](el, flashId);
+  if (view !== 'texto') el.dataset.v = '';
+  ({ dashboard: viewDashboard, texto: viewTexto, solicitudes: viewLeads, tablero: viewBoard, agenda: viewAgenda, seguimientos: viewFollow, ajustes: viewSettings })[view](el, flashId);
 }
 
 // ===== Dashboard =====
@@ -850,3 +851,136 @@ async function loadEvents(id) {
 }
 
 boot();
+
+// ===== Desde texto: Jerónimo escribe lo que quiere el cliente y Claude llena la cotización =====
+const txt = { draft: '', result: null, busy: false, error: '' };
+
+async function textCatalog() {
+  const { SERVICES, DETAILS, STYLES, TIMING, BUDGET } = await import('./quote.js');
+  const { TEMPLATES } = await import('./templates.js');
+  const { CAT_ORDER, CATS } = await import('./plans.js');
+  const ids = [...new Set(CAT_ORDER.flatMap((k) => CATS[k].services))];   // solo lo que hoy se ofrece
+  return {
+    services: ids.map((id) => ({ id, nombre: SERVICES[id].label, que_es: SERVICES[id].desc,
+      preguntas: DETAILS[id].qs.map((q) => ({ key: q.key, pregunta: q.q, tipo: q.type === 'multi' ? 'varias' : 'una', opciones: q.opts.map(([o]) => o) })) })),
+    plantillas_web: TEMPLATES.map((t) => ({ id: t.id, nombre: t.name })),
+    estilos: STYLES.map(([o]) => o), tiempos: TIMING.map(([o]) => o), presupuestos: BUDGET.map(([o]) => o),
+  };
+}
+
+// Keeps only answers that exist in the catalog, so a bad guess can never break pricing
+function cleanResult(r, cat) {
+  const svcIds = cat.services.map((s) => s.id);
+  const services = (r.services || []).filter((s) => svcIds.includes(s));
+  const details = {};
+  for (const a of r.answers || []) {
+    const s = cat.services.find((x) => x.id === a.service && services.includes(x.id));
+    const q = s?.preguntas.find((x) => x.key === a.key);
+    if (!q) continue;
+    const vals = (a.values || []).filter((v) => q.opciones.includes(v));
+    if (!vals.length) continue;
+    (details[s.id] ||= {})[q.key] = q.tipo === 'varias' ? vals : vals[0];
+  }
+  const ok = (list, v) => (list.includes(v) ? v : null);
+  const template = r.template === 'custom' || cat.plantillas_web.some((t) => t.id === r.template) ? r.template : null;
+  return { ...r, services, details, template: services.includes('web') ? template : null,
+    style: (r.style || []).filter((s) => cat.estilos.includes(s)).slice(0, 3), timing: ok(cat.tiempos, r.timing), budget: ok(cat.presupuestos, r.budget) };
+}
+
+async function textLead(r) {
+  const { CAT_ORDER, CATS } = await import('./plans.js');
+  const { SERVICES } = await import('./quote.js');
+  const cats = CAT_ORDER.filter((k) => CATS[k].services.some((s) => r.services.includes(s)));
+  const plan = `cats-${Math.max(1, cats.length)}`;
+  const quote = buildQuote({ plan, services: r.services, details: r.details, template: r.template, timing: r.timing });
+  const c = r.contact, b = r.business;
+  return {
+    id: crypto.randomUUID(), created_at: new Date().toISOString(),
+    name: (c.name || b.name || 'Cliente sin nombre').slice(0, 100), email: (c.email || '').slice(0, 150), phone: (c.phone || '').slice(0, 30),
+    business: (b.name || '').slice(0, 120), service: cats.map((k) => `${CATS[k].label} a medida`).join(' + ') || 'A medida',
+    message: `Creado desde el panel a partir de este texto:\n\n${txt.draft}\n\nResumen: ${r.summary}`.slice(0, 19500),
+    template: r.template || null,
+    details: { plan, cats, tiers: Object.fromEntries(cats.map((k) => [k, 'custom'])), services: r.services, details: r.details, template: r.template,
+      business: b, style: r.style, timing: r.timing, budget: r.budget, notes: r.notes, source: 'panel-texto',
+      serviceLabels: r.services.map((s) => SERVICES[s].label) },
+    quote, quote_total: quote.total,
+  };
+}
+
+function viewTexto(el, force) {
+  if (el.dataset.v === 'texto' && force !== true) return;       // don't wipe what you're typing on realtime updates
+  el.dataset.v = 'texto';
+  const r = txt.result;
+  el.innerHTML = `
+    <div class="tx">
+      <div class="tx-head"><h2>Cotización desde texto</h2>
+        <p class="muted">Escribe o pega lo que te contó el cliente, como te salga. Claude lo organiza, calcula el precio y te deja listos la cotización formal y el plan de trabajo en PDF.</p></div>
+      <textarea id="txDraft" rows="9" maxlength="20000" placeholder="Ej: Hablé con Laura, tiene una pastelería en Envigado que se llama Dulce Hogar. Quiere una página donde la gente vea sus tortas con precios y pueda pedir por WhatsApp. No tiene logo, quiere algo elegante en tonos rosados. Lo necesita para antes de diciembre. Su WhatsApp es 300 123 4567 y su correo laura@gmail.com">${esc(txt.draft)}</textarea>
+      <div class="tx-actions">
+        <button class="btn" id="txGo" ${txt.busy ? 'disabled' : ''}>${txt.busy ? 'Interpretando…' : `${icons.sparkles} Interpretar con Claude`}</button>
+        ${r ? '<button class="btn btn-ghost" id="txClear">Empezar otro</button>' : ''}
+      </div>
+      ${txt.error ? `<p class="tx-err">${esc(txt.error)}</p>` : ''}
+      <div id="txOut"></div>
+    </div>`;
+  el.querySelector('#txDraft').addEventListener('input', (e) => { txt.draft = e.target.value; });
+  el.querySelector('#txGo').addEventListener('click', () => runTexto(el));
+  el.querySelector('#txClear')?.addEventListener('click', () => { Object.assign(txt, { draft: '', result: null, error: '' }); viewTexto(el, true); });
+  if (r) renderTextoResult(el.querySelector('#txOut'));
+}
+
+async function runTexto(el) {
+  if (txt.draft.trim().length < 10) { txt.error = 'Escribe un poco más sobre lo que quiere el cliente.'; return viewTexto(el, true); }
+  Object.assign(txt, { busy: true, error: '', result: null }); viewTexto(el, true);
+  try {
+    const catalog = await textCatalog();
+    const { data: { session } } = await supabase.auth.getSession();
+    const res = await fetch('/api/interpretar', { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${session?.access_token || ''}` }, body: JSON.stringify({ text: txt.draft, catalog }) });
+    const out = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(out.error || `Error ${res.status}`);
+    txt.result = cleanResult(out.result, catalog);
+    if (!txt.result.services.length) txt.error = 'No encontré ningún servicio que hoy ofrezcas en ese texto. Revisa y vuelve a intentar.';
+  } catch (err) { txt.error = err.message || 'No se pudo interpretar el texto.'; }
+  txt.busy = false; viewTexto(el, true);
+}
+
+async function renderTextoResult(box) {
+  const r = txt.result; if (!r?.services.length) return;
+  const lead = await textLead(r);
+  const q = lead.quote;
+  const { SERVICES, DETAILS } = await import('./quote.js');
+  const row = (k, v) => (v ? `<div><small>${k}</small><b>${esc(v)}</b></div>` : '');
+  box.innerHTML = `
+    <div class="tx-res vision">
+      <p class="tx-sum">${esc(r.summary)}</p>
+      ${r.missing?.length ? `<div class="tx-miss"><b>Confírmale al cliente:</b><ul>${r.missing.map((m) => `<li>${esc(m)}</li>`).join('')}</ul></div>` : ''}
+      <div class="tx-grid">
+        ${row('Cliente', lead.name)}${row('WhatsApp', lead.phone)}${row('Correo', lead.email)}
+        ${row('Negocio', [r.business.name, r.business.sector, r.business.city].filter(Boolean).join(' · '))}
+        ${row('Para cuándo', r.timing)}${row('Presupuesto', r.budget)}${row('Estilo', r.style.join(', '))}
+      </div>
+      ${r.services.map((s) => `<div class="tx-svc"><h4>${esc(SERVICES[s].label)}</h4><ul>${DETAILS[s].qs.map((d) => { const v = r.details[s]?.[d.key]; return v ? `<li><span>${esc(d.q)}</span> ${esc(Array.isArray(v) ? v.join(', ') : v)}</li>` : ''; }).join('')}</ul></div>`).join('')}
+      <table class="tx-items">${q.items.map((i) => `<tr><td>${esc(i.concept)}</td><td>${cop(i.price)}${i.monthly ? '/mes' : ''}</td></tr>`).join('')}</table>
+      <div class="tx-total"><span>Total para empezar</span><b>${cop(q.total)}</b>${q.monthly ? `<small>+ ${cop(q.monthly)}/mes</small>` : ''}</div>
+      ${!lead.email || !lead.phone ? '<p class="muted small">Falta el WhatsApp o el correo del cliente. Puedes crearlo igual y completarlo después en su ficha.</p>' : ''}
+      <div class="tx-actions">
+        <button class="btn" id="txSave">${icons.file} Crear cliente y descargar PDFs</button>
+        <button class="btn btn-ghost" id="txPdf">Solo descargar PDFs</button>
+      </div>
+    </div>`;
+  const pdfs = async (l) => {
+    const [{ downloadQuote }, { downloadProposal }] = await Promise.all([import('./pdf.js'), import('./proposal.js')]);
+    downloadQuote(l); downloadProposal(l);
+  };
+  box.querySelector('#txPdf').addEventListener('click', () => pdfs(lead));
+  box.querySelector('#txSave').addEventListener('click', async (e) => {
+    e.currentTarget.disabled = true;
+    const { error } = await supabase.from('leads').insert(lead);
+    if (error) { console.error(error); e.currentTarget.disabled = false; return toast('No se pudo guardar el cliente'); }
+    await logEvent(lead.id, 'nota', 'Cliente creado desde texto en el panel');
+    await pdfs(lead);
+    toast('Cliente creado y PDFs descargados');
+    Object.assign(txt, { draft: '', result: null, error: '' });
+    await loadLeads(); go('solicitudes', lead.id);
+  });
+}
