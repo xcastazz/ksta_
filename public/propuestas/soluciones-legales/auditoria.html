@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auditoría web · Compañía Soluciones Legales · KstaStudio_</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="/favicon.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    @page { size: A4; margin: 0; }
+    :root { --ink: #16131f; --muted: #6b6580; --line: #e7e3ef; --purple: #7b2ff0; --purple-2: #b57bff; --navy: #0a1628; --gold: #c9a227; --soft: #f6f3fc; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; color: var(--ink); background: #ece9f2; line-height: 1.5; font-size: 10pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .page { width: 210mm; min-height: 297mm; margin: 0 auto 10mm; background: #fff; padding: 18mm 20mm 22mm; position: relative; page-break-after: always; overflow: hidden; }
+    .page:last-child { page-break-after: auto; }
+    @media print { body { background: #fff; } .page { margin: 0; box-shadow: none; } }
+    @media screen { .page { box-shadow: 0 10px 40px rgba(0,0,0,.08); } }
+    h1, h2 { font-family: 'Instrument Serif', Georgia, serif; font-weight: 400; letter-spacing: -.01em; line-height: 1.05; }
+    h2 { font-size: 27pt; margin-bottom: 8pt; }
+    h3 { font-size: 12pt; margin: 14pt 0 4pt; }
+    p { margin-bottom: 8pt; }
+    .muted { color: var(--muted); }
+    .eyebrow { font-size: 8pt; letter-spacing: .16em; text-transform: uppercase; color: var(--purple); font-weight: 600; margin-bottom: 8pt; }
+    .foot { position: absolute; left: 20mm; right: 20mm; bottom: 12mm; display: flex; justify-content: space-between; font-size: 7.5pt; color: var(--muted); border-top: 1px solid var(--line); padding-top: 6pt; }
+
+    /* Cover */
+    .cover { background: radial-gradient(90% 60% at 100% 0%, #3b1a7a 0%, transparent 60%), radial-gradient(70% 50% at 0% 100%, #1f0e44 0%, transparent 60%), #0c0618; color: #fff; display: flex; flex-direction: column; justify-content: space-between; }
+    .brand { display: flex; align-items: center; gap: 10pt; font-weight: 700; font-size: 15pt; letter-spacing: -.02em; }
+    .brand img { height: 22pt; }
+    .brand em { font-style: normal; color: var(--purple-2); }
+    .cover h1 { font-size: 52pt; }
+    .cover h1 span { background: linear-gradient(100deg, #e9dcff, var(--purple-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .cover .meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10pt; font-size: 9pt; color: #cbbfe6; border-top: 1px solid rgba(255,255,255,.15); padding-top: 12pt; }
+    .cover .meta b { display: block; color: #fff; font-weight: 600; }
+
+    .score { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6pt; margin: 12pt 0 16pt; }
+    .score div { border: 1px solid var(--line); border-radius: 10pt; padding: 10pt; text-align: center; }
+    .score b { font-family: 'Instrument Serif', serif; font-size: 22pt; font-weight: 400; display: block; line-height: 1; }
+    .score small { font-size: 7.5pt; color: var(--muted); }
+    .bad b { color: #c2410c; } .mid b { color: #b45309; } .ok b { color: #15803d; }
+
+    img.shot { width: 100%; display: block; }
+    .shot { border-radius: 10pt; border: 1px solid var(--line); overflow: hidden; margin: 8pt 0; }
+    .shots { display: grid; grid-template-columns: 2.6fr 1fr; gap: 10pt; align-items: start; }
+
+    .finding { border: 1px solid var(--line); border-radius: 12pt; padding: 8pt 12pt; margin-bottom: 6pt; break-inside: avoid; }
+    .finding h4 { font-size: 10.5pt; display: flex; gap: 8pt; align-items: baseline; margin-bottom: 3pt; }
+    .finding h4 i { font-style: normal; font-size: 7pt; font-weight: 700; letter-spacing: .08em; padding: 2pt 6pt; border-radius: 99pt; }
+    .alta { background: #fee2e2; color: #b91c1c; } .media { background: #fef3c7; color: #92400e; } .baja { background: #e0f2fe; color: #075985; }
+    .finding p { margin: 0; font-size: 9.5pt; color: var(--muted); }
+    .finding p b { color: var(--ink); font-weight: 600; }
+
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10pt; }
+    .card { background: var(--soft); border-radius: 12pt; padding: 12pt 14pt; break-inside: avoid; }
+    .card h4 { font-size: 10.5pt; margin-bottom: 4pt; }
+    .card ul { padding-left: 12pt; font-size: 9.5pt; color: var(--muted); }
+    .palette { display: flex; gap: 8pt; margin: 6pt 0 12pt; }
+    .palette span { flex: 1; border-radius: 10pt; padding: 26pt 8pt 8pt; font-size: 7.5pt; color: #fff; }
+    table { width: 100%; border-collapse: collapse; font-size: 9.5pt; margin: 6pt 0 10pt; }
+    td, th { text-align: left; padding: 7pt 6pt; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { font-size: 8pt; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+    .cta { margin-top: 14pt; padding: 16pt 18pt; border-radius: 14pt; background: linear-gradient(120deg, #0c0618, #3b1a7a); color: #fff; }
+    .cta a { color: var(--purple-2); }
+    .sign { margin-top: 26pt; display: flex; gap: 12pt; align-items: center; }
+    .sign img { height: 26pt; }
+  </style>
+</head>
+<body>
+
+  <!-- 1. Portada -->
+  <section class="page cover">
+    <div class="brand"><img src="img/ksta.svg" alt="" /><span>Ksta<em>Studio</em>_</span></div>
+    <div>
+      <p class="eyebrow" style="color:#c9b3ff">Auditoría de sitio web</p>
+      <h1>Compañía<br />Soluciones Legales:<br /><span>tu página puede ganar más clientes.</span></h1>
+      <p style="margin-top:16pt;max-width:120mm;color:#cbbfe6">Revisión de companiasolucioneslegales.com: qué funciona, qué le está costando clientes a la firma y una vista previa de cómo podría verse y funcionar.</p>
+    </div>
+    <div class="meta">
+      <div><b>Preparado para</b>Compañía Soluciones Legales · Bogotá</div>
+      <div><b>Preparado por</b>Jerónimo Castañeda Velásquez · KstaStudio_</div>
+      <div><b>Fecha</b>3 de noviembre de 2026</div>
+    </div>
+  </section>
+
+  <!-- 2. Resumen -->
+  <section class="page">
+    <p class="eyebrow">01 · Resumen</p>
+    <h2>Lo que encontramos, en una página.</h2>
+    <p>La página actual tiene buenas bases: <b>una paleta azul y dorada elegante</b>, un video real del abogado y la información de las nueve áreas del derecho que atiende la firma. El problema es lo que pasa cuando una persona llega buscando ayuda legal.</p>
+    <p>Hoy <b>todo está en una sola pantalla larga y cada botón lleva a WhatsApp</b>. No hay forma de contar el caso, saber quién es el abogado, ver opiniones de clientes, consultar un horario o encontrar la oficina en un mapa. En un servicio donde la gente decide por <b>confianza</b>, eso hace que muchos visitantes se vayan sin escribir.</p>
+    <div class="score">
+      <div class="bad"><b>3/10</b><small>Funcionalidad</small></div>
+      <div class="bad"><b>3/10</b><small>Confianza</small></div>
+      <div class="mid"><b>4/10</b><small>Personalidad</small></div>
+      <div class="bad"><b>3/10</b><small>Conexión con el cliente</small></div>
+      <div class="mid"><b>5/10</b><small>Técnico y Google</small></div>
+    </div>
+    <h3>Nuestra recomendación</h3>
+    <p>Una <b>reforma de la página</b>, no un parche. Mantener lo que ya identifica a la firma (colores, logo, video) y reorganizar todo alrededor de una pregunta: <i>"¿qué le está pasando a esta persona y cómo la ayudamos?"</i>. En las páginas 5 y 6 está la vista previa de esa nueva versión.</p>
+    <div class="shots">
+      <img class="shot" src="img/actual-desk.jpg" alt="Página actual en computador" />
+      <img class="shot" src="img/actual-mob.jpg" alt="Página actual en celular" />
+    </div>
+    <p class="muted" style="font-size:8.5pt">Página actual, en computador y en celular (capturas del 3 de noviembre de 2026).</p>
+    <div class="foot"><span>KstaStudio_ · Auditoría web · Compañía Soluciones Legales</span><span>2</span></div>
+  </section>
+
+  <!-- 3. Hallazgos -->
+  <section class="page">
+    <p class="eyebrow">02 · Hallazgos</p>
+    <h2>Qué le está costando clientes a la firma.</h2>
+    <h3>Funcionalidad</h3>
+    <div class="finding"><h4><i class="alta">ALTA</i>Todo lleva a WhatsApp, y nada más funciona</h4><p>"Consulta gratuita", "Habla con un abogado", "Protege tu caso" y "Escríbenos" hacen lo mismo. <b>Propuesta:</b> un formulario corto que organice el caso (área, qué pasó, plan de interés) y lo entregue ya escrito, además de WhatsApp como opción.</p></div>
+    <div class="finding"><h4><i class="alta">ALTA</i>El contador de la "oferta especial" está en cero</h4><p>El contador marca 00:00:00 y la frase "solo para 10 personas este mes" no tiene nada que la respalde. Una oferta que parece falsa resta credibilidad justo a un despacho de abogados. <b>Propuesta:</b> quitarla o reemplazarla por una oferta real y con fecha.</p></div>
+    <div class="finding"><h4><i class="media">MEDIA</i>Pagos sin forma de pagar</h4><p>La sección "Medios de pago" muestra tarjetas, PSE, código QR y Nequi, pero no tiene botón de pago ni el código QR. <b>Propuesta:</b> un enlace de pago (Wompi o Mercado Pago) o los datos claros para transferir.</p></div>
+    <h3>Confianza</h3>
+    <div class="finding"><h4><i class="alta">ALTA</i>No se sabe quién es el abogado</h4><p>No aparece el nombre, la tarjeta profesional, la universidad ni una foto del equipo. En servicios legales, eso es lo primero que revisa un cliente. <b>Propuesta:</b> una sección "Quién te atiende" con nombre, T.P. y foto profesional.</p></div>
+    <div class="finding"><h4><i class="alta">ALTA</i>Sin opiniones de clientes</h4><p>La página dice "80+ personas asesoradas", pero no muestra ninguna. <b>Propuesta:</b> 3 testimonios reales, con el permiso de cada cliente.</p></div>
+    <div class="finding"><h4><i class="media">MEDIA</i>Datos que no cuadran</h4><p>Dice "6 áreas legales" pero muestra 9. El pie de página dice © 2025. En Instagram aparecen "Penal" y un "10% de descuento" que no están en la página. Los precios ($350.000 y $500.000) no dicen si son por caso o por mes. <b>Propuesta:</b> unificar toda la información.</p></div>
+    <div class="finding"><h4><i class="media">MEDIA</i>Sin horario, sin correo y sin mapa</h4><p>Solo aparecen la dirección y un número de teléfono. <b>Propuesta:</b> horario de atención, un correo profesional y el mapa de la oficina.</p></div>
+    <div class="foot"><span>KstaStudio_ · Auditoría web · Compañía Soluciones Legales</span><span>3</span></div>
+  </section>
+
+  <!-- 4. Hallazgos 2 -->
+  <section class="page">
+    <h3 style="margin-top:0">Personalidad</h3>
+    <div class="finding"><h4><i class="media">MEDIA</i>Luce como una plantilla</h4><p>Partículas doradas, íconos genéricos de internet, tarjetas iguales con borde dorado y botones verdes de WhatsApp por todas partes. El verde de WhatsApp compite con el dorado de la marca. <b>Propuesta:</b> menos adornos, más espacio, una letra más fina y un solo color de acción: el dorado.</p></div>
+    <div class="finding"><h4><i class="baja">BAJA</i>Textos que hablan de la firma, no del cliente</h4><p>"Misión", "Visión" y "Principios" ocupan mucho espacio, y casi nadie los lee al buscar un abogado. <b>Propuesta:</b> hablarle al cliente de su problema ("¿Te despidieron? Esto hacemos por ti") y dejar la misión en una línea.</p></div>
+    <h3>Conexión con el cliente final</h3>
+    <div class="finding"><h4><i class="alta">ALTA</i>La persona tiene que adivinar si la pueden ayudar</h4><p>Las áreas están en lenguaje jurídico ("Derecho Mercantil", "Contratación Estatal"). Quien llega piensa en su situación, no en el nombre del área. <b>Propuesta:</b> un buscador de situaciones: "Me despidieron", "Me voy a separar", "Me deben plata"... Cada una explica qué hace la firma y qué documentos tener a mano.</p></div>
+    <div class="finding"><h4><i class="media">MEDIA</i>Sin respuestas a las dudas de siempre</h4><p>¿La consulta es gratis de verdad? ¿Qué llevo? ¿Atienden fuera de Bogotá? <b>Propuesta:</b> preguntas frecuentes cortas.</p></div>
+    <h3>Técnico y Google</h3>
+    <div class="finding"><h4><i class="media">MEDIA</i>Lo que ya está bien y lo que falta</h4><p>Bien: tiene candado de seguridad (https), descripción para Google y datos para redes sociales. Falta: nombres de imágenes con espacios, íconos traídos de otras páginas (si esas páginas cambian, los íconos se rompen), enlaces de redes sin texto (difíciles para lectores de pantalla), un aviso de tratamiento de datos (Ley 1581 de 2012) y el perfil de Google Maps conectado.</p></div>
+    <h3>Lo que conservaríamos</h3>
+    <div class="two">
+      <div class="card"><h4>Identidad</h4><ul><li>Colores azul marino y dorado</li><li>El logo del árbol</li><li>El video del abogado (es lo más humano de la página)</li></ul></div>
+      <div class="card"><h4>Contenido</h4><ul><li>Las 9 áreas de práctica</li><li>Los 3 planes y sus precios</li><li>Dirección, teléfono y redes</li></ul></div>
+    </div>
+    <div class="foot"><span>KstaStudio_ · Auditoría web · Compañía Soluciones Legales</span><span>4</span></div>
+  </section>
+
+  <!-- 5. Propuesta visual -->
+  <section class="page">
+    <p class="eyebrow">03 · La nueva versión</p>
+    <h2>Misma firma. Más confianza.</h2>
+    <p>Hicimos una <b>vista previa funcional</b> con los colores oficiales de la firma. Se puede abrir en el celular o en el computador y probarla:</p>
+    <p><b>https://ksta.jc-casta00.workers.dev/propuestas/soluciones-legales/</b></p>
+    <img class="shot" src="img/nueva-desk.jpg" alt="Vista previa: portada" />
+    <div class="palette">
+      <span style="background:#0a1628">Azul marino<br />#0A1628</span>
+      <span style="background:#1a3a6b">Azul profundo<br />#1A3A6B</span>
+      <span style="background:#c9a227">Dorado<br />#C9A227</span>
+      <span style="background:#f5d07a;color:#3b2a05">Dorado claro<br />#F5D07A</span>
+    </div>
+    <div class="two">
+      <div class="card"><h4>Letras</h4><ul><li><b>Instrument Serif</b> para títulos: elegante y editorial, como un despacho de tradición.</li><li><b>Inter</b> para los textos: muy legible en el celular.</li></ul></div>
+      <div class="card"><h4>Estilo</h4><ul><li>Fondos con degradados suaves en movimiento, al estilo Apple.</li><li>Paneles de vidrio, mucho espacio y animaciones sutiles al bajar.</li><li>Un solo color de acción: el dorado.</li></ul></div>
+    </div>
+    <div class="foot"><span>KstaStudio_ · Auditoría web · Compañía Soluciones Legales</span><span>5</span></div>
+  </section>
+
+  <!-- 6. Qué cambia -->
+  <section class="page">
+    <h3 style="margin-top:0">El buscador de situaciones</h3>
+    <img class="shot" src="img/nueva-desk-problema.jpg" alt="Vista previa: buscador de situaciones" />
+    <table>
+      <tr><th style="width:32%">Antes</th><th>En la nueva versión</th></tr>
+      <tr><td>Todos los botones llevan a WhatsApp</td><td>Formulario que organiza el caso (área, plan y qué pasó) y lo entrega por WhatsApp ya escrito, con casilla de tratamiento de datos</td></tr>
+      <tr><td>Áreas en lenguaje jurídico</td><td>"¿Qué te está pasando?": 6 situaciones comunes, qué hace la firma en cada una y qué documentos tener a mano</td></tr>
+      <tr><td>No se sabe quién atiende</td><td>Sección "Quién te atiende", con nombre, tarjeta profesional, formación y foto</td></tr>
+      <tr><td>Sin testimonios</td><td>Espacio para 3 testimonios reales de clientes</td></tr>
+      <tr><td>Precios sin contexto</td><td>Planes en COP, aclarando si son por caso, con métodos de pago</td></tr>
+      <tr><td>Sin horario ni mapa</td><td>Horario, mapa de la oficina, teléfono y preguntas frecuentes</td></tr>
+      <tr><td>Oferta con contador en cero</td><td>Se elimina. La primera consulta gratis se presenta como lo que es: una orientación inicial</td></tr>
+    </table>
+    <p class="muted" style="font-size:8.5pt">Los textos entre corchetes de la vista previa (nombre del abogado, T.P., universidad, horario y testimonios) se llenan con los datos reales de la firma.</p>
+    <div class="foot"><span>KstaStudio_ · Auditoría web · Compañía Soluciones Legales</span><span>6</span></div>
+  </section>
+
+  <!-- 7. Siguiente paso -->
+  <section class="page">
+    <p class="eyebrow">04 · Cómo lo haríamos</p>
+    <h2>De la vista previa a la página real.</h2>
+    <table>
+      <tr><th style="width:24%">Etapa</th><th>Qué pasa</th><th style="width:16%">Tiempo</th></tr>
+      <tr><td><b>1. Reunión</b></td><td>Revisamos juntos la vista previa y recogemos los datos reales: abogados, fotos, horario, testimonios y precios.</td><td>1 día</td></tr>
+      <tr><td><b>2. Contenido</b></td><td>Ajustamos los textos de cada área y de las situaciones más comunes de sus clientes.</td><td>3 días</td></tr>
+      <tr><td><b>3. Desarrollo</b></td><td>Construimos la página completa, rápida y adaptada al celular, con formulario, mapa y aviso de privacidad.</td><td>7 a 10 días</td></tr>
+      <tr><td><b>4. Google</b></td><td>Conectamos el perfil de Google Maps y preparamos la página para búsquedas como "abogado laboral en Bogotá".</td><td>2 días</td></tr>
+      <tr><td><b>5. Entrega</b></td><td>Publicación en su dominio actual, una capacitación corta y acompañamiento.</td><td>1 día</td></tr>
+    </table>
+    <p>El dominio <b>companiasolucioneslegales.com</b> se conserva: los clientes y Google no pierden la dirección.</p>
+    <p>La inversión se presenta en una cotización aparte, según lo que la firma decida incluir.</p>
+    <div class="cta">
+      <p style="font-family:'Instrument Serif',serif;font-size:20pt;line-height:1.15;margin-bottom:6pt">¿Hablamos 20 minutos esta semana?</p>
+      <p style="margin:0;color:#d9ccf5">Le mostramos la vista previa en vivo y resolvemos sus dudas. Sin compromiso.<br />WhatsApp +57 311 639 0334 · jc.casta00@hotmail.com · <a href="https://ksta.jc-casta00.workers.dev">ksta.jc-casta00.workers.dev</a></p>
+    </div>
+    <div class="sign">
+      <img src="img/ksta.svg" alt="" />
+      <div><b>Jerónimo Castañeda Velásquez</b><br /><span class="muted">Fundador · KstaStudio_ · Medellín, Colombia</span></div>
+    </div>
+    <div class="foot"><span>KstaStudio_ · Auditoría web · Compañía Soluciones Legales</span><span>7</span></div>
+  </section>
+</body>
+</html>

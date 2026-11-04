@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vista previa · Compañía Soluciones Legales (propuesta KstaStudio_)</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="description" content="Vista previa de rediseño propuesta por KstaStudio_. No es el sitio oficial." />
+  <link rel="icon" href="logo.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #0a1628; --navy-2: #0e2044; --navy-3: #1a3a6b;
+      --gold: #c9a227; --gold-2: #f5d07a;
+      --ink: #f4f1ea; --muted: #9aa6bb; --line: rgba(255,255,255,.09);
+      --glass: rgba(255,255,255,.035);
+      --serif: 'Instrument Serif', Georgia, serif;
+      --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --ease: cubic-bezier(.2,.7,.2,1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+    body { font-family: var(--sans); background: var(--navy); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+    img, video { max-width: 100%; display: block; }
+    .wrap { width: min(1160px, 100% - 40px); margin-inline: auto; }
+
+    /* Apple-like mesh gradient background */
+    .mesh { position: fixed; inset: 0; z-index: -1; overflow: hidden; background: radial-gradient(120% 80% at 50% -10%, #12284d 0%, var(--navy) 55%); }
+    .mesh i { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .55; animation: drift 22s ease-in-out infinite alternate; }
+    .mesh i:nth-child(1) { width: 620px; height: 620px; left: -160px; top: -120px; background: #1a3a6b; }
+    .mesh i:nth-child(2) { width: 520px; height: 520px; right: -140px; top: 18%; background: rgba(201,162,39,.35); animation-duration: 28s; }
+    .mesh i:nth-child(3) { width: 480px; height: 480px; left: 30%; bottom: -220px; background: #0e2044; animation-duration: 32s; }
+    @keyframes drift { to { transform: translate3d(60px, 40px, 0) scale(1.08); } }
+
+    /* Preview ribbon */
+    .ribbon { position: relative; z-index: 60; text-align: center; font-size: .78rem; padding: .5rem 1rem; background: linear-gradient(90deg, #7c3aed, #a855f7); color: #fff; }
+    .ribbon b { font-weight: 600; }
+
+    /* Nav */
+    .nav { position: sticky; top: 0; z-index: 50; backdrop-filter: saturate(160%) blur(18px); -webkit-backdrop-filter: saturate(160%) blur(18px); background: rgba(10,22,40,.62); border-bottom: 1px solid var(--line); }
+    .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 1rem; }
+    .brand { display: flex; align-items: center; gap: .7rem; font-weight: 600; letter-spacing: -.01em; }
+    .brand img { width: 38px; height: 38px; border-radius: 10px; object-fit: cover; }
+    .brand span small { display: block; font-size: .68rem; font-weight: 500; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+    .links { display: flex; gap: 1.6rem; font-size: .88rem; color: var(--muted); }
+    .links a:hover { color: var(--ink); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; padding: .8rem 1.4rem; border-radius: 999px; font: 600 .92rem var(--sans); border: 0; cursor: pointer; transition: transform .3s var(--ease), box-shadow .3s var(--ease), background .3s; }
+    .btn-gold { background: linear-gradient(180deg, var(--gold-2), var(--gold)); color: #1b1404; box-shadow: 0 8px 30px rgba(201,162,39,.25), inset 0 1px 0 rgba(255,255,255,.5); }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(201,162,39,.35), inset 0 1px 0 rgba(255,255,255,.5); }
+    .btn-ghost { background: rgba(255,255,255,.06); color: var(--ink); border: 1px solid var(--line); }
+    .btn-ghost:hover { background: rgba(255,255,255,.1); }
+    .btn-sm { padding: .6rem 1.1rem; font-size: .85rem; }
+    .burger { display: none; background: none; border: 0; color: var(--ink); font-size: 1.4rem; cursor: pointer; }
+
+    /* Type */
+    .eyebrow { font-size: .74rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--gold-2); }
+    h1, h2 { font-family: var(--serif); font-weight: 400; letter-spacing: -.01em; line-height: 1.02; }
+    h1 { font-size: clamp(3rem, 7.2vw, 6.2rem); }
+    h2 { font-size: clamp(2.3rem, 4.6vw, 3.8rem); }
+    h3 { font-size: 1.12rem; font-weight: 600; letter-spacing: -.01em; }
+    .gold { background: linear-gradient(100deg, #fff3cf 0%, var(--gold-2) 35%, var(--gold) 70%, #fff3cf 100%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 8s linear infinite; }
+    @keyframes shine { to { background-position: 200% center; } }
+    .lead { font-size: 1.12rem; color: var(--muted); max-width: 560px; }
+    .muted { color: var(--muted); }
+    section { padding: 110px 0; position: relative; }
+    .head { text-align: center; max-width: 720px; margin: 0 auto 56px; display: grid; gap: 14px; }
+
+    /* Hero */
+    .hero { padding: 90px 0 70px; }
+    .hero .wrap { display: grid; grid-template-columns: 1.15fr .85fr; gap: 56px; align-items: center; }
+    .hero-copy { display: grid; gap: 26px; }
+    .pill { display: inline-flex; align-items: center; gap: .5rem; width: fit-content; padding: .42rem .9rem; border-radius: 999px; font-size: .8rem; color: var(--gold-2); background: rgba(201,162,39,.08); border: 1px solid rgba(201,162,39,.25); }
+    .pill i { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 0 4px rgba(74,222,128,.15); }
+    .cta { display: flex; gap: .8rem; flex-wrap: wrap; }
+    .video-card { position: relative; border-radius: 28px; padding: 10px; background: linear-gradient(160deg, rgba(245,208,122,.35), rgba(255,255,255,.05) 40%, rgba(26,58,107,.5)); box-shadow: 0 40px 100px -30px rgba(0,0,0,.7); }
+    .video-card video { border-radius: 20px; width: 100%; aspect-ratio: 4/5; object-fit: cover; background: #000; }
+    .video-tag { position: absolute; left: 24px; bottom: 24px; right: 24px; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .8rem 1rem; border-radius: 16px; background: rgba(10,22,40,.6); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--line); font-size: .85rem; pointer-events: none; }
+    .video-tag b { display: block; }
+
+    /* Trust bar */
+    .trust { padding: 0 0 40px; }
+    .trust .wrap { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 24px; background: var(--glass); overflow: hidden; }
+    .trust div { padding: 26px 24px; border-right: 1px solid var(--line); }
+    .trust div:last-child { border-right: 0; }
+    .trust b { font-family: var(--serif); font-size: 2.3rem; font-weight: 400; display: block; line-height: 1; margin-bottom: 6px; }
+    .trust small { color: var(--muted); font-size: .85rem; }
+
+    /* Problem finder */
+    .finder { display: grid; grid-template-columns: 300px 1fr; gap: 24px; }
+    .probs { display: grid; gap: 8px; align-content: start; }
+    .probs button { text-align: left; padding: 15px 18px; border-radius: 16px; border: 1px solid var(--line); background: var(--glass); color: var(--muted); font: 500 .95rem var(--sans); cursor: pointer; transition: all .3s var(--ease); }
+    .probs button:hover { color: var(--ink); border-color: rgba(255,255,255,.18); }
+    .probs button.on { color: #1b1404; background: linear-gradient(180deg, var(--gold-2), var(--gold)); border-color: transparent; }
+    .answer { border-radius: 28px; padding: 40px; border: 1px solid var(--line); background: linear-gradient(160deg, rgba(26,58,107,.45), rgba(255,255,255,.02)); display: grid; gap: 18px; align-content: start; min-height: 360px; }
+    .answer h3 { font-family: var(--serif); font-weight: 400; font-size: 2.2rem; }
+    .answer ul { list-style: none; display: grid; gap: 10px; }
+    .answer li { display: flex; gap: 10px; color: var(--muted); }
+    .answer li::before { content: ''; flex: none; width: 18px; height: 18px; margin-top: 3px; border-radius: 50%; background: radial-gradient(circle, var(--gold-2) 0 3px, rgba(201,162,39,.18) 4px); }
+    .answer .tag { font-size: .8rem; color: var(--gold-2); }
+    .fade-in { animation: fadeUp .5s var(--ease); }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } }
+
+    /* Areas grid */
+    .areas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 56px; }
+    .area { padding: 26px; border-radius: 22px; border: 1px solid var(--line); background: var(--glass); transition: transform .4s var(--ease), border-color .4s, background .4s; }
+    .area:hover { transform: translateY(-4px); border-color: rgba(201,162,39,.35); background: rgba(255,255,255,.05); }
+    .area .n { font-family: var(--serif); color: var(--gold-2); font-size: 1.1rem; }
+    .area h3 { margin: 10px 0 6px; }
+    .area p { color: var(--muted); font-size: .92rem; }
+
+    /* Steps */
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; counter-reset: s; }
+    .step { padding: 28px; border-radius: 22px; border: 1px solid var(--line); background: var(--glass); counter-increment: s; }
+    .step::before { content: counter(s, decimal-leading-zero); font-family: var(--serif); font-size: 2.6rem; display: block; line-height: 1; margin-bottom: 18px; background: linear-gradient(180deg, var(--gold-2), rgba(201,162,39,.25)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .step p { color: var(--muted); font-size: .92rem; margin-top: 6px; }
+
+    /* Team */
+    .team { display: grid; grid-template-columns: .9fr 1.1fr; gap: 56px; align-items: center; }
+    .portrait { aspect-ratio: 4/5; border-radius: 28px; border: 1px dashed rgba(245,208,122,.35); background: linear-gradient(160deg, rgba(26,58,107,.5), rgba(10,22,40,.4)); display: grid; place-items: center; text-align: center; color: var(--muted); font-size: .9rem; padding: 24px; }
+    .creds { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+    .creds div { padding: 16px 18px; border-radius: 16px; border: 1px solid var(--line); background: var(--glass); font-size: .9rem; }
+    .creds b { display: block; font-weight: 600; margin-bottom: 2px; }
+    .ph { color: var(--gold-2); }
+
+    /* Plans */
+    .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: stretch; }
+    .plan { padding: 34px; border-radius: 26px; border: 1px solid var(--line); background: var(--glass); display: grid; gap: 16px; align-content: start; }
+    .plan.feat { background: linear-gradient(170deg, rgba(245,208,122,.14), rgba(26,58,107,.35) 60%); border-color: rgba(201,162,39,.4); box-shadow: 0 30px 80px -40px rgba(201,162,39,.45); }
+    .plan .price { font-family: var(--serif); font-size: 3rem; line-height: 1; }
+    .plan .price small { font-family: var(--sans); font-size: .85rem; color: var(--muted); }
+    .plan ul { list-style: none; display: grid; gap: 9px; color: var(--muted); font-size: .93rem; }
+    .plan li::before { content: '✓'; color: var(--gold-2); margin-right: 8px; }
+    .plan .btn { margin-top: auto; }
+    .note { text-align: center; color: var(--muted); font-size: .85rem; margin-top: 22px; }
+
+    /* Testimonials placeholder */
+    .quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .quote { padding: 28px; border-radius: 22px; border: 1px dashed rgba(255,255,255,.16); color: var(--muted); font-size: .92rem; display: grid; gap: 14px; }
+    .quote p { font-family: var(--serif); font-size: 1.35rem; color: var(--ink); line-height: 1.3; opacity: .55; }
+
+    /* FAQ */
+    .faq { max-width: 820px; margin: 0 auto; display: grid; gap: 10px; }
+    details { border-radius: 18px; border: 1px solid var(--line); background: var(--glass); }
+    summary { cursor: pointer; list-style: none; padding: 20px 24px; font-weight: 500; display: flex; justify-content: space-between; gap: 1rem; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: '+'; color: var(--gold-2); font-size: 1.3rem; line-height: 1; transition: transform .3s; }
+    details[open] summary::after { transform: rotate(45deg); }
+    details p { padding: 0 24px 20px; color: var(--muted); }
+
+    /* Contact */
+    .contact { display: grid; grid-template-columns: .95fr 1.05fr; gap: 28px; }
+    .info { display: grid; gap: 14px; align-content: start; }
+    .info .row { padding: 18px 20px; border-radius: 18px; border: 1px solid var(--line); background: var(--glass); }
+    .info .row small { color: var(--muted); display: block; font-size: .8rem; }
+    .map { border-radius: 18px; overflow: hidden; border: 1px solid var(--line); height: 230px; filter: grayscale(.6) contrast(1.05); }
+    .map iframe { width: 100%; height: 100%; border: 0; }
+    form { padding: 34px; border-radius: 28px; border: 1px solid var(--line); background: linear-gradient(170deg, rgba(26,58,107,.45), rgba(255,255,255,.02)); display: grid; gap: 14px; }
+    label { display: grid; gap: 6px; font-size: .85rem; color: var(--muted); }
+    input, select, textarea { font: inherit; color: var(--ink); background: rgba(0,0,0,.25); border: 1px solid var(--line); border-radius: 14px; padding: .85rem 1rem; outline: none; transition: border-color .3s, box-shadow .3s; }
+    input:focus, select:focus, textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(201,162,39,.15); }
+    select option { background: var(--navy); }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .consent { display: flex; gap: 10px; align-items: flex-start; font-size: .82rem; }
+    .consent input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--gold); padding: 0; }
+    .form-msg { font-size: .85rem; min-height: 1.2em; color: var(--gold-2); }
+
+    footer { padding: 50px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: .85rem; }
+    footer .wrap { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: center; }
+    .socials { display: flex; gap: 14px; }
+    .socials a:hover { color: var(--ink); }
+
+    /* Reveal */
+    .rv { opacity: 0; transform: translateY(24px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+    .rv.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; transition: none; } .mesh i, .gold { animation: none; } }
+
+    @media (max-width: 900px) {
+      .links { display: none; position: absolute; top: 68px; left: 0; right: 0; flex-direction: column; gap: 0; background: rgba(10,22,40,.97); border-bottom: 1px solid var(--line); }
+      .links.open { display: flex; }
+      .links a { padding: 16px 20px; border-top: 1px solid var(--line); }
+      .burger { display: block; }
+      .nav .btn { display: none; }
+      .hero .wrap, .finder, .team, .contact { grid-template-columns: 1fr; }
+      .trust .wrap { grid-template-columns: 1fr 1fr; }
+      .trust div:nth-child(2) { border-right: 0; }
+      .trust div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .areas, .plans, .quotes { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr 1fr; }
+      .probs { grid-template-columns: 1fr 1fr; }
+      section { padding: 80px 0; }
+      .answer { padding: 28px; min-height: 0; }
+    }
+    @media (max-width: 520px) { .steps, .probs, .two, .creds { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="mesh" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="ribbon"><b>Vista previa de rediseño</b> preparada por KstaStudio_ para Compañía Soluciones Legales · No es el sitio oficial</div>
+
+  <header class="nav">
+    <div class="wrap">
+      <a href="#inicio" class="brand"><img src="logo.jpg" alt="Compañía Soluciones Legales" /><span>Soluciones Legales<small>Abogados · Bogotá</small></span></a>
+      <nav class="links" id="links">
+        <a href="#problema">¿Qué te pasa?</a><a href="#areas">Áreas</a><a href="#proceso">Cómo trabajamos</a><a href="#equipo">Equipo</a><a href="#planes">Planes</a><a href="#preguntas">Preguntas</a>
+      </nav>
+      <a href="#contacto" class="btn btn-gold btn-sm">Agenda tu consulta</a>
+      <button class="burger" id="burger" aria-label="Abrir menú">☰</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div class="wrap">
+        <div class="hero-copy">
+          <span class="pill rv"><i></i>Primera consulta sin costo · Respuesta el mismo día</span>
+          <h1 class="rv">Tus derechos,<br /><span class="gold">en buenas manos.</span></h1>
+          <p class="lead rv">Abogados en Bogotá para trabajadores, familias y empresas. Te explicamos tu caso en palabras claras, te decimos qué opciones tienes y lo defendemos contigo hasta el final.</p>
+          <div class="cta rv">
+            <a href="#contacto" class="btn btn-gold">Cuéntanos tu caso</a>
+            <a href="#problema" class="btn btn-ghost">¿En qué te podemos ayudar?</a>
+          </div>
+        </div>
+        <div class="video-card rv">
+          <video src="https://www.companiasolucioneslegales.com/video/Video-Soluciones-Legales-Coy.mp4" controls playsinline preload="metadata"></video>
+          <div class="video-tag"><span><b>Conoce a tu abogado</b><span class="muted">1 minuto · Mensaje del equipo</span></span><span class="gold">▶</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="trust">
+      <div class="wrap rv">
+        <div><b>80+</b><small>personas asesoradas</small></div>
+        <div><b>9</b><small>áreas del derecho</small></div>
+        <div><b>2023</b><small>firma fundada en Bogotá</small></div>
+        <div><b>100%</b><small>confidencial, desde la primera consulta</small></div>
+      </div>
+    </div>
+
+    <section id="problema">
+      <div class="wrap">
+        <div class="head rv">
+          <span class="eyebrow">Empieza por aquí</span>
+          <h2>¿Qué te está <span class="gold">pasando?</span></h2>
+          <p class="muted">Escoge tu situación y te contamos cómo te ayudamos y qué necesitas tener a mano.</p>
+        </div>
+        <div class="finder rv">
+          <div class="probs" id="probs"></div>
+          <div class="answer" id="answer"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="areas">
+      <div class="wrap">
+        <div class="head rv">
+          <span class="eyebrow">Áreas de práctica</span>
+          <h2>Nueve áreas, <span class="gold">un solo equipo.</span></h2>
+        </div>
+        <div class="areas" id="areaGrid"></div>
+      </div>
+    </section>
+
+    <section id="proceso">
+      <div class="wrap">
+        <div class="head rv">
+          <span class="eyebrow">Cómo trabajamos</span>
+          <h2>Claro desde el <span class="gold">primer día.</span></h2>
+        </div>
+        <div class="steps">
+          <div class="step rv"><h3>Nos cuentas tu caso</h3><p>Por el formulario o WhatsApp. Todo lo que nos digas es confidencial.</p></div>
+          <div class="step rv"><h3>Lo analizamos</h3><p>Revisamos tus documentos y te explicamos tus opciones sin palabras raras.</p></div>
+          <div class="step rv"><h3>Te damos un plan</h3><p>Sabes qué vamos a hacer, cuánto cuesta y cuánto se demora antes de empezar.</p></div>
+          <div class="step rv"><h3>Te acompañamos</h3><p>Te contamos cada avance de tu proceso hasta que se resuelva.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="equipo">
+      <div class="wrap team">
+        <div class="portrait rv">Foto profesional del abogado<br />(en su oficina, luz natural)</div>
+        <div class="rv" style="display:grid;gap:18px">
+          <span class="eyebrow">Quién te atiende</span>
+          <h2>Personas reales, <span class="gold">no un chat.</span></h2>
+          <p class="muted">Aquí va una presentación corta del abogado o del equipo: quién es, dónde estudió y por qué fundó la firma. Es lo que más confianza genera en un despacho de abogados.</p>
+          <div class="creds">
+            <div><b>Dr. <span class="ph">[Nombre completo]</span></b>Abogado fundador</div>
+            <div><b>T.P. <span class="ph">[número]</span></b>Tarjeta profesional · C.S. de la Judicatura</div>
+            <div><b><span class="ph">[Universidad]</span></b>Abogado · Especialista en <span class="ph">[área]</span></div>
+            <div><b>Calle 12 #7-32</b>Centro de Bogotá</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="planes">
+      <div class="wrap">
+        <div class="head rv">
+          <span class="eyebrow">Planes</span>
+          <h2>Sabes cuánto pagas <span class="gold">antes de empezar.</span></h2>
+        </div>
+        <div class="plans">
+          <div class="plan rv"><span class="eyebrow">Para empezar</span><h3>Orientación inicial</h3><div class="price">$0</div>
+            <ul><li>Escuchamos tu caso</li><li>Te decimos si tienes opciones</li><li>Te explicamos los siguientes pasos</li></ul>
+            <a href="#contacto" class="btn btn-ghost" data-plan="Orientación inicial">Agendar</a></div>
+          <div class="plan feat rv"><span class="eyebrow">Recomendado</span><h3>Asesoría con abogado</h3><div class="price">$350.000 <small>COP · por caso</small></div>
+            <ul><li>Análisis completo de tu caso</li><li>Redacción de documentos</li><li>Acompañamiento en el proceso</li></ul>
+            <a href="#contacto" class="btn btn-gold" data-plan="Asesoría con abogado">Hablar con un abogado</a></div>
+          <div class="plan rv"><span class="eyebrow">Casos complejos</span><h3>Asesoría especializada</h3><div class="price">$500.000 <small>COP · por caso</small></div>
+            <ul><li>Estrategia legal detallada</li><li>Documentos avanzados</li><li>Defensa en litigios complejos</li></ul>
+            <a href="#contacto" class="btn btn-ghost" data-plan="Asesoría especializada">Proteger mi caso</a></div>
+        </div>
+        <p class="note rv">Pagos con tarjeta, PSE, Nequi, Bancolombia o efectivo en corresponsales. Valores de referencia: confirmar si son por caso o por mes.</p>
+      </div>
+    </section>
+
+    <section id="opiniones">
+      <div class="wrap">
+        <div class="head rv">
+          <span class="eyebrow">Lo que dicen nuestros clientes</span>
+          <h2>Casos que ya <span class="gold">resolvimos.</span></h2>
+          <p class="muted">Espacio para 3 testimonios reales, con el permiso de cada cliente (nombre y tipo de caso).</p>
+        </div>
+        <div class="quotes">
+          <div class="quote rv"><p>“Testimonio real de un cliente de derecho laboral.”</p><span>Nombre del cliente · Caso laboral</span></div>
+          <div class="quote rv"><p>“Testimonio real de un cliente de derecho de familia.”</p><span>Nombre del cliente · Caso de familia</span></div>
+          <div class="quote rv"><p>“Testimonio real de una empresa aliada.”</p><span>Empresa aliada · Derecho mercantil</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="preguntas">
+      <div class="wrap">
+        <div class="head rv"><span class="eyebrow">Preguntas frecuentes</span><h2>Antes de <span class="gold">escribirnos.</span></h2></div>
+        <div class="faq rv">
+          <details><summary>¿La primera consulta de verdad no tiene costo?</summary><p>Sí. En la orientación inicial escuchamos tu caso y te decimos si tienes opciones. Si decides seguir, te explicamos el plan y el valor antes de empezar.</p></details>
+          <details><summary>¿Qué documentos debo llevar?</summary><p>Depende de tu caso. En la sección “¿Qué te está pasando?” te decimos qué tener a mano. Si no los tienes todos, igual escríbenos.</p></details>
+          <details><summary>¿Atienden fuera de Bogotá?</summary><p>Sí. Muchas consultas se pueden hacer por videollamada y los documentos se pueden firmar de forma digital.</p></details>
+          <details><summary>¿Mi información es confidencial?</summary><p>Siempre. El secreto profesional nos obliga a guardar reserva de todo lo que nos cuentes, contrates o no.</p></details>
+          <details><summary>¿Cuánto se demora mi proceso?</summary><p>Cada caso es distinto. Después de revisar tus documentos te damos un tiempo estimado y te avisamos cada avance.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section id="contacto">
+      <div class="wrap">
+        <div class="head rv"><span class="eyebrow">Contacto</span><h2>Cuéntanos tu caso. <span class="gold">Te respondemos hoy.</span></h2></div>
+        <div class="contact">
+          <div class="info rv">
+            <div class="row"><small>Oficina</small>Calle 12 #7-32, Bogotá</div>
+            <div class="row"><small>Teléfono y WhatsApp</small>+57 321 437 1351</div>
+            <div class="row"><small>Horario</small><span class="ph">[Lunes a viernes, 8:00 a.m. – 6:00 p.m.]</span></div>
+            <div class="map"><iframe title="Mapa de la oficina" loading="lazy" src="https://www.google.com/maps?q=Calle+12+%237-32,+Bogot%C3%A1&output=embed"></iframe></div>
+          </div>
+          <form id="form" class="rv" novalidate>
+            <div class="two">
+              <label>Tu nombre<input name="nombre" required maxlength="80" autocomplete="name" /></label>
+              <label>Tu celular<input name="celular" required maxlength="20" inputmode="tel" autocomplete="tel" placeholder="300 000 0000" /></label>
+            </div>
+            <label>¿Sobre qué es tu caso?<select name="area" id="areaSel"></select></label>
+            <label>Plan de interés<select name="plan" id="planSel"><option>Orientación inicial</option><option>Asesoría con abogado</option><option>Asesoría especializada</option><option>Aún no sé</option></select></label>
+            <label>Cuéntanos brevemente qué pasó<textarea name="caso" rows="4" maxlength="800" placeholder="Ej: me despidieron sin justa causa después de 3 años y no me han pagado la liquidación."></textarea></label>
+            <label class="consent"><input type="checkbox" name="ok" /> <span>Acepto el tratamiento de mis datos para que me contacten sobre mi caso (Ley 1581 de 2012).</span></label>
+            <button class="btn btn-gold" type="submit">Enviar mi caso</button>
+            <p class="form-msg" id="formMsg" role="status"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>© 2026 Compañía Soluciones Legales · Bogotá, Colombia</span>
+      <div class="socials">
+        <a href="https://www.instagram.com/companiasolucioneslegales" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.facebook.com/profile.php?id=100090136012714" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://www.tiktok.com/@soluciones.legales.s.a.s" target="_blank" rel="noopener">TikTok</a>
+      </div>
+      <span>Diseño propuesto por <a href="https://ksta.jc-casta00.workers.dev" style="color:var(--gold-2)">KstaStudio_</a></span>
+    </div>
+  </footer>
+
+  <script>
+    const WA = '573214371351';
+    const AREAS = [
+      ['Derecho laboral', 'Despidos, contratos, liquidaciones, indemnizaciones y conflictos con tu empleador o tus trabajadores.'],
+      ['Seguridad y salud en el trabajo', 'Accidentes laborales, incapacidades y cumplimiento de las normas de salud ocupacional.'],
+      ['Contratación estatal', 'Licitaciones, contratos con entidades públicas y cumplimiento normativo.'],
+      ['Derecho civil', 'Contratos, deudas, arriendos, propiedades y disputas entre personas.'],
+      ['Derecho de familia', 'Divorcios, custodia, cuota alimentaria y sucesiones.'],
+      ['Derecho mercantil', 'Crear tu empresa, contratos comerciales y conflictos entre socios.'],
+      ['Derecho de seguros', 'Reclamaciones a aseguradoras, pólizas negadas y coberturas.'],
+      ['Derecho financiero', 'Créditos, inversiones y regulación financiera.'],
+      ['Derecho bancario', 'Cobros indebidos, reportes en centrales y disputas con bancos.'],
+    ];
+    const PROBLEMS = [
+      { t: 'Me despidieron', a: 0, help: ['Revisamos si el despido fue justo y si te deben indemnización.', 'Calculamos tu liquidación: cesantías, primas, vacaciones e intereses.', 'Reclamamos lo que te deben, primero de forma directa y si hace falta ante un juez.'], docs: 'Contrato, carta de despido, últimos desprendibles de pago.' },
+      { t: 'Tuve un accidente de trabajo', a: 1, help: ['Verificamos que la ARL y tu empleador cumplan con lo que te corresponde.', 'Te acompañamos en la calificación de pérdida de capacidad laboral.', 'Reclamamos incapacidades y prestaciones pendientes.'], docs: 'Reporte del accidente, historia clínica, incapacidades.' },
+      { t: 'Me voy a separar', a: 4, help: ['Te explicamos cómo funciona el divorcio de mutuo acuerdo o contencioso.', 'Protegemos la custodia y la cuota alimentaria de tus hijos.', 'Organizamos la repartición de bienes.'], docs: 'Registro civil de matrimonio y de los hijos, lista de bienes.' },
+      { t: 'Me deben plata', a: 3, help: ['Revisamos el contrato, pagaré o letra que respalda la deuda.', 'Enviamos un cobro formal antes de ir a juicio.', 'Iniciamos el proceso ejecutivo si no te pagan.'], docs: 'Contrato, pagaré, facturas o mensajes donde se acepta la deuda.' },
+      { t: 'Quiero crear mi empresa', a: 5, help: ['Te decimos qué tipo de sociedad te conviene (SAS, por ejemplo).', 'Redactamos los estatutos y te acompañamos en el registro ante la Cámara de Comercio.', 'Preparamos tus contratos con clientes, proveedores y empleados.'], docs: 'Cédulas de los socios, nombre de la empresa, actividad.' },
+      { t: 'El banco o el seguro no me responde', a: 8, help: ['Revisamos tu póliza o tu contrato con el banco.', 'Presentamos la reclamación formal y, si no responden, ante la Superintendencia Financiera.', 'Te ayudamos a salir de reportes negativos injustos.'], docs: 'Póliza o contrato, extractos, respuestas recibidas.' },
+    ];
+    const $ = (s) => document.querySelector(s);
+    $('#areaGrid').innerHTML = AREAS.map(([n, d], i) => `<div class="area rv"><span class="n">${String(i + 1).padStart(2, '0')}</span><h3>${n}</h3><p>${d}</p></div>`).join('');
+    $('#areaSel').innerHTML = AREAS.map(([n]) => `<option>${n}</option>`).join('') + '<option>No estoy seguro</option>';
+    const probs = $('#probs'), answer = $('#answer');
+    probs.innerHTML = PROBLEMS.map((p, i) => `<button type="button" data-i="${i}">${p.t}</button>`).join('');
+    function pick(i) {
+      const p = PROBLEMS[i];
+      probs.querySelectorAll('button').forEach((b) => b.classList.toggle('on', +b.dataset.i === i));
+      answer.innerHTML = `<div class="fade-in" style="display:grid;gap:18px"><span class="tag">${AREAS[p.a][0]}</span><h3>${p.t}. Esto hacemos por ti:</h3>
+        <ul>${p.help.map((h) => `<li>${h}</li>`).join('')}</ul>
+        <p class="muted"><b style="color:var(--ink)">Ten a mano:</b> ${p.docs}</p>
+        <div class="cta"><a href="#contacto" class="btn btn-gold" data-area="${AREAS[p.a][0]}">Quiero ayuda con esto</a></div></div>`;
+    }
+    probs.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) pick(+b.dataset.i); });
+    pick(0);
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('[data-area]'); if (a) $('#areaSel').value = a.dataset.area;
+      const pl = e.target.closest('[data-plan]'); if (pl) $('#planSel').value = pl.dataset.plan;
+    });
+    // Form: sends an organized message so the lawyer receives the case ready to read
+    $('#form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const f = Object.fromEntries(new FormData(e.target));
+      const msg = $('#formMsg');
+      if (!f.nombre?.trim() || (f.celular || '').replace(/\D/g, '').length < 7) return (msg.textContent = 'Escribe tu nombre y un celular válido.');
+      if (!f.ok) return (msg.textContent = 'Marca la casilla de tratamiento de datos para continuar.');
+      const text = `Hola, quiero una consulta.\n\nNombre: ${f.nombre}\nCelular: ${f.celular}\nÁrea: ${f.area}\nPlan: ${f.plan}\n\n${f.caso || ''}`;
+      msg.textContent = 'Listo. Te llevamos a WhatsApp con tu caso ya escrito.';
+      window.open(`https://wa.me/${WA}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+    });
+    $('#burger').addEventListener('click', () => $('#links').classList.toggle('open'));
+    document.querySelectorAll('#links a').forEach((a) => a.addEventListener('click', () => $('#links').classList.remove('open')));
+    const io = new IntersectionObserver((es) => es.forEach((x) => { if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } }), { threshold: .12 });
+    document.querySelectorAll('.rv').forEach((el) => io.observe(el));
+  </script>
+</body>
+</html>
