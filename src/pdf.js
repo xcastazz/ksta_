@@ -1,8 +1,22 @@
 import { jsPDF } from 'jspdf';
 import { cop, PRICES } from './pricing.js';
+import { LOGO_PNG, LOGO_RATIO } from './logo-png.js';
 
 const PURPLE = [124, 58, 237], DARK = [12, 6, 24], INK = [30, 22, 48], MUTED = [110, 100, 135], LINE = [230, 225, 240], SOFT = [246, 242, 255];
 
+// Logo KS + "KstaStudio_" (sobre fondo oscuro)
+function drawLogo(doc, x, baseline, size) {
+  const h = size * 1.25, w = h / LOGO_RATIO;
+  doc.addImage(LOGO_PNG, 'PNG', x, baseline - h * 0.82, w, h);
+  const tx = x + w + size * 0.45;
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(size);
+  doc.setTextColor(255, 255, 255); doc.text('Ksta', tx, baseline);
+  const w1 = doc.getTextWidth('Ksta');
+  doc.setTextColor(181, 123, 255); doc.text('Studio', tx + w1, baseline);
+  doc.setTextColor(123, 47, 240); doc.text('_', tx + w1 + doc.getTextWidth('Studio'), baseline);
+}
+
+export { drawLogo };
 export const quoteNumber = (lead) => {
   const d = new Date(lead.created_at || Date.now());
   const ymd = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
@@ -28,11 +42,9 @@ export function quotePDF(lead) {
   doc.setFillColor(...PURPLE); doc.circle(W - 30, 10, 100, 'F');
   doc.setFillColor(168, 85, 247); doc.circle(W - 150, 120, 34, 'F');
   doc.setFillColor(232, 121, 249); doc.circle(W - 95, 150, 8, 'F');
-  doc.setFont('courier', 'bold'); doc.setFontSize(30); doc.setTextColor(255, 255, 255);
-  doc.text('KstaStudio', M, 70);
-  doc.setTextColor(192, 132, 252); doc.text('_', M + doc.getTextWidth('KstaStudio'), 70);
+  drawLogo(doc, M, 70, 26);
   doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(200, 190, 225);
-  doc.text('Estudio creativo · Branding · Web · Audiovisual · Publicidad', M, 90);
+  doc.text('Páginas web y logos · Medellín, Colombia', M, 90);
   doc.setFont('helvetica', 'bold'); doc.setFontSize(22); doc.setTextColor(255, 255, 255);
   doc.text('Cotización', M, 140);
   doc.setFont('courier', 'normal'); doc.setFontSize(10); doc.setTextColor(200, 190, 225);

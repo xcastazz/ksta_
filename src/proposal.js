@@ -1,6 +1,6 @@
 import { jsPDF } from 'jspdf';
 import { cop, PRICES } from './pricing.js';
-import { quoteNumber } from './pdf.js';
+import { quoteNumber, drawLogo } from './pdf.js';
 
 // =========================================================
 //  PROPUESTA Y PLAN DE TRABAJO (PDF automático por cliente)
@@ -154,8 +154,7 @@ function buildPDF(lead, part) {
   doc.setFillColor(...PURPLE); doc.circle(W + 20, 120, 230, 'F');
   doc.setFillColor(168, 85, 247); doc.circle(W - 120, 330, 60, 'F');
   doc.setFillColor(232, 121, 249); doc.circle(W - 60, 420, 12, 'F');
-  doc.setFont('courier', 'bold'); doc.setFontSize(26); doc.setTextColor(255, 255, 255); doc.text('KstaStudio', M, 90);
-  doc.setTextColor(192, 132, 252); doc.text('_', M + doc.getTextWidth('KstaStudio'), 90);
+  drawLogo(doc, M, 95, 24);
   doc.setFont('helvetica', 'bold'); doc.setFontSize(34); doc.setTextColor(255, 255, 255);
   doc.text(isContract ? ['Contrato de', 'prestación de servicios'] : ['Propuesta y', 'plan de trabajo'], M, 420);
   doc.setFont('helvetica', 'normal'); doc.setFontSize(12); doc.setTextColor(210, 200, 235);
