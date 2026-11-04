@@ -88,13 +88,15 @@ function timeline(services, timing) {
   return phases.map(([n, d, days]) => [n, d, Math.max(1, Math.round(days * factor))]);
 }
 
-export function proposalPDF(lead) {
+// part: 'propuesta' (alcance, lo que necesito, cronograma) | 'contrato' (partes, pagos, derechos, datos, condiciones, firmas)
+function buildPDF(lead, part) {
+  const isContract = part === 'contrato';
   const d = lead.details || {};
   const q = lead.quote || {};
   const services = d.services || [];
   const doc = new jsPDF({ unit: 'pt', format: 'a4' });
   const W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight(), M = 50, CW = W - M * 2;
-  const num = quoteNumber(lead).replace('KSTA-', 'PLAN-');
+  const num = quoteNumber(lead).replace('KSTA-', isContract ? 'CONT-' : 'PLAN-');
   const date = new Date(lead.created_at || Date.now());
   const fmt = (x) => x.toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
   let y = 0, page = 1, sec = 0;
@@ -103,7 +105,7 @@ export function proposalPDF(lead) {
   const footer = () => {
     doc.setDrawColor(...LINE); doc.line(M, H - 46, W - M, H - 46);
     doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(...MUTED);
-    doc.text(`${BRAND} · Propuesta y plan de trabajo · ${num}`, M, H - 30);
+    doc.text(`${BRAND} · ${isContract ? 'Contrato de prestación de servicios' : 'Propuesta y plan de trabajo'} · ${num}`, M, H - 30);
     doc.text(`Página ${page}`, W - M, H - 30, { align: 'right' });
   };
   const newPage = () => { footer(); doc.addPage(); page++; y = M; };
@@ -155,18 +157,21 @@ export function proposalPDF(lead) {
   doc.setFont('courier', 'bold'); doc.setFontSize(26); doc.setTextColor(255, 255, 255); doc.text('KstaStudio', M, 90);
   doc.setTextColor(192, 132, 252); doc.text('_', M + doc.getTextWidth('KstaStudio'), 90);
   doc.setFont('helvetica', 'bold'); doc.setFontSize(34); doc.setTextColor(255, 255, 255);
-  doc.text(['Propuesta y', 'plan de trabajo'], M, 420);
+  doc.text(isContract ? ['Contrato de', 'prestación de servicios'] : ['Propuesta y', 'plan de trabajo'], M, 420);
   doc.setFont('helvetica', 'normal'); doc.setFontSize(12); doc.setTextColor(210, 200, 235);
   doc.text(doc.splitTextToSize(`Preparado para ${lead.name}${lead.business ? ` · ${lead.business}` : ''}`, CW), M, 490);
   doc.setFontSize(10); doc.setTextColor(170, 160, 200);
   doc.text(`${lead.service || ''}`, M, 512);
   doc.setFont('courier', 'normal'); doc.text(`${num} · ${fmt(date)}`, M, 532);
   doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(150, 140, 180);
-  doc.text(doc.splitTextToSize('Este documento describe el alcance del proyecto, lo que haremos, lo que necesitamos de ti, tus derechos como consumidor, el tratamiento de tus datos personales y las condiciones de propiedad y uso de lo que creemos para tu marca.', CW), M, H - 110);
+  doc.text(doc.splitTextToSize(isContract
+    ? `Acuerdo entre ${lead.name || 'el cliente'} y ${BRAND} para el proyecto descrito en la propuesta ${quoteNumber(lead).replace('KSTA-', 'PLAN-')} y la cotización ${quoteNumber(lead)}: valor, forma de pago, plazos, derechos sobre lo que se crea, tus derechos como consumidor y el tratamiento de tus datos.`
+    : 'Este documento describe el proyecto: lo que voy a hacer, lo que vas a recibir, lo que necesito de ti y en cuánto tiempo estará listo. Las condiciones legales van en el contrato, que es un documento aparte.', CW), M, H - 110);
   doc.addPage(); page++; y = M;
 
-  // ---------- 1. Resumen ----------
   const b = d.business || {};
+  if (!isContract) {
+  // ---------- 1. Resumen ----------
   h1('Resumen del proyecto');
   kv([
     ['Cliente', lead.name], ['Negocio', [b.name || lead.business, b.sector].filter(Boolean).join(' · ')], ['Ciudad', b.city],
@@ -216,7 +221,49 @@ export function proposalPDF(lead) {
   });
   p(`Duración total estimada: ${day} días hábiles desde la recepción del anticipo y la información completa. Las etapas pueden avanzar en paralelo.`, 9, MUTED);
 
-  // ---------- 5. Propiedad intelectual ----------
+  h1('Siguiente paso');
+  bullets([
+    'Si estás de acuerdo con esta propuesta, te mando el contrato para que lo revises y lo firmes (puede ser por correo o WhatsApp).',
+    `Con el contrato firmado y el anticipo de ${q.deposit ? cop(q.deposit) : 'la mitad del valor'}, arrancamos.`,
+    `Esta propuesta es válida por ${PRICES.vigenciaDias} días.`,
+  ]);
+  footer();
+  return doc;
+  }
+
+  // ================= CONTRATO =================
+  const tlC = timeline(services, d.timing);
+  const totalDays = tlC.reduce((s, [, , n]) => s + n, 0);
+  h1('Las partes');
+  kv([
+    ['Contratante (cliente)', lead.name], ['Negocio', [b.name || lead.business, b.sector].filter(Boolean).join(' · ')], ['Ciudad', b.city],
+    ['Contacto', [lead.phone, lead.email].filter(Boolean).join(' · ')], ['Documento de identidad', 'C.C. / NIT ____________________'],
+  ]);
+  kv([['Contratista', `${OWNER} (${BRAND})`], ['Contacto', CONTACT_EMAIL], ['Documento de identidad', 'C.C. ____________________']]);
+  p('Las partes acuerdan celebrar este contrato de prestación de servicios, que se rige por las cláusulas siguientes.', 9.3, MUTED);
+
+  h1('Objeto');
+  p(`El contratista realizará para el cliente: ${services.map((s) => scopeFor(s, (d.details || {})[s], lead)?.title.replace(/^Tu |^Tus /, '').toLowerCase()).filter(Boolean).join(', ') || lead.service}, con el alcance, los entregables y los requisitos descritos en la propuesta ${quoteNumber(lead).replace('KSTA-', 'PLAN-')}, que hace parte de este contrato. Lo que no esté descrito allí se considera trabajo adicional y se cotiza por aparte.`);
+
+  h1('Valor y forma de pago');
+  kv([
+    ['Valor total', q.total ? cop(q.total) : 'Según cotización'],
+    ['Anticipo (al firmar)', q.deposit ? cop(q.deposit) : ''],
+    ['Saldo (contra entrega)', q.total && q.deposit ? cop(q.total - q.deposit) : ''],
+    ['Cuota mensual', q.monthly ? `${cop(q.monthly)} /mes, desde la publicación o entrega` : ''],
+  ]);
+  p('Valores en pesos colombianos, sin IVA. Los pagos se hacen por transferencia, Nequi o Daviplata a la cuenta que indique el contratista. La cuota mensual cubre que la página siga en internet, segura y funcionando, soporte y ajustes menores.');
+
+  h1('Plazo');
+  p(`El proyecto se entrega en un plazo estimado de ${totalDays} días hábiles, contados desde que el cliente paga el anticipo y entrega la información completa. Si el cliente se demora en enviar información o en aprobar avances, el plazo se corre el mismo tiempo.`);
+
+  h1('Obligaciones de las partes');
+  h2('Del contratista');
+  bullets(['Hacer el trabajo descrito en la propuesta con calidad y en el plazo acordado.', 'Mostrar avances al cliente y atender hasta 2 rondas de ajustes por pieza.', 'Entregar los archivos finales y los accesos cuando se pague el valor total.', 'Guardar reserva sobre la información del negocio del cliente.']);
+  h2('Del cliente');
+  bullets(['Pagar el anticipo, el saldo y la cuota mensual en las fechas acordadas.', 'Entregar la información, fotos y textos necesarios, con derechos para usarlos.', 'Revisar y responder los avances en máximo 3 días hábiles.', services.includes('branding') ? null : 'Entregar su logo y colores en la mejor calidad disponible.']);
+
+  // ---------- Propiedad intelectual ----------
   h1('Propiedad intelectual y uso de lo que creamos');
   p('En Colombia los derechos de autor se rigen por la Ley 23 de 1982 y la Decisión Andina 351 de 1993. Para este proyecto se acuerda lo siguiente:');
   bullets([
@@ -267,12 +314,12 @@ export function proposalPDF(lead) {
     'Confidencialidad: ambas partes guardan reserva sobre la información del negocio compartida durante el proyecto.',
     'Responsabilidad: KstaStudio_ no garantiza resultados específicos de ventas o seguidores, ya que dependen de factores externos; sí garantiza la calidad del trabajo descrito.',
     'Ley aplicable: este acuerdo se rige por las leyes de la República de Colombia. Las diferencias se intentarán resolver primero de forma directa y amistosa.',
-    'Este documento y la cotización aceptados por el cliente (por escrito, correo o WhatsApp) conforman el acuerdo entre las partes (Ley 527 de 1999, mensajes de datos).',
+    'Este contrato, la propuesta y la cotización conforman el acuerdo completo entre las partes.',
   ]);
 
-  // ---------- 9. Aceptación ----------
-  h1('Aceptación');
-  p('Con la firma o la aceptación por escrito de esta propuesta, el cliente declara que leyó y acepta el alcance, las condiciones y el tratamiento de datos aquí descritos.', 9.3, MUTED);
+  // ---------- Firmas ----------
+  h1('Firmas');
+  p(`Las partes firman este contrato en señal de aceptación${b.city ? `, en ${b.city}` : ''}. También se entiende aceptado si el cliente lo confirma por escrito por correo o WhatsApp (Ley 527 de 1999).`, 9.3, MUTED);
   ensure(110); y += 50;
   const half = (CW - 40) / 2;
   [[lead.name || 'Cliente', 'El cliente'], [OWNER, BRAND]].forEach(([n, r], i) => {
@@ -287,6 +334,8 @@ export function proposalPDF(lead) {
   return doc;
 }
 
-export function downloadProposal(lead) {
-  proposalPDF(lead).save(`Propuesta-${quoteNumber(lead).replace('KSTA-', 'PLAN-')}-${(lead.business || lead.name || 'KstaStudio').replace(/[^\w-]+/g, '_')}.pdf`);
-}
+export const proposalPDF = (lead) => buildPDF(lead, 'propuesta');
+export const contractPDF = (lead) => buildPDF(lead, 'contrato');
+const fileName = (lead, prefix, tag) => `${prefix}-${quoteNumber(lead).replace('KSTA-', tag)}-${(lead.business || lead.name || 'KstaStudio').replace(/[^\w-]+/g, '_')}.pdf`;
+export function downloadProposal(lead) { proposalPDF(lead).save(fileName(lead, 'Propuesta', 'PLAN-')); }
+export function downloadContract(lead) { contractPDF(lead).save(fileName(lead, 'Contrato', 'CONT-')); }

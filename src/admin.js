@@ -700,6 +700,7 @@ function bindQuote(l) {
       <div class="aq-actions">
         <button class="btn btn-sm" id="aqPdf">${icons.file} Cotización PDF</button>
         <button class="btn btn-sm" id="aqPlan">${icons.list} Propuesta y plan PDF</button>
+        <button class="btn btn-sm" id="aqContract">${icons.file} Contrato PDF</button>
         <a class="btn btn-sm btn-ghost" id="aqWa" target="_blank" rel="noopener">${icons.whatsapp} Enviar por WhatsApp</a>
         <a class="btn btn-sm btn-ghost" id="aqMail">${icons.mail} Enviar por correo</a>
         <button class="btn btn-sm btn-ghost" id="aqSave">Guardar cambios</button>
@@ -720,6 +721,9 @@ function bindQuote(l) {
     box.querySelector('#aqPdf').addEventListener('click', async () => {
       const { downloadQuote } = pdfMod;
       downloadQuote({ ...l, quote: q }); logEvent(l.id, 'pdf', 'Descargó la cotización en PDF');
+    });
+    box.querySelector('#aqContract').addEventListener('click', () => {
+      proposalMod.downloadContract({ ...l, quote: q }); logEvent(l.id, 'pdf', 'Descargó el contrato');
     });
     box.querySelector('#aqPlan').addEventListener('click', async () => {
       const { downloadProposal } = proposalMod;
@@ -965,13 +969,13 @@ async function renderTextoResult(box) {
       <div class="tx-total"><span>Total para empezar</span><b>${cop(q.total)}</b>${q.monthly ? `<small>+ ${cop(q.monthly)}/mes</small>` : ''}</div>
       ${!lead.email || !lead.phone ? '<p class="muted small">Falta el WhatsApp o el correo del cliente. Puedes crearlo igual y completarlo después en su ficha.</p>' : ''}
       <div class="tx-actions">
-        <button class="btn" id="txSave">${icons.file} Crear cliente y descargar PDFs</button>
+        <button class="btn" id="txSave">${icons.file} Crear cliente y descargar los 3 PDFs</button>
         <button class="btn btn-ghost" id="txPdf">Solo descargar PDFs</button>
       </div>
     </div>`;
   const pdfs = async (l) => {
     const [{ downloadQuote }, { downloadProposal }] = [pdfMod, proposalMod];
-    downloadQuote(l); downloadProposal(l);
+    downloadQuote(l); downloadProposal(l); proposalMod.downloadContract(l);
   };
   box.querySelector('#txPdf').addEventListener('click', () => pdfs(lead));
   box.querySelector('#txSave').addEventListener('click', async (e) => {
