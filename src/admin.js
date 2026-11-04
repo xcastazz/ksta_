@@ -3,6 +3,12 @@ import { icons } from './icons.js';
 import { buildQuote, totals, cop } from './pricing.js';
 import { MEET_LINK } from './config.js';
 import { buildDevPrompt, devPromptFilename } from './devprompt.js';
+// Static on purpose: a dynamic import of pdf.js loses its export names in the build (downloads silently failed)
+import * as pdfMod from './pdf.js';
+import * as proposalMod from './proposal.js';
+import { SERVICES, DETAILS, STYLES, TIMING, BUDGET } from './quote.js';
+import { TEMPLATES } from './templates.js';
+import { CAT_ORDER, CATS } from './plans.js';
 
 const app = document.getElementById('app');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -712,16 +718,16 @@ function bindQuote(l) {
     box.querySelector('#aqReset').addEventListener('click', () => { l.quote = null; q = totals(ensureQuote(l)); draw(); toast('Recalculado con la lista de precios'); });
     box.querySelector('#aqSave').addEventListener('click', async () => { if (await update(l.id, { quote: q, quote_total: q.total }, ['cotizacion', `Cotización actualizada: ${cop(q.total)}`])) toast('Cotización guardada'); });
     box.querySelector('#aqPdf').addEventListener('click', async () => {
-      const { downloadQuote } = await import('./pdf.js');
+      const { downloadQuote } = pdfMod;
       downloadQuote({ ...l, quote: q }); logEvent(l.id, 'pdf', 'Descargó la cotización en PDF');
     });
     box.querySelector('#aqPlan').addEventListener('click', async () => {
-      const { downloadProposal } = await import('./proposal.js');
+      const { downloadProposal } = proposalMod;
       downloadProposal({ ...l, quote: q }); logEvent(l.id, 'pdf', 'Descargó la propuesta y plan de trabajo');
     });
     const sent = async (via) => {
       await update(l.id, { quote: q, quote_total: q.total, status: ['nuevo', 'contactado'].includes(l.status) ? 'cotizado' : l.status }, ['envio', `Cotización enviada por ${via}: ${cop(q.total)}`]);
-      const [{ downloadQuote }, { downloadProposal }] = await Promise.all([import('./pdf.js'), import('./proposal.js')]);
+      const [{ downloadQuote }, { downloadProposal }] = [pdfMod, proposalMod];
       downloadQuote({ ...l, quote: q }); downloadProposal({ ...l, quote: q });
       toast(`PDFs descargados: adjúntalos en ${via}`);
     };
@@ -856,9 +862,6 @@ boot();
 const txt = { draft: '', result: null, busy: false, error: '' };
 
 async function textCatalog() {
-  const { SERVICES, DETAILS, STYLES, TIMING, BUDGET } = await import('./quote.js');
-  const { TEMPLATES } = await import('./templates.js');
-  const { CAT_ORDER, CATS } = await import('./plans.js');
   const ids = [...new Set(CAT_ORDER.flatMap((k) => CATS[k].services))];   // solo lo que hoy se ofrece
   return {
     services: ids.map((id) => ({ id, nombre: SERVICES[id].label, que_es: SERVICES[id].desc,
@@ -888,8 +891,6 @@ function cleanResult(r, cat) {
 }
 
 async function textLead(r) {
-  const { CAT_ORDER, CATS } = await import('./plans.js');
-  const { SERVICES } = await import('./quote.js');
   const cats = CAT_ORDER.filter((k) => CATS[k].services.some((s) => r.services.includes(s)));
   const plan = `cats-${Math.max(1, cats.length)}`;
   const quote = buildQuote({ plan, services: r.services, details: r.details, template: r.template, timing: r.timing });
@@ -949,7 +950,6 @@ async function renderTextoResult(box) {
   const r = txt.result; if (!r?.services.length) return;
   const lead = await textLead(r);
   const q = lead.quote;
-  const { SERVICES, DETAILS } = await import('./quote.js');
   const row = (k, v) => (v ? `<div><small>${k}</small><b>${esc(v)}</b></div>` : '');
   box.innerHTML = `
     <div class="tx-res vision">
@@ -970,7 +970,7 @@ async function renderTextoResult(box) {
       </div>
     </div>`;
   const pdfs = async (l) => {
-    const [{ downloadQuote }, { downloadProposal }] = await Promise.all([import('./pdf.js'), import('./proposal.js')]);
+    const [{ downloadQuote }, { downloadProposal }] = [pdfMod, proposalMod];
     downloadQuote(l); downloadProposal(l);
   };
   box.querySelector('#txPdf').addEventListener('click', () => pdfs(lead));
