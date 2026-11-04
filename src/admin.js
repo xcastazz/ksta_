@@ -914,10 +914,10 @@ function viewTexto(el, force) {
   el.innerHTML = `
     <div class="tx">
       <div class="tx-head"><h2>Cotización desde texto</h2>
-        <p class="muted">Escribe o pega lo que te contó el cliente, como te salga. Claude lo organiza, calcula el precio y te deja listos la cotización formal y el plan de trabajo en PDF.</p></div>
+        <p class="muted">Escribe o pega lo que te contó el cliente, como te salga. La IA gratuita lo organiza, calcula el precio y te deja listos la cotización formal y el plan de trabajo en PDF.</p></div>
       <textarea id="txDraft" rows="9" maxlength="20000" placeholder="Ej: Hablé con Laura, tiene una pastelería en Envigado que se llama Dulce Hogar. Quiere una página donde la gente vea sus tortas con precios y pueda pedir por WhatsApp. No tiene logo, quiere algo elegante en tonos rosados. Lo necesita para antes de diciembre. Su WhatsApp es 300 123 4567 y su correo laura@gmail.com">${esc(txt.draft)}</textarea>
       <div class="tx-actions">
-        <button class="btn" id="txGo" ${txt.busy ? 'disabled' : ''}>${txt.busy ? 'Interpretando…' : `${icons.sparkles} Interpretar con Claude`}</button>
+        <button class="btn" id="txGo" ${txt.busy ? 'disabled' : ''}>${txt.busy ? 'Interpretando…' : `${icons.sparkles} Interpretar`}</button>
         ${r ? '<button class="btn btn-ghost" id="txClear">Empezar otro</button>' : ''}
       </div>
       ${txt.error ? `<p class="tx-err">${esc(txt.error)}</p>` : ''}
@@ -937,8 +937,9 @@ async function runTexto(el) {
     const { data: { session } } = await supabase.auth.getSession();
     const res = await fetch('/api/interpretar', { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${session?.access_token || ''}` }, body: JSON.stringify({ text: txt.draft, catalog }) });
     const out = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(out.error || `Error ${res.status}`);
-    txt.result = cleanResult(out.result, catalog);
+    let raw = out.result;
+    if (!res.ok) { if (!out.fallback) throw new Error(out.error || `Error ${res.status}`); raw = localParse(txt.draft, catalog); raw.missing.unshift('Lo leí sin IA (el cupo gratis del día se acabó o no respondió): revisa todo con cuidado.'); }
+    txt.result = cleanResult(raw, catalog);
     if (!txt.result.services.length) txt.error = 'No encontré ningún servicio que hoy ofrezcas en ese texto. Revisa y vuelve a intentar.';
   } catch (err) { txt.error = err.message || 'No se pudo interpretar el texto.'; }
   txt.busy = false; viewTexto(el, true);
@@ -983,4 +984,37 @@ async function renderTextoResult(box) {
     Object.assign(txt, { draft: '', result: null, error: '' });
     await loadLeads(); go('solicitudes', lead.id);
   });
+}
+
+// Lector sin IA (gratis, en el navegador): se usa si Workers AI no responde
+function localParse(text, cat) {
+  const norm = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const t = norm(text);
+  const words = (s) => norm(s).split(/[^a-z0-9ñ]+/).filter((w) => w.length > 3 && !['para', 'tengo', 'quiero', 'necesito', 'solo', 'pagina', 'como', 'algo', 'otra'].includes(w));
+  const score = (opt) => words(opt).filter((w) => t.includes(w.slice(0, Math.max(4, w.length - 2)))).length;
+  const email = text.match(/[\w.+-]+@[\w-]+\.[\w.]+/)?.[0] || '';
+  const phone = text.match(/(?:\+?57[\s-]?)?3\d{2}[\s-]?\d{3}[\s-]?\d{4}|\b\d[\d\s-]{6,13}\d\b/)?.[0]?.trim() || '';
+  const name = text.match(/(?:[Hh]abl[eé] con|[Cc]liente(?: es)?|se llama|[Ss]oy|[Nn]ombre(?: es)?:?)\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?: [A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)?)/)?.[1] || '';
+  const bizName = text.match(/(?:negocio|empresa|tienda|local|marca)\s+(?:que\s+)?(?:se llama|llamad[ao])\s+["“]?([^,."”\n]{2,40})/i)?.[1]?.trim() || '';
+  const city = ['Medellín', 'Envigado', 'Itagüí', 'Sabaneta', 'Bello', 'La Estrella', 'Rionegro', 'Bogotá', 'Cali', 'Barranquilla', 'Cartagena', 'Bucaramanga', 'Pereira', 'Manizales'].find((c) => t.includes(norm(c))) || '';
+  const want = { web: /pagina|web|tienda|catalogo|internet|sitio|vender en linea/, branding: /logo|marca|identidad|tarjeta|imagen/ };
+  const services = cat.services.map((s) => s.id).filter((id) => want[id]?.test(t));
+  const answers = [], missing = [];
+  for (const s of cat.services.filter((x) => services.includes(x.id))) {
+    for (const q of s.preguntas) {
+      const ranked = q.opciones.map((o) => [o, score(o)]).sort((a, b) => b[1] - a[1]);
+      const hits = ranked.filter(([, n]) => n > 0).map(([o]) => o);
+      if (hits.length) answers.push({ service: s.id, key: q.key, values: q.tipo === 'varias' ? hits : [hits[0]] });
+      else { answers.push({ service: s.id, key: q.key, values: [q.opciones[0]] }); missing.push(`${q.pregunta} (puse "${q.opciones[0]}")`); }
+    }
+  }
+  const timing = /urgente|ya mismo|lo antes|esta semana|rapido/.test(t) ? cat.tiempos[0] : /semana/.test(t) ? cat.tiempos[1] : /mes|diciembre|enero|navidad/.test(t) ? cat.tiempos[2] : '';
+  if (!name) missing.push('Nombre del cliente');
+  if (!phone) missing.push('WhatsApp del cliente');
+  if (!email) missing.push('Correo del cliente');
+  return {
+    contact: { name, phone, email }, business: { name: bizName, sector: '', city, link: '', audience: '', refs: '' },
+    services, answers, template: '', style: cat.estilos.filter((e) => t.includes(norm(e))),
+    timing, budget: '', notes: '', summary: text.length > 240 ? text.slice(0, 240) + '…' : text, missing,
+  };
 }

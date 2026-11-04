@@ -1,5 +1,3 @@
-import Anthropic from '@anthropic-ai/sdk';
-
 // Cloudflare Worker: serves the static site and one private API route for the admin panel.
 // POST /api/interpretar  → turns a free-text client description into the quote wizard's answers.
 export default {
@@ -65,39 +63,36 @@ Reglas:
 - "missing": lista corta de datos que faltan o que supusiste, para que Jerónimo los confirme con el cliente.
 - "notes": cualquier detalle útil del texto que no cupo en otra parte.`;
 
+// Gratis: Workers AI de Cloudflare (cupo diario sin costo). Si falla o se acaba el cupo, el panel usa su lector local.
+const MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
+
 async function interpretar(request, env) {
   if (request.method !== 'POST') return json({ error: 'Método no permitido' }, 405);
   const token = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
   if (!(await isAdmin(token, env))) return json({ error: 'No autorizado' }, 401);
-  if (!env.ANTHROPIC_API_KEY) return json({ error: 'Falta configurar ANTHROPIC_API_KEY en Cloudflare' }, 503);
+  if (!env.AI) return json({ error: 'Workers AI no está activado', fallback: true }, 503);
 
   let body;
   try { body = await request.json(); } catch { return json({ error: 'JSON inválido' }, 400); }
-  const text = String(body.text || '').trim().slice(0, 20000);
+  const text = String(body.text || '').trim().slice(0, 12000);
   if (text.length < 10) return json({ error: 'Escribe un poco más sobre lo que quiere el cliente' }, 400);
 
-  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
   try {
-    const response = await client.beta.messages.create({
-      model: 'claude-opus-5-5',
-      max_tokens: 16000,
-      betas: ['server-side-fallback-2026-07-01'],
-      fallbacks: 'default',
-      output_config: { effort: 'medium', format: { type: 'json_schema', schema: SCHEMA } },
-      system: SYSTEM,
-      messages: [{
-        role: 'user',
-        content: `<catalogo>\n${JSON.stringify(body.catalog || {})}\n</catalogo>\n\n<lo_que_dijo_el_cliente>\n${text}\n</lo_que_dijo_el_cliente>`,
-      }],
+    const out = await env.AI.run(MODEL, {
+      messages: [
+        { role: 'system', content: SYSTEM + '\nResponde únicamente con el JSON pedido.' },
+        { role: 'user', content: `<catalogo>\n${JSON.stringify(body.catalog || {})}\n</catalogo>\n\n<lo_que_dijo_el_cliente>\n${text}\n</lo_que_dijo_el_cliente>` },
+      ],
+      response_format: { type: 'json_schema', json_schema: SCHEMA },
+      max_tokens: 2048,
+      temperature: 0.1,
     });
-    if (response.stop_reason === 'refusal') return json({ error: 'No se pudo interpretar este texto. Intenta escribirlo de otra forma.' }, 422);
-    if (response.stop_reason === 'max_tokens') return json({ error: 'El texto es muy largo. Intenta resumirlo.' }, 422);
-    const out = response.content.find((b) => b.type === 'text');
-    return json({ result: JSON.parse(out.text) });
+    let result = out?.response ?? out;
+    if (typeof result === 'string') result = JSON.parse(result.slice(result.indexOf('{'), result.lastIndexOf('}') + 1));
+    if (!result || typeof result !== 'object') throw new Error('respuesta vacía');
+    return json({ result, engine: 'workers-ai' });
   } catch (err) {
-    if (err instanceof Anthropic.RateLimitError) return json({ error: 'Hay muchas solicitudes ahora. Intenta en un minuto.' }, 429);
-    if (err instanceof Anthropic.AuthenticationError) return json({ error: 'La clave de Claude no es válida. Revísala en Cloudflare.' }, 502);
-    if (err instanceof Anthropic.APIError) return json({ error: `Claude respondió con un error (${err.status}). Intenta otra vez.` }, 502);
-    return json({ error: 'No se pudo interpretar el texto. Intenta otra vez.' }, 500);
+    console.error('interpretar', err);
+    return json({ error: 'La IA gratuita no pudo responder ahora (quizás se acabó el cupo del día).', fallback: true }, 503);
   }
 }
