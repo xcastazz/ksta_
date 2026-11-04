@@ -93,10 +93,35 @@
     <section class="section chapter" id="servicios" data-title="Qué hago">
             <div class="section-head">
         <p class="eyebrow reveal">qué hago</p>
-        <h2 class="mask"><span>Páginas web y logos, bien hechos.</span></h2>
+        <h2 class="mask"><span>Páginas web, logos y auditorías, bien hechos.</span></h2>
       </div>
       <div class="services" id="services"></div>
       <p class="soon-line reveal muted">Muy pronto también: fotos, videos y publicidad en redes.</p>
+    </section>
+
+    <section class="section chapter audit-req" id="auditoria" data-title="Auditoría">
+      <div class="audit-box glass-strong reveal">
+        <div class="audit-copy">
+          <p class="eyebrow">auditoría de tu página</p>
+          <h2>¿Ya tienes página? Te digo qué le falta.</h2>
+          <p class="muted">La reviso como lo haría un cliente nuevo y te mando un documento claro: qué funciona, qué te está haciendo perder clientes y qué haría yo para mejorarla. Tú decides qué hacer con eso.</p>
+          <ul class="audit-list">
+            <li><i data-icon="check"></i>Notas del 1 al 10 en 5 temas</li>
+            <li><i data-icon="check"></i>Cada problema explicado en palabras sencillas</li>
+            <li><i data-icon="check"></i>Un plan con los siguientes pasos</li>
+          </ul>
+        </div>
+        <form class="audit-form" id="auditForm" novalidate>
+          <label>Tu nombre<input name="name" required maxlength="100" autocomplete="name" /></label>
+          <label>Tu WhatsApp<input name="phone" required maxlength="30" inputmode="tel" autocomplete="tel" placeholder="+57 300 000 0000" /></label>
+          <label>Nombre del negocio<input name="business" maxlength="120" /></label>
+          <label>Dirección de tu página<input name="url" required maxlength="200" inputmode="url" placeholder="www.tunegocio.com" /></label>
+          <label>¿Qué te preocupa de tu página? <small>(opcional)</small><textarea name="notes" rows="3" maxlength="800" placeholder="Ej: me visitan pero nadie me escribe"></textarea></label>
+          <label class="consent"><input type="checkbox" name="consent" /> <span>Acepto que KstaStudio_ use mis datos solo para responderme. <a href="/privacidad.html" target="_blank" rel="noopener">Aviso de privacidad</a></span></label>
+          <button class="btn btn-lg" type="submit">Pedir mi auditoría</button>
+          <p class="audit-msg" role="status"></p>
+        </form>
+      </div>
     </section>
 
     <section class="section templates chapter" id="plantillas" data-title="Ejemplos">

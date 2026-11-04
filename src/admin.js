@@ -9,6 +9,8 @@ import * as proposalMod from './proposal.js';
 import { SERVICES, DETAILS, STYLES, TIMING, BUDGET } from './quote.js';
 import { TEMPLATES } from './templates.js';
 import { CAT_ORDER, CATS } from './plans.js';
+import { AUDIT_CATS, RECOS, auditScores, auditFindings, buildAuditHTML } from './audit.js';
+import { WHATSAPP_NUMBER, EMAIL } from './config.js';
 
 const app = document.getElementById('app');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -25,7 +27,7 @@ const INACTIVE = ['cerrado', 'perdido'];                                     // 
 const PRIORITIES = [['alta', 'Alta'], ['media', 'Media'], ['baja', 'Baja']];
 const statusLabel = (s) => (STATUSES.find(([k]) => k === s) || [, s])[1];
 const VIEWS = [
-  ['dashboard', 'Inicio', 'grid'], ['texto', 'Desde texto', 'sparkles'], ['solicitudes', 'Solicitudes', 'inbox'], ['tablero', 'Tablero', 'layers'],
+  ['dashboard', 'Inicio', 'grid'], ['texto', 'Desde texto', 'sparkles'], ['auditorias', 'Auditorías', 'search'], ['solicitudes', 'Solicitudes', 'inbox'], ['tablero', 'Tablero', 'layers'],
   ['agenda', 'Agenda', 'teams'], ['seguimientos', 'Seguimientos', 'calendar'], ['ajustes', 'Ajustes', 'list'],
 ];
 
@@ -272,8 +274,8 @@ function renderAll(flashId) {
   app.querySelectorAll('[data-view]').forEach((b) => b.classList.toggle('active', b.dataset.view === view));
   const el = document.getElementById('view');
   if (!el) return;
-  if (view !== 'texto') el.dataset.v = '';
-  ({ dashboard: viewDashboard, texto: viewTexto, solicitudes: viewLeads, tablero: viewBoard, agenda: viewAgenda, seguimientos: viewFollow, ajustes: viewSettings })[view](el, flashId);
+  if (view !== 'texto' && view !== 'auditorias') el.dataset.v = '';
+  ({ dashboard: viewDashboard, texto: viewTexto, auditorias: viewAudit, solicitudes: viewLeads, tablero: viewBoard, agenda: viewAgenda, seguimientos: viewFollow, ajustes: viewSettings })[view](el, flashId);
 }
 
 // ===== Dashboard =====
@@ -1021,4 +1023,96 @@ function localParse(text, cat) {
     services, answers, template: '', style: cat.estilos.filter((e) => t.includes(norm(e))),
     timing, budget: '', notes: '', summary: text.length > 240 ? text.slice(0, 240) + '…' : text, missing,
   };
+}
+
+// ===== Auditorías: respondes preguntas y se genera el documento =====
+const AUD_KEY = 'ksta-audit-draft';
+const audBlank = () => ({ client: '', city: '', url: '', headline: '', reco: 'reforma', summary: '', price: '', previewUrl: '', keep: '', extra: '', colors: ['', '', ''], answers: {}, notes: {}, scoreOverride: {}, shotDesk: '', shotMob: '', leadId: null });
+let aud = (() => { try { return { ...audBlank(), ...JSON.parse(localStorage.getItem(AUD_KEY) || '{}') }; } catch { return audBlank(); } })();
+const audSave = () => { try { localStorage.setItem(AUD_KEY, JSON.stringify(aud)); } catch { /* full (screenshots) */ } };
+
+function viewAudit(el, force) {
+  if (el.dataset.v === 'auditorias' && force !== true) return;
+  el.dataset.v = 'auditorias';
+  const reqs = leads.filter((l) => /auditor/i.test(l.service || ''));
+  const inp = (k, label, ph = '', type = 'text') => `<label>${label}<input data-k="${k}" type="${type}" value="${esc(aud[k])}" placeholder="${ph}" /></label>`;
+  const ta = (k, label, ph = '') => `<label class="span2">${label}<textarea data-k="${k}" rows="3" placeholder="${ph}">${esc(aud[k])}</textarea></label>`;
+  el.innerHTML = `
+    <div class="au">
+      <div class="tx-head"><h2>Auditoría web</h2><p class="muted">Responde las preguntas mirando la página del cliente. Las notas se calculan solas y al final generas el documento listo para guardar como PDF.</p></div>
+      ${reqs.length ? `<label class="au-load">Cargar datos de una solicitud<select id="auLead"><option value="">Escoge una solicitud de auditoría…</option>${reqs.map((l) => `<option value="${l.id}" ${aud.leadId === l.id ? 'selected' : ''}>${esc(l.business || l.name)} · ${new Date(l.created_at).toLocaleDateString('es')}</option>`).join('')}</select></label>` : ''}
+      <div class="au-card"><h3>1. El cliente</h3><div class="au-grid">
+        ${inp('client', 'Empresa', 'Ej: Compañía Soluciones Legales')}${inp('city', 'Ciudad', 'Bogotá')}
+        ${inp('url', 'Página web', 'https://…', 'url')}${inp('headline', 'Frase de portada (opcional)', 'tu página puede ganar más clientes.')}
+      </div></div>
+      <div class="au-card"><h3>2. Las preguntas</h3><p class="muted small">Toca la respuesta. Si algo está mal, puedes escribir lo que viste para que salga en el documento.</p>
+        ${AUDIT_CATS.map((c) => `<div class="au-cat"><div class="au-cat-h"><b>${c.name}</b><span class="au-score" data-score="${c.id}"></span><label class="au-ov">Nota manual<input type="number" min="1" max="10" data-ov="${c.id}" value="${aud.scoreOverride[c.id] || ''}" placeholder="auto" /></label></div>
+          ${c.checks.map((k) => `<div class="au-q" data-q="${k.id}"><p>${k.q} <i class="au-sev ${k.sev}">${k.sev}</i></p>
+            <div class="au-seg">${[['si', 'Sí', true], ['no', 'No', false], ['na', 'No aplica', null]].map(([v, t, val]) => `<button type="button" data-ans="${v}" class="${aud.answers[k.id] === val && (val !== null || k.id in aud.answers) ? 'on' : ''}">${t}</button>`).join('')}</div>
+            <input class="au-note" data-note="${k.id}" placeholder="Qué viste exactamente (opcional)" value="${esc(aud.notes[k.id] || '')}" ${aud.answers[k.id] === k.bad ? '' : 'hidden'} /></div>`).join('')}</div>`).join('')}
+      </div>
+      <div class="au-card"><h3>3. Conclusión</h3><div class="au-grid">
+        <label>Recomendación<select data-k="reco">${Object.entries(RECOS).map(([k, r]) => `<option value="${k}" ${aud.reco === k ? 'selected' : ''}>${r.label}</option>`).join('')}</select></label>
+        ${inp('price', 'Inversión (opcional)', 'Ej: desde $1.200.000')}
+        ${ta('summary', 'Resumen con tus palabras (opcional)', 'Si lo dejas vacío, se escribe uno automático con los hallazgos.')}
+        ${ta('keep', 'Lo que conservaríamos (uno por línea)', 'Colores azul y dorado\nEl video del abogado')}
+        ${ta('extra', 'Observaciones adicionales (opcional)', '')}
+        ${inp('previewUrl', 'Enlace a una vista previa (opcional)', 'https://…')}
+        <label>Colores de la marca<span class="au-colors">${[0, 1, 2].map((i) => `<input data-color="${i}" value="${esc(aud.colors[i] || '')}" placeholder="#0a1628" maxlength="9" />`).join('')}</span></label>
+      </div></div>
+      <div class="au-card"><h3>4. Capturas de la página actual (opcional)</h3><div class="au-grid">
+        <label>Computador<input type="file" accept="image/*" data-shot="shotDesk" />${aud.shotDesk ? '<small class="ok">Captura cargada</small>' : ''}</label>
+        <label>Celular<input type="file" accept="image/*" data-shot="shotMob" />${aud.shotMob ? '<small class="ok">Captura cargada</small>' : ''}</label>
+      </div></div>
+      <div class="au-bar vision"><span id="auSum"></span><div class="tx-actions"><button class="btn btn-ghost" id="auNew">Empezar otra</button><button class="btn" id="auGo">${icons.file} Generar auditoría</button></div></div>
+    </div>`;
+
+  const refresh = () => {
+    const sc = auditScores(aud), f = auditFindings(aud);
+    el.querySelectorAll('[data-score]').forEach((s) => { const n = sc[s.dataset.score]; s.textContent = `${n}/10`; s.className = `au-score ${n <= 4 ? 'bad' : n <= 6 ? 'mid' : 'ok'}`; });
+    el.querySelector('#auSum').textContent = `${f.length} hallazgos · ${f.filter((x) => x.sev === 'alta').length} de prioridad alta`;
+    audSave();
+  };
+  el.querySelectorAll('[data-k]').forEach((i) => i.addEventListener('input', () => { aud[i.dataset.k] = i.value; audSave(); }));
+  el.querySelectorAll('[data-color]').forEach((i) => i.addEventListener('input', () => { aud.colors[+i.dataset.color] = i.value.trim(); audSave(); }));
+  el.querySelectorAll('[data-ov]').forEach((i) => i.addEventListener('input', () => { aud.scoreOverride[i.dataset.ov] = i.value; refresh(); }));
+  el.querySelectorAll('[data-note]').forEach((i) => i.addEventListener('input', () => { aud.notes[i.dataset.note] = i.value; audSave(); }));
+  el.querySelectorAll('.au-q').forEach((q) => q.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-ans]'); if (!b) return;
+    const id = q.dataset.q, k = AUDIT_CATS.flatMap((c) => c.checks).find((x) => x.id === id);
+    aud.answers[id] = { si: true, no: false, na: null }[b.dataset.ans];
+    q.querySelectorAll('[data-ans]').forEach((x) => x.classList.toggle('on', x === b));
+    q.querySelector('.au-note').hidden = aud.answers[id] !== k.bad;
+    refresh();
+  }));
+  el.querySelectorAll('[data-shot]').forEach((i) => i.addEventListener('change', async () => {
+    const file = i.files[0]; if (!file) return;
+    aud[i.dataset.shot] = await shrinkImage(file, i.dataset.shot === 'shotMob' ? 700 : 1600);
+    audSave(); toast('Captura cargada');
+  }));
+  el.querySelector('#auLead')?.addEventListener('change', (e) => {
+    const l = leads.find((x) => x.id === e.target.value); if (!l) return;
+    const url = (l.message || '').match(/https?:\/\/\S+|www\.\S+/)?.[0] || '';
+    Object.assign(aud, { leadId: l.id, client: l.business || l.name, url: url && !/^http/.test(url) ? `https://${url}` : url });
+    audSave(); viewAudit(el, true);
+  });
+  el.querySelector('#auNew').addEventListener('click', () => { if (!confirm('¿Borrar esta auditoría y empezar otra?')) return; aud = audBlank(); audSave(); viewAudit(el, true); });
+  el.querySelector('#auGo').addEventListener('click', () => {
+    if (!aud.client.trim()) return toast('Escribe el nombre de la empresa');
+    if (!auditFindings(aud).length && !Object.keys(aud.answers).length) return toast('Responde las preguntas primero');
+    const html = buildAuditHTML(aud, { phone: `+${WHATSAPP_NUMBER.replace(/^57/, '57 ')}`, email: EMAIL });
+    const w = window.open(URL.createObjectURL(new Blob([html], { type: 'text/html' })), '_blank');
+    if (!w) toast('Permite las ventanas emergentes para ver la auditoría');
+    if (aud.leadId) logEvent(aud.leadId, 'pdf', `Generó la auditoría web (${auditFindings(aud).length} hallazgos)`);
+  });
+  refresh();
+}
+
+// Screenshots: shrink to keep the draft light
+function shrinkImage(file, maxW) {
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => { const k = Math.min(1, maxW / img.width); const c = document.createElement('canvas'); c.width = img.width * k; c.height = img.height * k; c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(img.src); res(c.toDataURL('image/jpeg', 0.78)); };
+    img.onerror = rej; img.src = URL.createObjectURL(file);
+  });
 }

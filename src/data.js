@@ -1,5 +1,9 @@
 const allServices = [
   {
+    icon: 'search', title: 'Auditoría de tu página',
+    items: ['Reviso tu página como lo haría un cliente nuevo', 'Te digo qué funciona y qué te está haciendo perder clientes', 'Notas claras en 5 temas: funcionamiento, confianza, personalidad, conexión y Google', 'Te entrego un documento en PDF con lo que haría para mejorarla', 'Sin compromiso: tú decides qué hacer con eso'],
+  },
+  {
     icon: 'brand', title: 'Logo e imagen de tu negocio',
     items: ['Te creo tu logo o te mejoro el que tienes', 'Escojo tus colores y letras', 'Una guía para que tu logo siempre se vea igual', 'Tarjetas de presentación', 'Empaques y etiquetas para tus productos', 'Diseños para tus redes sociales'],
   },
@@ -21,7 +25,7 @@ const allServices = [
   },
 ];
 // Páginas web primero (lo que ya ofrecemos); el resto sale como 'Próximamente'
-export const services = [...allServices.filter((s) => ['code', 'brand'].includes(s.icon)), ...allServices.filter((s) => !['code', 'brand'].includes(s.icon))];
+export const services = [...allServices.filter((s) => ['code', 'brand', 'search'].includes(s.icon)), ...allServices.filter((s) => !['code', 'brand', 'search'].includes(s.icon))];
 
 export const packages = [
   {

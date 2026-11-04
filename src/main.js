@@ -3,14 +3,15 @@ import { CATS, CAT_ORDER, CAT_SOON, COMBO, tierPrice, priceHTML } from './plans.
 import { cop } from './pricing.js';
 import { icons } from './icons.js';
 import { initQuote } from './quote.js';
+import { supabase } from './supabase.js';
 import { initShowcase } from './showcase.js';
 import { initPlanner } from './planner.js';
 import { WHATSAPP_NUMBER, HAS_WHATSAPP, EMAIL, INSTAGRAM } from './config.js';
 
 // Render services & packages
-document.getElementById('services').innerHTML = services.filter((s) => ['code', 'brand'].includes(s.icon)).map((s, i) => `
-  <article class="service glass reveal ${['code', 'brand'].includes(s.icon) ? '' : 'soon'}" style="--d:${i * 90}ms">
-    <div class="icon">${icons[s.icon]}</div>${['code', 'brand'].includes(s.icon) ? '<span class="soon-tag on">Disponible</span>' : '<span class="soon-tag">Próximamente</span>'}
+document.getElementById('services').innerHTML = services.filter((s) => ['code', 'brand', 'search'].includes(s.icon)).map((s, i) => `
+  <article class="service glass reveal ${['code', 'brand', 'search'].includes(s.icon) ? '' : 'soon'}" style="--d:${i * 90}ms">
+    <div class="icon">${icons[s.icon]}</div>${['code', 'brand', 'search'].includes(s.icon) ? '<span class="soon-tag on">Disponible</span>' : '<span class="soon-tag">Próximamente</span>'}
     <h3>${s.title}</h3>
     <ul>${s.items.map((it) => `<li>${it}</li>`).join('')}</ul>
   </article>`).join('');
@@ -80,7 +81,7 @@ document.querySelectorAll('.reveal, .reveal-scale, .mask').forEach((el) => io.ob
 // Chapters: rail + active tracking
 const chapters = [...document.querySelectorAll('.chapter')];
 const rail = document.getElementById('rail');
-const RAIL_ICONS = { inicio: 'home', proyectos: 'monitor', manifiesto: 'sparkles', servicios: 'layers', plantillas: 'code', paquetes: 'globe', presupuesto: 'target', proceso: 'file', faq: 'chat', nosotros: 'user', contacto: 'send' };
+const RAIL_ICONS = { inicio: 'home', proyectos: 'monitor', manifiesto: 'sparkles', servicios: 'layers', plantillas: 'code', paquetes: 'globe', presupuesto: 'target', proceso: 'file', auditoria: 'search', faq: 'chat', nosotros: 'user', contacto: 'send' };
 rail.className = 'dock vision';
 rail.innerHTML = chapters.map((c) =>
   `<a href="#${c.id}" data-id="${c.id}" aria-label="${c.dataset.title}"><span class="dock-icon">${icons[RAIL_ICONS[c.id]]}</span><span class="dock-tip">${c.dataset.title}</span></a>`
@@ -195,7 +196,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
 // ---------- Pestañas: el inicio muestra solo lo necesario, el resto va en su propia vista ----------
 {
   const VIEWS = {
-    inicio: ['inicio', 'servicios', 'proyectos'],
+    inicio: ['inicio', 'servicios', 'auditoria', 'proyectos'],
     precios: ['paquetes', 'presupuesto'],
     ejemplos: ['plantillas'],
     'como-trabajo': ['proceso', 'faq'],
@@ -225,4 +226,32 @@ document.getElementById('year').textContent = new Date().getFullYear();
   }
   addEventListener('hashchange', route);
   route();
+}
+
+// Pedido de auditoría → llega como solicitud al panel
+{
+  const form = document.getElementById('auditForm');
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(form));
+    const msg = form.querySelector('.audit-msg');
+    if (!fd.name?.trim() || (fd.phone || '').replace(/\D/g, '').length < 7 || !fd.url?.trim()) { msg.textContent = 'Me falta tu nombre, tu WhatsApp o la dirección de tu página.'; return; }
+    if (!fd.consent) { msg.textContent = 'Marca la casilla de privacidad para poder enviarlo.'; return; }
+    const btn = form.querySelector('button'); btn.disabled = true; btn.textContent = 'Enviando…';
+    const url = fd.url.trim();
+    const lead = {
+      id: crypto.randomUUID(), created_at: new Date().toISOString(),
+      name: fd.name.trim().slice(0, 100), email: '', phone: fd.phone.trim().slice(0, 30), business: (fd.business || '').trim().slice(0, 120),
+      service: 'Auditoría web', template: null, details: null,
+      message: [`• Página: ${url}`, fd.business && `• Negocio: ${fd.business}`, fd.notes && `• Qué le preocupa: ${fd.notes}`].filter(Boolean).join('\n'),
+    };
+    try {
+      if (!supabase) throw new Error('Supabase no configurado');
+      const { error } = await supabase.from('leads').insert(lead);
+      if (error) throw error;
+      form.innerHTML = `<div class="audit-done"><b>¡Listo, ${lead.name.split(' ')[0]}!</b><p>Ya tengo tu pedido. Reviso tu página y te escribo a tu WhatsApp con la auditoría.</p></div>`;
+    } catch (err) {
+      console.error(err); msg.textContent = 'Uy, algo falló. ¿Lo intentas otra vez?'; btn.disabled = false; btn.textContent = 'Pedir mi auditoría';
+    }
+  });
 }
