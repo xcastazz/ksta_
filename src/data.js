@@ -1,6 +1,6 @@
 const allServices = [
   {
-    icon: 'search', title: 'Auditoría de tu página',
+    icon: 'search', title: 'Auditoría de tu página', price: '$100.000', sample: '/muestras/Auditoria-Ejemplo-KstaStudio.pdf',
     items: ['Reviso tu página como lo haría un cliente nuevo', 'Te digo qué funciona y qué te está haciendo perder clientes', 'Notas claras en 5 temas: funcionamiento, confianza, personalidad, conexión y Google', 'Te entrego un documento en PDF con lo que haría para mejorarla', 'Sin compromiso: tú decides qué hacer con eso'],
   },
   {

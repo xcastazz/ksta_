@@ -9,11 +9,11 @@ import { initPlanner } from './planner.js';
 import { WHATSAPP_NUMBER, HAS_WHATSAPP, EMAIL, INSTAGRAM } from './config.js';
 
 // Render services & packages
-document.getElementById('services').innerHTML = services.filter((s) => ['code', 'brand', 'search'].includes(s.icon)).map((s, i) => `
+document.getElementById('services').innerHTML = services.filter((s) => ['code', 'brand', 'search'].includes(s.icon)).sort((x, y) => ['code', 'brand', 'search'].indexOf(x.icon) - ['code', 'brand', 'search'].indexOf(y.icon)).map((s, i) => `
   <article class="service glass reveal ${['code', 'brand', 'search'].includes(s.icon) ? '' : 'soon'}" style="--d:${i * 90}ms">
     <div class="icon">${icons[s.icon]}</div>${['code', 'brand', 'search'].includes(s.icon) ? '<span class="soon-tag on">Disponible</span>' : '<span class="soon-tag">Próximamente</span>'}
     <h3>${s.title}</h3>
-    <ul>${s.items.map((it) => `<li>${it}</li>`).join('')}</ul>
+    <ul>${s.items.map((it) => `<li>${it}</li>`).join('')}</ul>${s.price ? `<p class="svc-price"><b>${s.price}</b> pago único</p>` : ''}${s.sample ? `<a class="svc-sample" href="${s.sample}" target="_blank" rel="noopener">Ver ejemplo en PDF</a>` : ''}
   </article>`).join('');
 
 // Plans by category (tabs) + combo
@@ -251,7 +251,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
       if (error) throw error;
       form.innerHTML = `<div class="audit-done"><b>¡Listo, ${lead.name.split(' ')[0]}!</b><p>Ya tengo tu pedido. Reviso tu página y te escribo a tu WhatsApp con la auditoría.</p></div>`;
     } catch (err) {
-      console.error(err); msg.textContent = 'Uy, algo falló. ¿Lo intentas otra vez?'; btn.disabled = false; btn.textContent = 'Pedir mi auditoría';
+      console.error(err); msg.textContent = 'Uy, algo falló. ¿Lo intentas otra vez?'; btn.disabled = false; btn.textContent = 'Pedir mi auditoría · $100.000';
     }
   });
 }
