@@ -1,0 +1,80 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8" /><title>Auditoría web · Panadería La Espiga (ejemplo) · KstaStudio_</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+@page { size: A4; margin: 0; }
+:root { --ink: #16131f; --muted: #6b6580; --line: #e7e3ef; --purple: #7b2ff0; --purple-2: #b57bff; --soft: #f6f3fc; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Manrope', system-ui, sans-serif; color: var(--ink); background: #ece9f2; line-height: 1.5; font-size: 10pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.bar { position: sticky; top: 0; z-index: 5; display: flex; justify-content: center; align-items: center; gap: 14px; padding: 10px; background: #0c0618; color: #fff; font-size: 13px; }
+.bar button { font: 600 13px 'Manrope', sans-serif; padding: 8px 16px; border-radius: 99px; border: 0; background: var(--purple); color: #fff; cursor: pointer; }
+.page { width: 210mm; height: 297mm; margin: 10mm auto; background: #fff; padding: 18mm 20mm 22mm; position: relative; page-break-after: always; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,.08); }
+.page:last-child { page-break-after: auto; }
+@media print { body { background: #fff; } .bar { display: none; } .page { margin: 0; box-shadow: none; } }
+h1, h2 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; letter-spacing: -.01em; line-height: 1.05; }
+h2 { font-size: 28pt; margin-bottom: 8pt; }
+h3 { font-size: 12pt; margin: 14pt 0 5pt; }
+p { margin-bottom: 8pt; }
+.muted { color: var(--muted); }
+.eyebrow { font-size: 8pt; letter-spacing: .16em; text-transform: uppercase; color: var(--purple); font-weight: 700; margin-bottom: 8pt; }
+.foot { position: absolute; left: 20mm; right: 20mm; bottom: 12mm; display: flex; justify-content: space-between; font-size: 7.5pt; color: var(--muted); border-top: 1px solid var(--line); padding-top: 6pt; }
+.cover { background: radial-gradient(90% 60% at 100% 0%, #3b1a7a 0%, transparent 60%), radial-gradient(70% 50% at 0% 100%, #1f0e44 0%, transparent 60%), #0c0618; color: #fff; display: flex; flex-direction: column; justify-content: space-between; }
+.brand { display: flex; align-items: center; gap: 10pt; font-weight: 700; font-size: 15pt; letter-spacing: -.02em; }
+.brand img { height: 22pt; }
+.brand em { font-style: normal; color: var(--purple-2); }
+.cover h1 { font-size: 50pt; }
+.cover h1 span { background: linear-gradient(100deg, #e9dcff, var(--purple-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.cover .meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10pt; font-size: 9pt; color: #cbbfe6; border-top: 1px solid rgba(255,255,255,.15); padding-top: 12pt; }
+.cover .meta b { display: block; color: #fff; font-weight: 600; }
+.score { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6pt; margin: 12pt 0 14pt; }
+.score div { border: 1px solid var(--line); border-radius: 10pt; padding: 10pt 6pt; text-align: center; }
+.score b { font-family: 'Cormorant Garamond', serif; font-size: 24pt; font-weight: 600; display: block; line-height: 1; }
+.score small { font-size: 7.5pt; color: var(--muted); }
+.bad b { color: #c2410c; } .mid b { color: #b45309; } .ok b { color: #15803d; }
+img.shot { width: 100%; display: block; border-radius: 10pt; border: 1px solid var(--line); }
+.shots { display: grid; grid-template-columns: 2.6fr 1fr; gap: 10pt; align-items: start; margin-top: 8pt; max-height: 105mm; overflow: hidden; }
+.finding { border: 1px solid var(--line); border-radius: 12pt; padding: 8pt 12pt; margin-bottom: 6pt; break-inside: avoid; }
+.finding h4 { font-size: 10.5pt; display: flex; gap: 8pt; align-items: baseline; margin-bottom: 3pt; }
+.finding h4 i { font-style: normal; font-size: 7pt; font-weight: 700; letter-spacing: .08em; padding: 2pt 6pt; border-radius: 99pt; }
+.alta { background: #fee2e2; color: #b91c1c; } .media { background: #fef3c7; color: #92400e; } .baja { background: #e0f2fe; color: #075985; }
+.finding p { margin: 0; font-size: 9.5pt; color: var(--muted); }
+.finding p b { color: var(--ink); }
+.card { background: var(--soft); border-radius: 12pt; padding: 12pt 14pt; }
+.card h4 { font-size: 10.5pt; margin-bottom: 4pt; }
+.card ul { padding-left: 14pt; color: var(--muted); }
+.palette { display: flex; gap: 8pt; margin: 6pt 0 12pt; }
+.palette span { flex: 1; border-radius: 10pt; padding: 26pt 8pt 8pt; font-size: 7.5pt; }
+table { width: 100%; border-collapse: collapse; font-size: 9.5pt; margin: 6pt 0 12pt; }
+td, th { text-align: left; padding: 7pt 6pt; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 8pt; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.cta { margin-top: 14pt; padding: 16pt 18pt; border-radius: 14pt; background: linear-gradient(120deg, #0c0618, #3b1a7a); color: #fff; }
+.sign { margin-top: 26pt; display: flex; gap: 12pt; align-items: center; }
+.sign img { height: 26pt; }
+</style></head><body>
+<div class="bar"><span>Revisa el documento y guárdalo como PDF</span><button onclick="print()">Guardar como PDF</button></div>
+<section class="page cover">
+  <div class="brand"><img src="https://ksta.jc-casta00.workers.dev/logo-mark.svg" alt="" /><span>Ksta<em>Studio</em>_</span></div>
+  <div><p class="eyebrow" style="color:#c9b3ff">Auditoría de sitio web</p>
+    <h1>Panadería La Espiga (ejemplo):<br /><span>su pan enamora, su página todavía no.</span></h1>
+    <p style="margin-top:16pt;max-width:120mm;color:#cbbfe6">Revisión de www.panaderialaespiga-ejemplo.com: qué funciona, qué le está costando clientes al negocio y qué haríamos para mejorarlo.</p></div>
+  <div class="meta"><div><b>Preparado para</b>Panadería La Espiga (ejemplo) · Medellín</div><div><b>Preparado por</b>Jerónimo Castañeda Velásquez · KstaStudio_</div><div><b>Fecha</b>5 de noviembre de 2026</div></div>
+</section>
+<section class="page"><p class="eyebrow">01 · Resumen</p><h2>Lo que encontramos, en una página.</h2>
+    <p>Revisamos <b>www.panaderialaespiga-ejemplo.com</b> pensando en lo que vive un cliente nuevo cuando llega: si entiende qué ofrecen, si confía y si es fácil dar el siguiente paso. Encontramos <b>11 oportunidades de mejora</b>, <b>5 de prioridad alta</b>.</p>
+    <div class="score"><div class="bad"><b>4/10</b><small>Funcionalidad</small></div><div class="bad"><b>1/10</b><small>Confianza</small></div><div class="ok"><b>8/10</b><small>Personalidad</small></div><div class="mid"><b>5/10</b><small>Conexión con el cliente</small></div><div class="mid"><b>6/10</b><small>Técnico y Google</small></div></div>
+    <h3>Nuestra recomendación</h3><p>La página tiene una buena base. Recomendamos <b>mejoras puntuales</b> en los puntos de prioridad alta antes de invertir en publicidad.</p><h3>Lo más urgente</h3><div class="card"><ul><li><b style="color:var(--ink)">Todo lleva a WhatsApp, y nada más funciona.</b> Un formulario corto que organice la solicitud y la entregue ya escrita, además de WhatsApp como opción.</li><li><b style="color:var(--ink)">Hay elementos que no funcionan.</b> Quitar o arreglar todo lo que no funciona y revisar cada enlace.</li><li><b style="color:var(--ink)">No se sabe quién está detrás.</b> Una sección &quot;Quién te atiende&quot; con nombre, foto profesional y experiencia.</li><li><b style="color:var(--ink)">Sin opiniones de clientes.</b> 3 testimonios reales, con el permiso de cada cliente, y conectar las opiniones de Google.</li><li><b style="color:var(--ink)">No se entiende rápido qué ofrecen.</b> Un título claro que diga qué hacen, para quién y cuál es el siguiente paso.</li></ul></div>
+    <div class="foot"><span>KstaStudio_ · Auditoría web · Panadería La Espiga (ejemplo)</span><span>2</span></div></section>
+<section class="page"><p class="eyebrow">02 · Hallazgos</p><h2>Qué le está costando clientes.</h2><h3>Funcionalidad</h3><div class="finding"><h4><i class="alta">ALTA</i>Todo lleva a WhatsApp, y nada más funciona</h4><p>El botón &quot;Pedir domicilio&quot;, el de &quot;Contacto&quot; y el de &quot;Cotizar pedidos&quot; abren el mismo chat de WhatsApp. <b>Propuesta:</b> Un formulario corto que organice la solicitud y la entregue ya escrita, además de WhatsApp como opción.</p></div><div class="finding"><h4><i class="alta">ALTA</i>Hay elementos que no funcionan</h4><p>El contador de &quot;clientes felices&quot; se queda en 0 y el enlace a Instagram lleva a una página que no existe. <b>Propuesta:</b> Quitar o arreglar todo lo que no funciona y revisar cada enlace.</p></div><h3>Confianza</h3><div class="finding"><h4><i class="alta">ALTA</i>No se sabe quién está detrás</h4><p>No aparece la dueña ni el equipo; solo fotos de banco de imágenes. <b>Propuesta:</b> Una sección &quot;Quién te atiende&quot; con nombre, foto profesional y experiencia.</p></div><div class="finding"><h4><i class="alta">ALTA</i>Sin opiniones de clientes</h4><p>No hay opiniones de clientes, aunque en Google Maps tienen 4,7 estrellas. <b>Propuesta:</b> 3 testimonios reales, con el permiso de cada cliente, y conectar las opiniones de Google.</p></div><div class="finding"><h4><i class="media">MEDIA</i>Faltan horario, correo o mapa</h4><p>No dice el horario ni la dirección del local. <b>Propuesta:</b> Horario de atención, un correo profesional y el mapa del local u oficina.</p></div><div class="finding"><h4><i class="baja">BAJA</i>Sin aviso de tratamiento de datos</h4><p>En Colombia es obligatorio si la página recoge datos personales, y da tranquilidad al cliente. <b>Propuesta:</b> Agregar un aviso de privacidad sencillo y una casilla de aceptación en los formularios.</p></div><h3>Personalidad</h3><div class="finding"><h4><i class="media">MEDIA</i>Luce como una plantilla</h4><p>Se nota que es una plantilla: el mismo diseño se ve en otras páginas. <b>Propuesta:</b> Menos adornos, más espacio, una tipografía con carácter y fotos propias.</p></div><div class="foot"><span>KstaStudio_ · Auditoría web · Panadería La Espiga (ejemplo)</span><span>3</span></div></section>
+<section class="page"><h3 style="margin-top:0">Conexión con el cliente</h3><div class="finding"><h4><i class="alta">ALTA</i>No se entiende rápido qué ofrecen</h4><p>El título principal dice &quot;Bienvenidos&quot; y no explica que venden pan artesanal con domicilio. <b>Propuesta:</b> Un título claro que diga qué hacen, para quién y cuál es el siguiente paso.</p></div><div class="finding"><h4><i class="media">MEDIA</i>Sin respuestas a las dudas frecuentes</h4><p>Las dudas típicas (domicilios, pedidos para eventos, pago) no están respondidas. <b>Propuesta:</b> Una sección corta de preguntas frecuentes.</p></div><h3>Técnico y Google</h3><div class="finding"><h4><i class="media">MEDIA</i>Sin título ni descripción para Google</h4><p>El título en Google aparece como &quot;Inicio&quot;. <b>Propuesta:</b> Escribir título y descripción con las palabras que la gente busca.</p></div><div class="finding"><h4><i class="media">MEDIA</i>La página carga lento</h4><p>En el celular tarda unos 6 segundos en abrir por fotos muy pesadas. <b>Propuesta:</b> Optimizar imágenes y videos y quitar lo que no se usa.</p></div><div class="foot"><span>KstaStudio_ · Auditoría web · Panadería La Espiga (ejemplo)</span><span>4</span></div></section>
+<section class="page"><p class="eyebrow">03 · Lo que vale la pena</p><h2>Lo que conservaríamos.</h2>
+      <div class="card"><ul><li>El logo y los colores cálidos (café y crema): ya identifican a la marca.</li><li>Las fotos reales de los productos de la sección &quot;Nuestro pan&quot;.</li></ul></div>
+      <h3>Colores de la marca</h3><div class="palette"><span style="background:#6b3f1d;color:#fff">#6B3F1D</span><span style="background:#f3e6cf;color:#2a2210">#F3E6CF</span><span style="background:#c98a3d;color:#fff">#C98A3D</span></div>
+      <h3>Observaciones adicionales</h3><p>Este es un documento de muestra con un negocio inventado, para que veas cómo se ve una auditoría de KstaStudio_.</p>
+      <div class="foot"><span>KstaStudio_ · Auditoría web · Panadería La Espiga (ejemplo)</span><span>5</span></div></section>
+<section class="page"><p class="eyebrow">04 · Cómo lo haríamos</p><h2>El siguiente paso.</h2>
+    <table><tr><th style="width:24%">Etapa</th><th>Qué pasa</th><th style="width:16%">Tiempo</th></tr><tr><td><b>1. Reunión</b></td><td>Priorizamos los hallazgos de esta auditoría.</td><td>1 día</td></tr><tr><td><b>2. Ajustes</b></td><td>Corregimos los puntos de prioridad alta y media.</td><td>5 a 7 días</td></tr><tr><td><b>3. Google</b></td><td>Título, descripción y Perfil de Empresa de Google.</td><td>2 días</td></tr><tr><td><b>4. Entrega</b></td><td>Revisión final y acompañamiento.</td><td>1 día</td></tr></table>
+    <p>La inversión se presenta en una cotización aparte, según lo que el negocio decida incluir.</p>
+    <div class="cta"><p style="font-family:'Cormorant Garamond',serif;font-size:21pt;line-height:1.15;margin-bottom:6pt">¿Hablamos 20 minutos esta semana?</p>
+      <p style="margin:0;color:#d9ccf5">Te mostramos todo en vivo y resolvemos tus dudas. Sin compromiso.<br />WhatsApp 311 639 0334 · jc.casta00@hotmail.com · ksta.jc-casta00.workers.dev</p></div>
+    <div class="sign"><img src="https://ksta.jc-casta00.workers.dev/logo-mark.svg" alt="" /><div><b>Jerónimo Castañeda Velásquez</b><br /><span class="muted">Fundador · KstaStudio_ · Medellín, Colombia</span></div></div><div class="foot"><span>KstaStudio_ · Auditoría web · Panadería La Espiga (ejemplo)</span><span>6</span></div></section>
+<script>document.fonts.ready.then(()=>{ if (location.hash === '#print') setTimeout(()=>print(), 300); });</script>
+</body></html>
