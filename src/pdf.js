@@ -137,7 +137,7 @@ export function quotePDF(lead) {
     doc.setDrawColor(...LINE); doc.line(M, H - 60, W - M, H - 60);
     doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(...MUTED);
     doc.text('KstaStudio_ · Jerónimo Castañeda Velásquez · Hecho en Colombia', M, H - 42);
-    doc.text('ksta.jc-casta00.workers.dev', W - M, H - 42, { align: 'right' });
+    doc.text('ksta.jc-casta00.workers.dev · @kstastudio_ · kstastudio@gmail.com', W - M, H - 42, { align: 'right' });
   }
   return doc;
 }

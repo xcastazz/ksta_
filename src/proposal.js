@@ -9,7 +9,7 @@ import { quoteNumber, drawLogo } from './pdf.js';
 // =========================================================
 const BRAND = 'KstaStudio_';
 const OWNER = 'Jerónimo Castañeda Velásquez';
-const CONTACT_EMAIL = 'jc.casta00@gmail.com';
+const CONTACT_EMAIL = 'kstastudio@gmail.com';
 const SITE = 'ksta.jc-casta00.workers.dev';
 
 const PURPLE = [124, 58, 237], DARK = [12, 6, 24], INK = [30, 22, 48], MUTED = [105, 96, 130], LINE = [230, 225, 240], SOFT = [246, 242, 255];
@@ -238,7 +238,7 @@ function buildPDF(lead, part) {
     ['Contratante (cliente)', lead.name], ['Negocio', [b.name || lead.business, b.sector].filter(Boolean).join(' · ')], ['Ciudad', b.city],
     ['Contacto', [lead.phone, lead.email].filter(Boolean).join(' · ')], ['Documento de identidad', 'C.C. / NIT ____________________'],
   ]);
-  kv([['Contratista', `${OWNER} (${BRAND})`], ['Contacto', CONTACT_EMAIL], ['Documento de identidad', 'C.C. ____________________']]);
+  kv([['Contratista', `${OWNER} (${BRAND})`], ['Contacto', CONTACT_EMAIL + ' · Instagram @kstastudio_'], ['Documento de identidad', 'C.C. ____________________']]);
   p('Las partes acuerdan celebrar este contrato de prestación de servicios, que se rige por las cláusulas siguientes.', 9.3, MUTED);
 
   h1('Objeto');

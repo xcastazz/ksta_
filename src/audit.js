@@ -69,7 +69,7 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
 const lines = (s) => String(s || '').split('\n').map((x) => x.trim()).filter(Boolean);
 
 // Full printable document (same look as the audit made by hand)
-export function buildAuditHTML(a, { origin = location.origin, owner = 'Jerónimo Castañeda Velásquez', phone = '', email = '' } = {}) {
+export function buildAuditHTML(a, { origin = location.origin, owner = 'Jerónimo Castañeda Velásquez', phone = '', email = '', instagram = 'kstastudio_' } = {}) {
   const f = auditFindings(a);
   const sc = auditScores(a);
   const order = { alta: 0, media: 1, baja: 2 };
@@ -126,7 +126,7 @@ export function buildAuditHTML(a, { origin = location.origin, owner = 'Jerónimo
     <table><tr><th style="width:24%">Etapa</th><th>Qué pasa</th><th style="width:16%">Tiempo</th></tr>${plan.map(([s, d, t]) => `<tr><td><b>${s}</b></td><td>${d}</td><td>${t}</td></tr>`).join('')}</table>
     ${a.price ? `<p>Inversión estimada: <b>${esc(a.price)}</b>. El detalle va en la cotización.</p>` : '<p>La inversión se presenta en una cotización aparte, según lo que el negocio decida incluir.</p>'}
     <div class="cta"><p style="font-family:'Cormorant Garamond',serif;font-size:21pt;line-height:1.15;margin-bottom:6pt">¿Hablamos 20 minutos esta semana?</p>
-      <p style="margin:0;color:#d9ccf5">Te mostramos todo en vivo y resolvemos tus dudas. Sin compromiso.<br />${[phone && `WhatsApp ${esc(phone)}`, email && esc(email), esc(origin.replace(/^https?:\/\//, ''))].filter(Boolean).join(' · ')}</p></div>
+      <p style="margin:0;color:#d9ccf5">Te mostramos todo en vivo y resolvemos tus dudas. Sin compromiso.<br />${[phone && `WhatsApp ${esc(phone)}`, email && esc(email), instagram && `Instagram @${esc(instagram)}`, esc(origin.replace(/^https?:\/\//, ''))].filter(Boolean).join(' · ')}</p></div>
     <div class="sign"><img src="${origin}/logo-mark.svg" alt="" /><div><b>${esc(owner)}</b><br /><span class="muted">Fundador · KstaStudio_ · Medellín, Colombia</span></div></div>`);
 
   return `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8" /><title>Auditoría web · ${client} · KstaStudio_</title>

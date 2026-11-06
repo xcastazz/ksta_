@@ -10,7 +10,7 @@ import { SERVICES, DETAILS, STYLES, TIMING, BUDGET } from './quote.js';
 import { TEMPLATES } from './templates.js';
 import { CAT_ORDER, CATS } from './plans.js';
 import { AUDIT_CATS, RECOS, auditScores, auditFindings, buildAuditHTML } from './audit.js';
-import { WHATSAPP_NUMBER, EMAIL } from './config.js';
+import { WHATSAPP_NUMBER, EMAIL, INSTAGRAM } from './config.js';
 
 const app = document.getElementById('app');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -1100,7 +1100,7 @@ function viewAudit(el, force) {
   el.querySelector('#auGo').addEventListener('click', () => {
     if (!aud.client.trim()) return toast('Escribe el nombre de la empresa');
     if (!auditFindings(aud).length && !Object.keys(aud.answers).length) return toast('Responde las preguntas primero');
-    const html = buildAuditHTML(aud, { phone: `+${WHATSAPP_NUMBER.replace(/^57/, '57 ')}`, email: EMAIL });
+    const html = buildAuditHTML(aud, { phone: `+${WHATSAPP_NUMBER.replace(/^57/, '57 ')}`, email: EMAIL, instagram: INSTAGRAM });
     const w = window.open(URL.createObjectURL(new Blob([html], { type: 'text/html' })), '_blank');
     if (!w) toast('Permite las ventanas emergentes para ver la auditoría');
     if (aud.leadId) logEvent(aud.leadId, 'pdf', `Generó la auditoría web (${auditFindings(aud).length} hallazgos)`);
