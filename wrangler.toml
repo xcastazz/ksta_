@@ -2,6 +2,10 @@ name = "ksta"
 main = "src/worker.js"
 compatibility_date = "2026-10-01"
 compatibility_flags = ["nodejs_compat"]
+routes = [
+  { pattern = "kstastudio.com", custom_domain = true },
+  { pattern = "www.kstastudio.com", custom_domain = true },
+]
 
 [assets]
 directory = "./dist"
