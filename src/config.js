@@ -2,7 +2,7 @@
 export const WHATSAPP_NUMBER = '573116390334';
 
 // Correo e Instagram que se muestran en la página. Mientras sigan vacíos, esos botones no aparecen.
-export const EMAIL = 'kstastudio@gmail.com';
+export const EMAIL = 'cotizaciones@kstastudio.com';
 export const INSTAGRAM = 'kstastudio_'; // solo el usuario, sin @ (ej: kstastudio_)
 
 // true cuando ya pusiste tu número real arriba

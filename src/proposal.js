@@ -9,7 +9,7 @@ import { quoteNumber, drawLogo } from './pdf.js';
 // =========================================================
 const BRAND = 'KstaStudio_';
 const OWNER = 'Jerónimo Castañeda Velásquez';
-const CONTACT_EMAIL = 'kstastudio@gmail.com';
+const CONTACT_EMAIL = 'cotizaciones@kstastudio.com';
 const SITE = 'kstastudio.com';
 
 const PURPLE = [124, 58, 237], DARK = [12, 6, 24], INK = [30, 22, 48], MUTED = [105, 96, 130], LINE = [230, 225, 240], SOFT = [246, 242, 255];
