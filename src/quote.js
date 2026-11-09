@@ -225,7 +225,7 @@ export function initQuote({ onStep }) {
     template: () => head('ejemplos de páginas', '¿Cuál te enamora más?', 'Toca “Ver cómo se ve” para mirarlo completo. Después le pongo tu nombre, tus fotos y tus colores.') + info('template') + `
       <div class="tpl-grid">${TEMPLATES.map((t, i) => `
         <div class="tpl vision ${state.template === t.id ? 'on' : ''}" data-tpl="${t.id}" style="--i:${i}">
-          <div class="tpl-thumb"><iframe src="/templates/${t.id}/index.html" loading="lazy" tabindex="-1" title="${t.name}" aria-hidden="true"></iframe></div>
+          <div class="tpl-thumb"><img src="/shots/tpl-${t.id}.webp" alt="" loading="lazy" width="640" height="400" /></div>
           <div class="tpl-body"><div><b>${t.name}</b><span class="pill">${t.tag}</span></div><p>${t.desc}</p>
             <div class="tpl-actions"><button type="button" class="btn btn-sm btn-ghost" data-preview="${t.id}">Ver cómo se ve</button><button type="button" class="btn btn-sm" data-pick="${t.id}">${state.template === t.id ? '✓ Elegida' : 'Elegir'}</button></div></div>
         </div>`).join('')}

@@ -1,6 +1,6 @@
 const allServices = [
   {
-    icon: 'search', title: 'Auditoría de tu página', price: '$100.000', sample: '/muestras/Auditoria-Ejemplo-KstaStudio.pdf',
+    icon: 'search', title: 'Auditoría de tu página', price: '$100.000', sample: '/muestras/Auditoria-Ejemplo-KstaStudio.pdf', cta: { href: '#auditoria', label: 'Pedir mi auditoría' },
     items: ['Reviso tu página como lo haría un cliente nuevo', 'Te digo qué funciona y qué te está haciendo perder clientes', 'Notas claras en 5 temas: funcionamiento, confianza, personalidad, conexión y Google', 'Te entrego un documento en PDF con lo que haría para mejorarla', 'Sin compromiso: tú decides qué hacer con eso'],
   },
   {
@@ -48,4 +48,9 @@ export const packages = [
     desc: 'Una imagen completa, digital y física.',
     items: ['Identidad visual corporativa', 'Página web funcional', 'Fotos y videos', 'Publicidad digital', 'Letreros y publicidad física', 'Material promocional'],
   },
+];
+
+// Opiniones REALES de clientes (nombre, negocio y lo que dijeron). Mientras esté vacío, la sección no aparece.
+export const TESTIMONIALS = [
+  // { name: 'Nombre Apellido', business: 'Negocio', text: 'Lo que dijo el cliente, con sus palabras.', photo: '/opiniones/foto.webp' },
 ];

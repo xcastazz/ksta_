@@ -13,7 +13,7 @@ export function initShowcase() {
   stage.innerHTML = PROJECTS.map((p, i) => `
     <a class="sc-device vision" href="${p.url}" target="_blank" rel="noopener" data-i="${i}" aria-label="Visitar ${p.name}">
       <div class="sc-bar"><i></i><i></i><i></i><span>${p.domain}</span><b>Visitar ↗</b></div>
-      <div class="sc-screen"><iframe data-src="${p.url}" loading="lazy" tabindex="-1" title="${p.name}"></iframe><div class="sc-glare"></div></div>
+      <div class="sc-screen"><img src="${p.shot}" alt="Página de ${p.name}" loading="lazy" width="1280" height="800" /><div class="sc-glare"></div></div>
     </a>`).join('') + '<div class="sc-floor"></div>';
 
   info.innerHTML = PROJECTS.map((p, i) => `
@@ -27,8 +27,6 @@ export function initShowcase() {
   dotsEl.innerHTML = PROJECTS.map(() => '<span></span>').join('');
 
   const devices = [...stage.querySelectorAll('.sc-device')];
-  const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { stage.querySelectorAll('iframe[data-src]').forEach((f) => { f.src = f.dataset.src; f.removeAttribute('data-src'); }); io.disconnect(); } }, { rootMargin: '600px' });
-  io.observe(section);
   const items = [...info.querySelectorAll('.sc-item')];
   const dots = [...dotsEl.children];
   const mobile = matchMedia('(max-width: 960px)').matches;

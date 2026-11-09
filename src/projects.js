@@ -3,7 +3,7 @@ export const PROJECTS = [
   {
     name: 'IV Bags',
     url: 'https://ivbagss.com/',
-    domain: 'ivbagss.com',
+    domain: 'ivbagss.com', shot: '/shots/ivbags.webp',
     type: 'Tienda / catálogo',
     desc: 'Bolsos, totebags y accesorios pintados, bordados y estampados a mano en Medellín. Catálogo con personalización y pedidos con envíos a toda Colombia.',
     tags: ['Branding', 'Web', 'Catálogo', 'Fotografía'],
@@ -11,7 +11,7 @@ export const PROJECTS = [
   {
     name: 'MAEVO',
     url: 'https://catalogo.jc-casta00.workers.dev/#catalogo',
-    domain: 'catalogo.maevo',
+    domain: 'catalogo.maevo', shot: '/shots/maevo.webp',
     type: 'Catálogo digital',
     desc: '“Tu mundo, más conectado.” Catálogo de productos rápido y moderno, pensado para mostrar y vender desde el celular.',
     tags: ['Web', 'Catálogo', 'Diseño UI'],

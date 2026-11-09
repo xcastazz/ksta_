@@ -885,3 +885,46 @@ body:not([data-view="inicio"]) main { padding-top: 2rem; }
 .svc-sample{display:inline-block;margin-top:.3rem;color:#c4b5fd;font-size:.9rem;text-decoration:underline;text-underline-offset:3px}
 .audit-price{margin:.4rem 0 0}.audit-price b{font-size:1.6rem}
 .audit-sample{justify-self:start}
+
+/* ===== Mejoras de la revisión ===== */
+.sc-screen img, .tpl-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+.hero-from { margin-top: 1.4rem; color: var(--muted); font-size: .98rem; --d: 600ms; }
+.hero-from b { color: var(--text); font-size: 1.15rem; }
+.hero-visual { display: none; }
+@media (min-width: 1100px) {
+  .hero { padding-right: 44%; }
+  .hero-title { font-size: clamp(3rem, 6.4vw, 6.6rem); }
+  .hero-visual { display: block; position: absolute; right: 2%; top: 50%; width: 42%; aspect-ratio: 1.15; transform: translateY(-46%); pointer-events: none; }
+  .hv-desk { position: absolute; left: 0; top: 6%; width: 86%; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,.14); box-shadow: 0 40px 120px rgba(124,58,237,.35); background: #0b0614; transform: perspective(1400px) rotateY(-10deg) rotateX(4deg); }
+  .hv-desk img { display: block; width: 100%; height: auto; }
+  .hv-bar { display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: rgba(255,255,255,.06); font-size: .7rem; color: var(--muted); }
+  .hv-bar i { width: 9px; height: 9px; border-radius: 50%; background: #f87171; } .hv-bar i + i { background: #fbbf24; } .hv-bar i + i + i { background: #4ade80; }
+  .hv-bar span { margin-left: 10px; }
+  .hv-phone { position: absolute; right: 0; bottom: 0; width: 30%; border-radius: 26px; overflow: hidden; border: 6px solid #1f1630; box-shadow: 0 30px 90px rgba(0,0,0,.6); background: #0b0614; transform: rotate(4deg); }
+  .hv-phone img { display: block; width: 100%; height: auto; }
+}
+.promo { padding-top: 3rem; padding-bottom: 3rem; }
+.promo-box { display: grid; grid-template-columns: auto 1fr; gap: 2.5rem; align-items: center; padding: 2.4rem; border-radius: 30px; }
+.promo-big { font-weight: 800; font-size: clamp(5rem, 14vw, 10rem); letter-spacing: -.06em; line-height: .9; background: linear-gradient(135deg, #c4a8ff, #e879f9); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.promo-copy h2 { font-size: clamp(1.6rem, 3.2vw, 2.4rem); line-height: 1.1; margin: .3rem 0 .8rem; }
+.promo-terms { margin: 1rem 0; color: var(--muted); font-size: .92rem; }
+.promo-terms summary { cursor: pointer; color: var(--text); min-height: 44px; display: inline-flex; align-items: center; }
+.promo-terms ul { margin: .4rem 0 0; padding-left: 1.2rem; display: grid; gap: .4rem; }
+.ally-box { margin-top: 1.2rem; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; padding: 1.8rem 2.2rem; border-radius: 24px; flex-wrap: wrap; }
+.ally-box h3 { font-size: 1.35rem; margin: .3rem 0 .5rem; }
+.ally-box p.muted { max-width: 620px; margin: 0; }
+.ally-actions { display: flex; gap: .8rem; flex-wrap: wrap; }
+@media (max-width: 720px) { .promo-box { grid-template-columns: 1fr; gap: .6rem; padding: 1.6rem; } .ally-box { padding: 1.5rem; } }
+.opin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem; }
+.opin { margin: 0; padding: 1.6rem; border-radius: 24px; display: grid; gap: .9rem; }
+.opin img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; }
+.opin blockquote { margin: 0; font-size: 1.05rem; line-height: 1.5; }
+.opin figcaption { display: grid; }
+.svc-cta { margin-top: .9rem; }
+.wa-float { transition: transform .3s ease, opacity .3s ease; }
+.wa-float.wa-hidden { opacity: 0; transform: translateY(20px); pointer-events: none; }
+/* zonas táctiles de al menos 44px */
+.nav-links a, .footer a, .svc-sample, .quick-link, .foot-links a { min-height: 44px; display: inline-flex; align-items: center; }
+.foot-links { display: flex; gap: 1.2rem; flex-wrap: wrap; width: 100%; font-size: .9rem; }
+.foot-links a { color: var(--muted); }
+.foot-links a:hover { color: var(--text); }

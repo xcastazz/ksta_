@@ -1,4 +1,4 @@
-import { services } from './data.js';
+import { services, TESTIMONIALS } from './data.js';
 import { CATS, CAT_ORDER, CAT_SOON, COMBO, tierPrice, priceHTML } from './plans.js';
 import { cop } from './pricing.js';
 import { icons } from './icons.js';
@@ -13,7 +13,7 @@ document.getElementById('services').innerHTML = services.filter((s) => ['code', 
   <article class="service glass reveal ${['code', 'brand', 'search'].includes(s.icon) ? '' : 'soon'}" style="--d:${i * 90}ms">
     <div class="icon">${icons[s.icon]}</div>${['code', 'brand', 'search'].includes(s.icon) ? '<span class="soon-tag on">Disponible</span>' : '<span class="soon-tag">Próximamente</span>'}
     <h3>${s.title}</h3>
-    <ul>${s.items.map((it) => `<li>${it}</li>`).join('')}</ul>${s.price ? `<p class="svc-price"><b>${s.price}</b> pago único</p>` : ''}${s.sample ? `<a class="svc-sample" href="${s.sample}" target="_blank" rel="noopener">Ver ejemplo en PDF</a>` : ''}
+    <ul>${s.items.map((it) => `<li>${it}</li>`).join('')}</ul>${s.price ? `<p class="svc-price"><b>${s.price}</b> pago único</p>` : ''}${s.cta ? `<a class="btn btn-sm svc-cta" href="${s.cta.href}">${s.cta.label}</a> ` : ''}${s.sample ? `<a class="svc-sample" href="${s.sample}" target="_blank" rel="noopener">Ver ejemplo en PDF</a>` : ''}
   </article>`).join('');
 
 // Plans by category (tabs) + combo
@@ -81,7 +81,7 @@ document.querySelectorAll('.reveal, .reveal-scale, .mask').forEach((el) => io.ob
 // Chapters: rail + active tracking
 const chapters = [...document.querySelectorAll('.chapter')];
 const rail = document.getElementById('rail');
-const RAIL_ICONS = { inicio: 'home', proyectos: 'monitor', manifiesto: 'sparkles', servicios: 'layers', plantillas: 'code', paquetes: 'globe', presupuesto: 'target', proceso: 'file', auditoria: 'search', faq: 'chat', nosotros: 'user', contacto: 'send' };
+const RAIL_ICONS = { inicio: 'home', proyectos: 'monitor', manifiesto: 'sparkles', servicios: 'layers', plantillas: 'code', paquetes: 'globe', presupuesto: 'target', proceso: 'file', auditoria: 'search', promo: 'sparkles', opiniones: 'chat', faq: 'chat', nosotros: 'user', contacto: 'send' };
 rail.className = 'dock vision';
 rail.innerHTML = chapters.map((c) =>
   `<a href="#${c.id}" data-id="${c.id}" aria-label="${c.dataset.title}"><span class="dock-icon">${icons[RAIL_ICONS[c.id]]}</span><span class="dock-tip">${c.dataset.title}</span></a>`
@@ -190,14 +190,14 @@ document.getElementById('year').textContent = new Date().getFullYear();
   ].filter(Boolean);
   const el = document.getElementById('contactLinks');
   if (el) el.innerHTML = links.join('');
-  if (wa) document.body.insertAdjacentHTML('beforeend', `<a class="wa-float" href="${wa}" target="_blank" rel="noopener" aria-label="Escríbeme por WhatsApp">${icons.whatsapp}<span>¿Hablamos?</span></a>`);
+  if (wa) document.body.insertAdjacentHTML('beforeend', `<a class="wa-float wa-hidden" href="${wa}" target="_blank" rel="noopener" aria-label="Escríbeme por WhatsApp">${icons.whatsapp}<span>¿Hablamos?</span></a>`);
 }
 
 // ---------- Pestañas: el inicio muestra solo lo necesario, el resto va en su propia vista ----------
 {
   const VIEWS = {
-    inicio: ['inicio', 'servicios', 'auditoria', 'proyectos'],
-    precios: ['paquetes', 'presupuesto'],
+    inicio: ['inicio', 'promo', 'servicios', 'proyectos', 'opiniones'],
+    precios: ['paquetes', 'auditoria'],
     ejemplos: ['plantillas'],
     'como-trabajo': ['proceso', 'faq'],
     'quien-soy': ['nosotros'],
@@ -254,4 +254,23 @@ document.getElementById('year').textContent = new Date().getFullYear();
       console.error(err); msg.textContent = 'Uy, algo falló. ¿Lo intentas otra vez?'; btn.disabled = false; btn.textContent = 'Pedir mi auditoría · $100.000';
     }
   });
+}
+
+// Botón flotante de WhatsApp: aparece después de bajar un poco (no tapa la portada)
+{
+  const f = () => document.querySelector('.wa-float')?.classList.toggle('wa-hidden', scrollY < 500);
+  addEventListener('scroll', f, { passive: true }); f();
+}
+// "Páginas desde $X" en la portada (el precio más bajo de las páginas web)
+{
+  const el = document.getElementById('fromPrice');
+  if (el) { const min = Math.min(...CATS.web.tiers.map((t) => tierPrice(t).total).filter(Boolean)); el.textContent = '$' + min.toLocaleString('es-CO'); }
+}
+// Opiniones reales (solo si hay)
+{
+  const sec = document.getElementById('opiniones');
+  if (sec && TESTIMONIALS.length) {
+    sec.hidden = false;
+    document.getElementById('opinGrid').innerHTML = TESTIMONIALS.map((o) => `<figure class="opin glass reveal">${o.photo ? `<img src="${o.photo}" alt="${o.name}" width="64" height="64" loading="lazy" />` : ''}<blockquote>“${o.text}”</blockquote><figcaption><b>${o.name}</b><span class="muted">${o.business || ''}</span></figcaption></figure>`).join('');
+  }
 }
