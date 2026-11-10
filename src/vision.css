@@ -945,3 +945,9 @@ body:not([data-view="inicio"]) main { padding-top: 2rem; }
 .pj-links { display: flex; gap: .5rem; flex-wrap: wrap; }
 .pj-links .btn { min-height: 44px; }
 @media (max-width: 760px) { .pj-grid { grid-template-columns: 1fr; gap: 2.2rem; } .pj-foot { flex-direction: column; align-items: flex-start; } }
+
+/* Etiqueta del plan ("Para empezar", "La más pedida") arriba del nombre, en una sola línea */
+.tier-top { flex-direction: column-reverse; align-items: flex-start; justify-content: flex-start; gap: .55rem; }
+.tier-top .pill { white-space: nowrap; font-size: .7rem; font-weight: 700; line-height: 1; padding: .38rem .7rem; border-radius: 999px; background: rgba(168, 85, 247, .16); border: 1px solid rgba(192, 132, 252, .35); color: #e9d5ff; }
+.choice.tier.feat .tier-top .pill { background: linear-gradient(90deg, #7c3aed, #c026d3); border-color: transparent; color: #fff; }
+.tier-top b { line-height: 1.2; }
