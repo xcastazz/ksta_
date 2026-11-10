@@ -928,3 +928,20 @@ body:not([data-view="inicio"]) main { padding-top: 2rem; }
 .foot-links { display: flex; gap: 1.2rem; flex-wrap: wrap; width: 100%; font-size: .9rem; }
 .foot-links a { color: var(--muted); }
 .foot-links a:hover { color: var(--text); }
+
+/* ===== Proyectos: cuadrícula con marcos (sin transiciones) ===== */
+.showcase-grid { height: auto !important; }
+.pj-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1.2rem, 2.5vw, 2.2rem); }
+.pj { display: grid; gap: 1rem; align-content: start; min-width: 0; }
+.pj .sc-device { position: relative; inset: auto; margin: 0; width: 100%; transform: none !important; opacity: 1 !important; clip-path: none !important; filter: none !important; transition: box-shadow .25s ease, border-color .25s ease; }
+.pj .sc-device:hover { box-shadow: 0 40px 100px -40px rgba(139, 92, 246, .7), inset 0 1px 0 rgba(255,255,255,.3) !important; }
+.pj .sc-bar span { font-size: .72rem; }
+.pj-info { display: grid; gap: .6rem; padding: 0 .3rem; }
+.pj-top { display: flex; align-items: center; justify-content: space-between; gap: .8rem; flex-wrap: wrap; }
+.pj-top h3 { font-size: clamp(1.4rem, 2.2vw, 1.9rem); letter-spacing: -.03em; margin: 0; }
+.pj-top .pill { margin: 0; }
+.pj-info p { margin: 0; font-size: .95rem; }
+.pj-foot { display: flex; align-items: center; justify-content: space-between; gap: .8rem; flex-wrap: wrap; }
+.pj-links { display: flex; gap: .5rem; flex-wrap: wrap; }
+.pj-links .btn { min-height: 44px; }
+@media (max-width: 760px) { .pj-grid { grid-template-columns: 1fr; gap: 2.2rem; } .pj-foot { flex-direction: column; align-items: flex-start; } }
