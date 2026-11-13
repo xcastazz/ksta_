@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vista previa · Transportadora MAAK (propuesta KstaStudio_)</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="logo.jpg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,500;0,700;0,800;0,900;1,800;1,900&display=swap" rel="stylesheet" />
+<style>
+:root{--ink:#0d0d0d;--paper:#f6f5f2;--line:#e2dfd8;--muted:#6b6862;--accent:#f5b400;--ok:#16a34a;--go:#2563eb;--wait:#9ca3af}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Archivo,system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.5}
+a{color:inherit}
+.ribbon{background:linear-gradient(90deg,#6d28d9,#a855f7);color:#fff;text-align:center;font-size:.8rem;padding:.45rem 1rem}
+.wrap{width:min(1100px,100% - 32px);margin-inline:auto}
+header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:76px;gap:12px}
+header img{height:52px}
+nav{display:flex;gap:6px}
+nav a{text-decoration:none;font-weight:700;padding:10px 14px;border-radius:10px;min-height:44px;display:inline-flex;align-items:center}
+nav a.cta{background:var(--ink);color:#fff}
+.hero{background:var(--ink);color:#fff;position:relative;overflow:hidden}
+.hero:before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(115deg,transparent 0 38px,rgba(255,255,255,.035) 38px 46px)}
+.hero .wrap{position:relative;padding:70px 0 80px;display:grid;gap:26px}
+.kick{font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-size:.85rem}
+h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;font-style:italic;line-height:.95;letter-spacing:-.02em}
+.hero p{color:#cfcac0;font-size:1.15rem;max-width:620px}
+.search{display:flex;gap:10px;background:#fff;padding:10px;border-radius:18px;max-width:640px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.search input{flex:1;border:0;font:700 1.25rem Archivo;padding:12px 14px;outline:none;min-width:0;text-transform:uppercase;color:var(--ink)}
+.search button{border:0;background:var(--accent);color:#111;font:900 1.05rem Archivo;padding:0 26px;border-radius:12px;cursor:pointer;min-height:52px}
+.hint{color:#aaa49a;font-size:.92rem}.hint button{background:none;border:1px dashed #6b675f;color:#fff;border-radius:8px;padding:3px 9px;margin:2px;cursor:pointer;font:700 .85rem Archivo}
+#result{margin-top:-40px;position:relative;z-index:2}
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.08)}
+.rhead{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;align-items:flex-start}
+.rhead small{color:var(--muted);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:.75rem}
+.rhead h2{font-size:1.8rem;font-weight:900}
+.badge{display:inline-flex;align-items:center;gap:8px;font-weight:900;padding:10px 18px;border-radius:999px;font-size:1.05rem}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:30px 0 10px;position:relative}
+.step{text-align:center;position:relative;padding-top:52px;font-weight:800;font-size:.95rem}
+.step:before{content:'';position:absolute;top:18px;left:-50%;right:50%;height:6px;background:var(--line)}
+.step:first-child:before{display:none}
+.step.done:before{background:var(--ink)}
+.dot{position:absolute;top:4px;left:50%;transform:translateX(-50%);width:34px;height:34px;border-radius:50%;background:#fff;border:5px solid var(--line);z-index:1}
+.step.done .dot{background:var(--ink);border-color:var(--ink)}
+.step.now .dot{background:var(--accent);border-color:var(--ink);box-shadow:0 0 0 6px rgba(245,180,0,.3)}
+.step span{display:block;color:var(--muted);font-weight:600;font-size:.82rem;margin-top:2px}
+.photos{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+.ph{border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#efede8}
+.ph .img{aspect-ratio:4/3;display:grid;place-items:center;color:#8b877f;font-weight:800;text-align:center;padding:10px;background:repeating-linear-gradient(45deg,#ebe8e1 0 14px,#f3f1ec 14px 28px)}
+.ph p{padding:10px 14px;font-weight:800;font-size:.95rem}
+.ph p small{display:block;color:var(--muted);font-weight:600}
+.notfound{text-align:center;padding:30px}
+section{padding:80px 0}
+h3.t{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;font-style:italic;margin-bottom:10px}
+.lead{color:var(--muted);font-size:1.08rem;max-width:640px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px}
+.feat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px}
+.feat b{font-size:1.15rem;display:block;margin-bottom:6px}
+.feat .n{font:900 2rem Archivo;font-style:italic;color:var(--accent);-webkit-text-stroke:1px #111}
+.admin{background:#141414;color:#fff}
+.admin .lead{color:#bdb8ad}
+.mock{margin-top:30px;background:#1f1f1f;border:1px solid #333;border-radius:20px;overflow:hidden}
+.mock .bar{display:flex;gap:6px;padding:12px 16px;background:#2a2a2a}.mock .bar i{width:11px;height:11px;border-radius:50%;background:#ff5f57}.mock .bar i:nth-child(2){background:#febc2e}.mock .bar i:nth-child(3){background:#28c840}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{text-align:left;padding:14px 16px;border-bottom:1px solid #303030}
+th{color:#9a958b;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
+.st{display:inline-block;padding:5px 12px;border-radius:999px;font-weight:800;font-size:.8rem}
+.st.w{background:#3a3a3a;color:#ddd}.st.r{background:#3b2f0a;color:#f5b400}.st.g{background:#10243f;color:#93c5fd}.st.ok{background:#0f2e1b;color:#86efac}
+.act{display:flex;gap:6px;flex-wrap:wrap}.act span{border:1px solid #444;border-radius:8px;padding:5px 9px;font-weight:700;font-size:.8rem;color:#ddd}
+footer{background:var(--ink);color:#bdb8ad;padding:40px 0;font-size:.95rem}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+footer b{color:#fff}
+.wa{position:fixed;right:18px;bottom:18px;background:#25d366;color:#052e14;font-weight:900;text-decoration:none;padding:14px 20px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:30}
+@media(max-width:760px){nav a:not(.cta){display:none}.steps{grid-template-columns:1fr;gap:4px}.step{text-align:left;padding:6px 0 6px 56px;min-height:46px}.step:before{left:15px;right:auto;top:-50%;bottom:50%;width:6px;height:auto}.dot{left:0;top:6px;transform:none}.grid3,.photos{grid-template-columns:1fr}.search{flex-direction:column}.mock{overflow-x:auto}table{min-width:640px}}
+</style>
+</head>
+<body>
+<div class="ribbon"><b>Vista previa</b> preparada por KstaStudio_ para Transportadora MAAK · Los datos son de ejemplo</div>
+<header><div class="wrap"><img src="logo.jpg" alt="Transportadora MAAK" /><nav><a href="#rastreo">Rastrear</a><a href="#como">Cómo funciona</a><a href="#panel">Panel MAAK</a><a class="cta" href="#rastreo">Rastrear envío</a></nav></div></header>
+
+<div class="hero" id="rastreo"><div class="wrap">
+  <p class="kick">Transporte de encomiendas y mensajería</p>
+  <h1>¿Dónde va<br>tu envío?</h1>
+  <p>Escribe tu número de guía y mira en qué paso está tu mercancía. Cuando se entregue, verás las fotos de la entrega.</p>
+  <form class="search" id="f"><input id="q" placeholder="Número de guía, ej: MAAK-1024" aria-label="Número de guía" autocomplete="off" /><button>Rastrear</button></form>
+  <p class="hint">Prueba con: <button type="button" data-g="MAAK-1021">MAAK-1021</button><button type="button" data-g="MAAK-1022">MAAK-1022</button><button type="button" data-g="MAAK-1023">MAAK-1023</button><button type="button" data-g="MAAK-1024">MAAK-1024</button></p>
+</div></div>
+
+<div class="wrap" id="result"></div>
+
+<section id="como"><div class="wrap">
+  <h3 class="t">Así de fácil.</h3>
+  <p class="lead">Tus clientes ya no tienen que escribirte para preguntar por su mercancía. Lo consultan ellos mismos, a cualquier hora.</p>
+  <div class="grid3">
+    <div class="feat"><div class="n">1</div><b>Recibimos la mercancía</b>Registramos la guía y el cliente ya puede consultarla.</div>
+    <div class="feat"><div class="n">2</div><b>Sale a entrega</b>Con un toque cambiamos el estado a "en proceso de entrega".</div>
+    <div class="feat"><div class="n">3</div><b>Entregada, con pruebas</b>Subimos la foto de la guía firmada y del lugar de entrega.</div>
+  </div>
+</div></section>
+
+<section class="admin" id="panel"><div class="wrap">
+  <h3 class="t">El panel privado de MAAK.</h3>
+  <p class="lead">Solo para tu equipo. Desde el celular creas guías, cambias el estado con un toque y subes las fotos de entrega. Lo que cambias aquí, el cliente lo ve al instante.</p>
+  <div class="mock"><div class="bar"><i></i><i></i><i></i></div>
+  <table><thead><tr><th>Guía</th><th>Cliente</th><th>Destinatario</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+    <tr><td><b>MAAK-1024</b></td><td>Tienda Ejemplo</td><td>Carlos R.</td><td><span class="st ok">Entregada</span></td><td class="act"><span>📷 Ver fotos</span></td></tr>
+    <tr><td><b>MAAK-1023</b></td><td>Tienda Ejemplo</td><td>Ana M.</td><td><span class="st g">En proceso de entrega</span></td><td class="act"><span>✅ Marcar entregada</span><span>📷 Subir fotos</span></td></tr>
+    <tr><td><b>MAAK-1022</b></td><td>Comercial Demo</td><td>Luis P.</td><td><span class="st r">Recibida por MAAK</span></td><td class="act"><span>🚚 Salió a entrega</span></td></tr>
+    <tr><td><b>MAAK-1021</b></td><td>Comercial Demo</td><td>Sofía G.</td><td><span class="st w">Pendiente de recibir</span></td><td class="act"><span>📦 Marcar recibida</span></td></tr>
+  </tbody></table></div>
+</div></section>
+
+<footer><div class="wrap"><div><b>Transportadora MAAK</b><br>Transporte de encomiendas y mensajería</div><div>Vista previa diseñada por <b>KstaStudio_</b> · kstastudio.com</div></div></footer>
+<a class="wa" href="#rastreo">Rastrear envío</a>
+
+<script>
+const STEPS=['Pendiente de recibir','Recibida por MAAK','En proceso de entrega','Entregada'];
+const COL=[['#e5e7eb','#374151'],['#fef3c7','#92400e'],['#dbeafe','#1e40af'],['#dcfce7','#166534']];
+const DB={
+ 'MAAK-1021':{s:0,c:'Comercial Demo',d:'Sofía G.',f:['—','—','—','—']},
+ 'MAAK-1022':{s:1,c:'Comercial Demo',d:'Luis P.',f:['10 nov','11 nov, 9:12 a. m.','—','—']},
+ 'MAAK-1023':{s:2,c:'Tienda Ejemplo',d:'Ana M.',f:['10 nov','11 nov, 8:40 a. m.','12 nov, 7:55 a. m.','—']},
+ 'MAAK-1024':{s:3,c:'Tienda Ejemplo',d:'Carlos R.',f:['9 nov','10 nov, 10:02 a. m.','11 nov, 8:15 a. m.','11 nov, 2:47 p. m.']}};
+const out=document.getElementById('result');
+function show(g){g=g.trim().toUpperCase();if(/^\d+$/.test(g))g='MAAK-'+g;const x=DB[g];
+ if(!x){out.innerHTML=`<div class="card notfound"><h2>No encontramos la guía ${g||''}</h2><p class="lead" style="margin:8px auto 0">Revisa el número o escríbenos por WhatsApp.</p></div>`;return}
+ const [bg,fg]=COL[x.s];
+ out.innerHTML=`<div class="card"><div class="rhead"><div><small>Guía</small><h2>${g}</h2><p style="color:var(--muted)">Remitente: <b>${x.c}</b> · Para: <b>${x.d}</b></p></div><span class="badge" style="background:${bg};color:${fg}">${STEPS[x.s]}</span></div>
+ <div class="steps">${STEPS.map((s,i)=>`<div class="step ${i<x.s?'done':''} ${i===x.s?'now done':''}"><i class="dot"></i>${s}<span>${x.f[i]}</span></div>`).join('')}</div>
+ ${x.s===3?`<div class="photos"><div class="ph"><div class="img">Aquí va la foto<br>de la guía firmada</div><p>Guía firmada<small>Subida al entregar · ejemplo</small></p></div><div class="ph"><div class="img">Aquí va la foto<br>del lugar de entrega</div><p>Lugar de entrega<small>Subida al entregar · ejemplo</small></p></div></div>`:''}</div>`;
+ out.scrollIntoView({behavior:'smooth',block:'center'});}
+document.getElementById('f').addEventListener('submit',e=>{e.preventDefault();show(document.getElementById('q').value)});
+document.querySelectorAll('[data-g]').forEach(b=>b.addEventListener('click',()=>{document.getElementById('q').value=b.dataset.g;show(b.dataset.g)}));
+</script>
+</body>
+</html>
