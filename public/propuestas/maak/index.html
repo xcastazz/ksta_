@@ -249,14 +249,14 @@ for(let x=-58;x<60;x+=4){const d=new THREE.Mesh(new THREE.PlaneGeometry(2,.18),M
 for(const z of[-2.75,2.75]){const e=new THREE.Mesh(new THREE.PlaneGeometry(120,.12),M(0xe8e4da));e.rotation.x=-Math.PI/2;e.position.set(0,.02,z);S.add(e)}
 
 // estaciones (una por estado)
-const ST=[-16,-5.5,5,16],LAB=['Por recibir','Recibida','En camino','Entregada'],SC=[0x9ca3af,0xf5b400,0x3b82f6,0x22c55e];
-const sign=(t,n)=>{const cv=document.createElement('canvas');cv.width=640;cv.height=180;const g=cv.getContext('2d');g.fillStyle='#f5b400';g.fillRect(0,0,640,180);g.strokeStyle='#111';g.lineWidth=12;g.strokeRect(14,14,612,152);g.fillStyle='#111';g.fillRect(14,14,150,152);g.fillStyle='#f5b400';g.font='900 110px Archivo, sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(n,89,96);g.fillStyle='#111';g.font='italic 900 64px Archivo, sans-serif';g.textAlign='center';g.fillText(t.toUpperCase(),395,98);const tx=new THREE.CanvasTexture(cv);tx.colorSpace=THREE.SRGBColorSpace;tx.anisotropy=8;return tx};
+const ST=[-17,-5.7,5.7,17],LAB=['Por recibir','Recibida','En camino','Entregada'],SC=[0x9ca3af,0xf5b400,0x3b82f6,0x22c55e];
+const sign=(t,n)=>{const W=1024,H=288,cv=document.createElement('canvas');cv.width=W;cv.height=H;const g=cv.getContext('2d');g.fillStyle='#f5b400';g.fillRect(0,0,W,H);g.strokeStyle='#111';g.lineWidth=16;g.strokeRect(20,20,W-40,H-40);g.fillStyle='#111';g.beginPath();g.arc(150,H/2,82,0,7);g.fill();g.fillStyle='#f5b400';g.font='900 120px Archivo, sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(n,150,H/2+6);g.fillStyle='#111';let fs=118;g.font='italic 900 '+fs+'px Archivo, sans-serif';const max=W-300-60;while(g.measureText(t.toUpperCase()).width>max&&fs>40){fs-=4;g.font='italic 900 '+fs+'px Archivo, sans-serif'}g.textAlign='left';g.fillText(t.toUpperCase(),270,H/2+6);const tx=new THREE.CanvasTexture(cv);tx.colorSpace=THREE.SRGBColorSpace;tx.anisotropy=8;return tx};
 const lamps=[];
 ST.forEach((x,i)=>{const g=new THREE.Group();g.position.set(x,0,-3.9);
- for(const px of[-1.35,1.35]){const p=box(.16,4.3,.16,M(0x8a8a8a,{metalness:.7,roughness:.35}));p.position.set(px*1.3,2.15,0);g.add(p)}
- const mat=new THREE.MeshStandardMaterial({map:sign(LAB[i],String(i+1)),roughness:.5,color:0x6f6f6f,emissive:0x000000});
- const back=box(4.7,1.32,.08,M(0x2b2b2b,{metalness:.5}));back.position.y=3.95;g.add(back);
- const plate=new THREE.Mesh(new THREE.PlaneGeometry(4.6,1.28),mat);plate.position.set(0,3.95,.045);g.add(plate);lamps.push(plate);S.add(g)});
+ for(const px of[-1.35,1.35]){const p=box(.18,4.7,.18,M(0x8a8a8a,{metalness:.7,roughness:.35}));p.position.set(px*1.6,2.35,-.17);g.add(p)}
+ const mat=new THREE.MeshBasicMaterial({map:sign(LAB[i],String(i+1)),color:0xd6d6d6});
+ const back=box(5.9,1.7,.1,M(0x2b2b2b,{metalness:.5}));back.position.set(0,4.35,-.03);g.add(back);
+ const plate=new THREE.Mesh(new THREE.PlaneGeometry(5.75,1.6),mat);plate.position.set(0,4.35,.04);g.add(plate);lamps.push(plate);S.add(g)});
 // bodega de MAAK al inicio y casa al final
 const ware=new THREE.Group();ware.position.set(-22,0,-6.5);const wb=box(7,3.2,4.5,M(0x3a3832));wb.position.y=1.6;ware.add(wb);const wr=box(7.4,.3,4.9,M(0xf5b400));wr.position.y=3.35;ware.add(wr);const wd=box(3,2.2,.1,M(0x1b1a17));wd.position.set(0,1.1,2.27);ware.add(wd);S.add(ware);
 const house=new THREE.Group();house.position.set(21.5,0,-6.2);const hb=box(4.2,2.6,3.6,M(0xf1ece0));hb.position.y=1.3;house.add(hb);
@@ -291,7 +291,7 @@ el.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,yaw,pitch};a
 addEventListener('pointerup',()=>drag=null);
 addEventListener('pointermove',e=>{if(!drag)return;yaw=drag.yaw-(e.clientX-drag.x)*.006;pitch=Math.max(.12,Math.min(.75,drag.pitch+(e.clientY-drag.y)*.004))});
 window.TRUCK={
- go(s){target=s;tx=ST[s];drop=-1;pkg.visible=false;lamps.forEach((l,i)=>{l.material.color.setHex(i<=s?0xffffff:0x6f6f6f);l.material.emissive.setHex(i===s?0x2a1d00:0x000000);l.scale.setScalar(1)})},
+ go(s){target=s;tx=ST[s];drop=-1;pkg.visible=false;lamps.forEach((l,i)=>{l.material.color.setHex(i<=s?0xffffff:0xbdbdbd);l.scale.setScalar(1)})},
  nope(){shake=1;honk=1},
  rev(){rev=Math.min(1,rev+.5)},
  honk(){honk=1}
@@ -310,7 +310,7 @@ function loop(){const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
  hl.forEach(h=>h.material.emissiveIntensity=.6+honk*3*(Math.sin(t*30)>0?1:0));honk=Math.max(0,honk-dt*1.2);
  if(target===3&&!moving&&Math.abs(d)<.05&&drop<0){drop=0;pkg.visible=true}
  if(drop>=0&&drop<1){drop=Math.min(1,drop+dt*1.3);const q=drop;pkg.position.set(cur+(-3)+(-0.2)*q,1+Math.sin(q*Math.PI)*2.2-(q)*.65+.35,-1.5-q*2.6);pkg.rotation.y=q*3}
- lamps.forEach((l,i)=>{if(i===target)l.material.emissive.setRGB(.16+Math.sin(t*4)*.08,.11+Math.sin(t*4)*.05,0)});
+ lamps.forEach((l,i)=>{if(i===target){const k=1+Math.sin(t*4)*.035;l.parent.scale.setScalar(k)}});
  if(!drag&&auto<=0)yaw+=Math.sin(t*.25)*.0006;auto=Math.max(0,auto-dt);
  camX+=(cur+.5-camX)*Math.min(1,dt*2.5);
  const dist=innerWidth<600?17:14;C.position.set(camX+Math.sin(yaw)*dist*Math.cos(pitch),2+Math.sin(pitch)*dist,Math.cos(yaw)*dist*Math.cos(pitch));C.lookAt(camX,1.9,-.8);
