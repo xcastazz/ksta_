@@ -68,12 +68,13 @@ th,td{text-align:left;padding:14px 16px;border-bottom:1px solid #303030}
 th{color:#9a958b;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
 .st{display:inline-block;padding:5px 12px;border-radius:999px;font-weight:800;font-size:.8rem}
 .st.w{background:#3a3a3a;color:#ddd}.st.r{background:#3b2f0a;color:#f5b400}.st.g{background:#10243f;color:#93c5fd}.st.ok{background:#0f2e1b;color:#86efac}
-.act{display:flex;gap:6px;flex-wrap:wrap}.act span{border:1px solid #444;border-radius:8px;padding:5px 9px;font-weight:700;font-size:.8rem;color:#ddd}
+.act{display:flex;gap:6px;flex-wrap:wrap}.act span{display:inline-flex;align-items:center;gap:6px;border:1px solid #444;border-radius:8px;padding:5px 9px;font-weight:700;font-size:.8rem;color:#ddd}
 footer{background:var(--ink);color:#bdb8ad;padding:40px 0;font-size:.95rem}
 footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 footer b{color:#fff}
 .wa{position:fixed;right:18px;bottom:18px;background:#25d366;color:#052e14;font-weight:900;text-decoration:none;padding:14px 20px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:30}
 @media(max-width:760px){nav a:not(.cta){display:none}.steps{grid-template-columns:1fr;gap:4px}.step{text-align:left;padding:6px 0 6px 56px;min-height:46px}.step:before{left:15px;right:auto;top:-50%;bottom:50%;width:6px;height:auto}.dot{left:0;top:6px;transform:none}.grid3,.photos{grid-template-columns:1fr}.search{flex-direction:column}.mock{overflow-x:auto}table{min-width:640px}}
+.act svg{width:15px;height:15px}.feat{position:relative}.fi{position:absolute;top:22px;right:22px;width:30px;height:30px;color:#111}.search button{display:inline-flex;align-items:center;gap:8px;justify-content:center}.search svg{width:20px;height:20px}.wa{display:inline-flex;align-items:center;gap:8px}.wa svg{width:20px;height:20px}
 </style>
 </head>
 <body>
@@ -84,7 +85,7 @@ footer b{color:#fff}
   <p class="kick">Transporte de encomiendas y mensajería</p>
   <h1>¿Dónde va<br>tu envío?</h1>
   <p>Escribe tu número de guía y mira en qué paso está tu mercancía. Cuando se entregue, verás las fotos de la entrega.</p>
-  <form class="search" id="f"><input id="q" placeholder="Número de guía, ej: MAAK-1024" aria-label="Número de guía" autocomplete="off" /><button>Rastrear</button></form>
+  <form class="search" id="f"><input id="q" placeholder="Número de guía, ej: MAAK-1024" aria-label="Número de guía" autocomplete="off" /><button><i data-lucide="search"></i>Rastrear</button></form>
   <p class="hint">Prueba con: <button type="button" data-g="MAAK-1021">MAAK-1021</button><button type="button" data-g="MAAK-1022">MAAK-1022</button><button type="button" data-g="MAAK-1023">MAAK-1023</button><button type="button" data-g="MAAK-1024">MAAK-1024</button></p>
 </div></div>
 
@@ -94,9 +95,9 @@ footer b{color:#fff}
   <h3 class="t">Así de fácil.</h3>
   <p class="lead">Tus clientes ya no tienen que escribirte para preguntar por su mercancía. Lo consultan ellos mismos, a cualquier hora.</p>
   <div class="grid3">
-    <div class="feat"><div class="n">1</div><b>Recibimos la mercancía</b>Registramos la guía y el cliente ya puede consultarla.</div>
-    <div class="feat"><div class="n">2</div><b>Sale a entrega</b>Con un toque cambiamos el estado a "en proceso de entrega".</div>
-    <div class="feat"><div class="n">3</div><b>Entregada, con pruebas</b>Subimos la foto de la guía firmada y del lugar de entrega.</div>
+    <div class="feat"><i class="fi" data-lucide="package"></i><div class="n">1</div><b>Recibimos la mercancía</b>Registramos la guía y el cliente ya puede consultarla.</div>
+    <div class="feat"><i class="fi" data-lucide="truck"></i><div class="n">2</div><b>Sale a entrega</b>Con un toque cambiamos el estado a "en proceso de entrega".</div>
+    <div class="feat"><i class="fi" data-lucide="clipboard-check"></i><div class="n">3</div><b>Entregada, con pruebas</b>Subimos la foto de la guía firmada y del lugar de entrega.</div>
   </div>
 </div></section>
 
@@ -105,15 +106,15 @@ footer b{color:#fff}
   <p class="lead">Solo para tu equipo. Desde el celular creas guías, cambias el estado con un toque y subes las fotos de entrega. Lo que cambias aquí, el cliente lo ve al instante.</p>
   <div class="mock"><div class="bar"><i></i><i></i><i></i></div>
   <table><thead><tr><th>Guía</th><th>Cliente</th><th>Destinatario</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
-    <tr><td><b>MAAK-1024</b></td><td>Tienda Ejemplo</td><td>Carlos R.</td><td><span class="st ok">Entregada</span></td><td class="act"><span>📷 Ver fotos</span></td></tr>
-    <tr><td><b>MAAK-1023</b></td><td>Tienda Ejemplo</td><td>Ana M.</td><td><span class="st g">En proceso de entrega</span></td><td class="act"><span>✅ Marcar entregada</span><span>📷 Subir fotos</span></td></tr>
-    <tr><td><b>MAAK-1022</b></td><td>Comercial Demo</td><td>Luis P.</td><td><span class="st r">Recibida por MAAK</span></td><td class="act"><span>🚚 Salió a entrega</span></td></tr>
-    <tr><td><b>MAAK-1021</b></td><td>Comercial Demo</td><td>Sofía G.</td><td><span class="st w">Pendiente de recibir</span></td><td class="act"><span>📦 Marcar recibida</span></td></tr>
+    <tr><td><b>MAAK-1024</b></td><td>Tienda Ejemplo</td><td>Carlos R.</td><td><span class="st ok">Entregada</span></td><td class="act"><span><i data-lucide="image"></i>Ver fotos</span></td></tr>
+    <tr><td><b>MAAK-1023</b></td><td>Tienda Ejemplo</td><td>Ana M.</td><td><span class="st g">En proceso de entrega</span></td><td class="act"><span><i data-lucide="circle-check"></i>Marcar entregada</span><span><i data-lucide="camera"></i>Subir fotos</span></td></tr>
+    <tr><td><b>MAAK-1022</b></td><td>Comercial Demo</td><td>Luis P.</td><td><span class="st r">Recibida por MAAK</span></td><td class="act"><span><i data-lucide="truck"></i>Salió a entrega</span></td></tr>
+    <tr><td><b>MAAK-1021</b></td><td>Comercial Demo</td><td>Sofía G.</td><td><span class="st w">Pendiente de recibir</span></td><td class="act"><span><i data-lucide="package-check"></i>Marcar recibida</span></td></tr>
   </tbody></table></div>
 </div></section>
 
 <footer><div class="wrap"><div><b>Transportadora MAAK</b><br>Transporte de encomiendas y mensajería</div><div>Vista previa diseñada por <b>KstaStudio_</b> · kstastudio.com</div></div></footer>
-<a class="wa" href="#rastreo">Rastrear envío</a>
+<a class="wa" href="#rastreo"><i data-lucide="package-search"></i>Rastrear envío</a>
 
 <script>
 const STEPS=['Pendiente de recibir','Recibida por MAAK','En proceso de entrega','Entregada'];
@@ -134,5 +135,7 @@ function show(g){g=g.trim().toUpperCase();if(/^\d+$/.test(g))g='MAAK-'+g;const x
 document.getElementById('f').addEventListener('submit',e=>{e.preventDefault();show(document.getElementById('q').value)});
 document.querySelectorAll('[data-g]').forEach(b=>b.addEventListener('click',()=>{document.getElementById('q').value=b.dataset.g;show(b.dataset.g)}));
 </script>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script>lucide.createIcons();</script>
 </body>
 </html>
