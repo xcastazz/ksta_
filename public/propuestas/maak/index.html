@@ -2,91 +2,172 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Vista previa · Transportadora MAAK (propuesta KstaStudio_)</title>
 <meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#0d0d0d" />
 <link rel="icon" href="logo.jpg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,500;0,700;0,800;0,900;1,800;1,900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,500;0,600;0,700;0,800;0,900;1,800;1,900&display=swap" rel="stylesheet" />
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <style>
-:root{--ink:#0d0d0d;--paper:#f6f5f2;--line:#e2dfd8;--muted:#6b6862;--accent:#f5b400;--ok:#16a34a;--go:#2563eb;--wait:#9ca3af}
+:root{--ink:#0d0d0d;--ink2:#1a1a1a;--paper:#f5f3ee;--line:#e4e0d7;--muted:#6b6862;--y:#f5b400;--y2:#ffd24d;--ok:#16a34a;--blue:#2563eb;--r:22px}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Archivo,system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.5}
-a{color:inherit}
-.ribbon{background:linear-gradient(90deg,#6d28d9,#a855f7);color:#fff;text-align:center;font-size:.8rem;padding:.45rem 1rem}
-.wrap{width:min(1100px,100% - 32px);margin-inline:auto}
-header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
-header .wrap{display:flex;align-items:center;justify-content:space-between;height:76px;gap:12px}
-header img{height:52px}
-nav{display:flex;gap:6px}
-nav a{text-decoration:none;font-weight:700;padding:10px 14px;border-radius:10px;min-height:44px;display:inline-flex;align-items:center}
-nav a.cta{background:var(--ink);color:#fff}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{font-family:Archivo,system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+svg.lucide{width:20px;height:20px;stroke-width:2.2}
+.wrap{width:min(1160px,100% - 32px);margin-inline:auto}
+.ribbon{background:linear-gradient(90deg,#6d28d9,#a855f7);color:#fff;text-align:center;font-size:.78rem;padding:.4rem 1rem}
+
+/* header */
+header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:72px;gap:12px}
+header img{height:48px;display:block}
+nav{display:flex;gap:4px;align-items:center}
+nav a{font-weight:700;padding:10px 14px;border-radius:12px;min-height:44px;display:inline-flex;align-items:center;gap:8px}
+nav a:hover{background:#f0ede6}
+nav a.cta{background:var(--ink);color:#fff}nav a.cta:hover{background:#2a2a2a}
+
+/* hero */
 .hero{background:var(--ink);color:#fff;position:relative;overflow:hidden}
-.hero:before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(115deg,transparent 0 38px,rgba(255,255,255,.035) 38px 46px)}
-.hero .wrap{position:relative;padding:70px 0 80px;display:grid;gap:26px}
-.kick{font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-size:.85rem}
-h1{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:900;font-style:italic;line-height:.95;letter-spacing:-.02em}
-.hero p{color:#cfcac0;font-size:1.15rem;max-width:620px}
-.search{display:flex;gap:10px;background:#fff;padding:10px;border-radius:18px;max-width:640px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
-.search input{flex:1;border:0;font:700 1.25rem Archivo;padding:12px 14px;outline:none;min-width:0;text-transform:uppercase;color:var(--ink)}
-.search button{border:0;background:var(--accent);color:#111;font:900 1.05rem Archivo;padding:0 26px;border-radius:12px;cursor:pointer;min-height:52px}
-.hint{color:#aaa49a;font-size:.92rem}.hint button{background:none;border:1px dashed #6b675f;color:#fff;border-radius:8px;padding:3px 9px;margin:2px;cursor:pointer;font:700 .85rem Archivo}
-#result{margin-top:-40px;position:relative;z-index:2}
-.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.08)}
-.rhead{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;align-items:flex-start}
-.rhead small{color:var(--muted);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:.75rem}
-.rhead h2{font-size:1.8rem;font-weight:900}
-.badge{display:inline-flex;align-items:center;gap:8px;font-weight:900;padding:10px 18px;border-radius:999px;font-size:1.05rem}
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:30px 0 10px;position:relative}
-.step{text-align:center;position:relative;padding-top:52px;font-weight:800;font-size:.95rem}
-.step:before{content:'';position:absolute;top:18px;left:-50%;right:50%;height:6px;background:var(--line)}
-.step:first-child:before{display:none}
-.step.done:before{background:var(--ink)}
-.dot{position:absolute;top:4px;left:50%;transform:translateX(-50%);width:34px;height:34px;border-radius:50%;background:#fff;border:5px solid var(--line);z-index:1}
-.step.done .dot{background:var(--ink);border-color:var(--ink)}
-.step.now .dot{background:var(--accent);border-color:var(--ink);box-shadow:0 0 0 6px rgba(245,180,0,.3)}
-.step span{display:block;color:var(--muted);font-weight:600;font-size:.82rem;margin-top:2px}
-.photos{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
-.ph{border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#efede8}
-.ph .img{aspect-ratio:4/3;display:grid;place-items:center;color:#8b877f;font-weight:800;text-align:center;padding:10px;background:repeating-linear-gradient(45deg,#ebe8e1 0 14px,#f3f1ec 14px 28px)}
-.ph p{padding:10px 14px;font-weight:800;font-size:.95rem}
-.ph p small{display:block;color:var(--muted);font-weight:600}
-.notfound{text-align:center;padding:30px}
-section{padding:80px 0}
-h3.t{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;font-style:italic;margin-bottom:10px}
-.lead{color:var(--muted);font-size:1.08rem;max-width:640px}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px}
-.feat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px}
+.hero:before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(115deg,transparent 0 38px,rgba(255,255,255,.03) 38px 46px)}
+.hero:after{content:'';position:absolute;width:700px;height:700px;right:-200px;top:-260px;border-radius:50%;background:radial-gradient(circle,rgba(245,180,0,.22),transparent 65%)}
+.hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1.05fr;gap:30px;align-items:center;padding:56px 0 90px}
+.kick{display:inline-flex;align-items:center;gap:8px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--y);font-size:.8rem}
+h1{font-size:clamp(2.5rem,5.4vw,4.4rem);font-weight:900;font-style:italic;line-height:.95;letter-spacing:-.02em;margin:14px 0 16px}
+h1 em{color:var(--y)}
+.hero p.sub{color:#cfcac0;font-size:1.12rem;max-width:520px}
+.search{margin-top:26px;display:flex;gap:8px;background:#fff;padding:8px;border-radius:20px;max-width:560px;box-shadow:0 24px 60px rgba(0,0,0,.45);border:3px solid transparent;transition:border-color .2s}
+.search:focus-within{border-color:var(--y)}
+.search label{display:flex;align-items:center;gap:10px;flex:1;padding-left:12px;color:#8a867e}
+.search input{flex:1;border:0;font:800 1.2rem Archivo;padding:12px 4px;outline:none;min-width:0;text-transform:uppercase;color:var(--ink);background:transparent}
+.search input::placeholder{text-transform:none;font-weight:600;color:#a39f97}
+.search button{border:0;background:var(--y);color:#111;font:900 1.05rem Archivo;padding:0 24px;border-radius:14px;cursor:pointer;min-height:56px;display:inline-flex;align-items:center;gap:8px;justify-content:center;transition:transform .15s,background .2s}
+.search button:hover{background:var(--y2)}.search button:active{transform:scale(.97)}
+.hint{margin-top:14px;color:#a8a399;font-size:.92rem;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.hint button{background:rgba(255,255,255,.06);border:1px solid #4a4740;color:#fff;border-radius:10px;padding:7px 11px;cursor:pointer;font:800 .85rem Archivo;min-height:38px;transition:background .2s,border-color .2s}
+.hint button:hover{border-color:var(--y);background:rgba(245,180,0,.12)}
+
+/* escena 3D */
+.stage{position:relative;height:440px;border-radius:28px;overflow:hidden;background:linear-gradient(180deg,#26241f 0%,#151411 100%);border:1px solid #2e2b25;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+#truck3d{position:absolute;inset:0}
+#truck3d canvas{display:block;width:100%!important;height:100%!important}
+.stage .say{position:absolute;left:16px;top:16px;z-index:2;background:rgba(13,13,13,.78);backdrop-filter:blur(8px);border:1px solid #3a372f;color:#fff;font-weight:800;font-size:.92rem;padding:9px 14px;border-radius:999px;display:flex;align-items:center;gap:8px;transition:transform .3s}
+.stage .say i{width:9px;height:9px;border-radius:50%;background:var(--y);box-shadow:0 0 0 4px rgba(245,180,0,.25)}
+.stage .lg{position:absolute;right:14px;bottom:12px;z-index:2;font-size:.72rem;color:#8a857a}
+
+/* resultado */
+#result{position:relative;z-index:5;margin-top:-56px;scroll-margin-top:90px}
+.card{background:#fff;border:1px solid var(--line);border-radius:26px;padding:28px;box-shadow:0 24px 60px rgba(0,0,0,.08);animation:pop .45s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes pop{from{opacity:0;transform:translateY(20px) scale(.98)}to{opacity:1;transform:none}}
+.rhead{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;align-items:flex-start}
+.rhead small{color:var(--muted);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:.72rem}
+.rhead h2{font-size:2rem;font-weight:900;letter-spacing:-.01em;line-height:1.1}
+.rhead .who{color:var(--muted);margin-top:4px}
+.badge{display:inline-flex;align-items:center;gap:8px;font-weight:900;padding:11px 18px;border-radius:999px;font-size:1rem}
+.track{display:grid;grid-template-columns:repeat(4,1fr);margin:32px 0 6px}
+.tk{text-align:center;position:relative;padding-top:58px;font-weight:800;font-size:.98rem}
+.tk:before{content:'';position:absolute;top:22px;left:-50%;right:50%;height:6px;background:var(--line);border-radius:3px}
+.tk:first-child:before{display:none}
+.tk.done:before{background:var(--ink)}
+.tk .dot{position:absolute;top:2px;left:50%;transform:translateX(-50%);width:46px;height:46px;border-radius:50%;background:#fff;border:3px solid var(--line);display:grid;place-items:center;color:#b8b3a9;z-index:1}
+.tk.done .dot{background:var(--ink);border-color:var(--ink);color:#fff}
+.tk.now .dot{background:var(--y);border-color:var(--ink);color:#111;box-shadow:0 0 0 7px rgba(245,180,0,.28);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 12px rgba(245,180,0,.1)}}
+.tk .dot svg{width:22px;height:22px}
+.tk span{display:block;color:var(--muted);font-weight:600;font-size:.84rem;margin-top:2px}
+.photos{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+.ph{border-radius:18px;overflow:hidden;border:1px solid var(--line);background:#efede8}
+.ph .img{aspect-ratio:4/3;display:grid;place-items:center;gap:6px;color:#8b877f;font-weight:800;text-align:center;padding:10px;background:repeating-linear-gradient(45deg,#ebe8e1 0 14px,#f3f1ec 14px 28px)}
+.ph .img svg{width:34px;height:34px}
+.ph p{padding:12px 16px;font-weight:800}.ph p small{display:block;color:var(--muted);font-weight:600}
+.notfound{text-align:center;padding:34px}.notfound svg{width:44px;height:44px;color:#c2410c;margin-bottom:8px}
+.ask{margin-top:20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding-top:18px;border-top:1px dashed var(--line);color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:800;padding:12px 18px;border-radius:14px;min-height:48px}
+.btn.wa{background:#25d366;color:#052e14}
+
+/* secciones */
+section{padding:84px 0}
+.t{font-size:clamp(1.9rem,4vw,2.8rem);font-weight:900;font-style:italic;line-height:1.02;margin-bottom:10px}
+.lead{color:var(--muted);font-size:1.08rem;max-width:620px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:32px}
+.feat{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:24px;transition:transform .25s,box-shadow .25s}
+.feat:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(0,0,0,.07)}
+.feat .ic{width:52px;height:52px;border-radius:16px;background:var(--ink);color:var(--y);display:grid;place-items:center;margin-bottom:16px}
+.feat .ic svg{width:26px;height:26px}
 .feat b{font-size:1.15rem;display:block;margin-bottom:6px}
-.feat .n{font:900 2rem Archivo;font-style:italic;color:var(--accent);-webkit-text-stroke:1px #111}
-.admin{background:#141414;color:#fff}
+.feat .n{float:right;font:900 1.8rem Archivo;font-style:italic;color:#e7e2d7}
+.admin{background:#121212;color:#fff}
 .admin .lead{color:#bdb8ad}
-.mock{margin-top:30px;background:#1f1f1f;border:1px solid #333;border-radius:20px;overflow:hidden}
-.mock .bar{display:flex;gap:6px;padding:12px 16px;background:#2a2a2a}.mock .bar i{width:11px;height:11px;border-radius:50%;background:#ff5f57}.mock .bar i:nth-child(2){background:#febc2e}.mock .bar i:nth-child(3){background:#28c840}
-table{width:100%;border-collapse:collapse;font-size:.95rem}
-th,td{text-align:left;padding:14px 16px;border-bottom:1px solid #303030}
-th{color:#9a958b;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
-.st{display:inline-block;padding:5px 12px;border-radius:999px;font-weight:800;font-size:.8rem}
-.st.w{background:#3a3a3a;color:#ddd}.st.r{background:#3b2f0a;color:#f5b400}.st.g{background:#10243f;color:#93c5fd}.st.ok{background:#0f2e1b;color:#86efac}
-.act{display:flex;gap:6px;flex-wrap:wrap}.act span{display:inline-flex;align-items:center;gap:6px;border:1px solid #444;border-radius:8px;padding:5px 9px;font-weight:700;font-size:.8rem;color:#ddd}
-footer{background:var(--ink);color:#bdb8ad;padding:40px 0;font-size:.95rem}
+.mock{margin-top:30px;background:#1c1c1c;border:1px solid #2f2f2f;border-radius:22px;overflow:hidden}
+.mock .bar{display:flex;gap:6px;padding:13px 16px;background:#262626;align-items:center}.mock .bar i{width:11px;height:11px;border-radius:50%;background:#ff5f57}.mock .bar i:nth-child(2){background:#febc2e}.mock .bar i:nth-child(3){background:#28c840}
+.mock .bar span{margin-left:12px;color:#8f8a80;font-size:.82rem;font-weight:700}
+.rows{display:grid}
+.row{display:grid;grid-template-columns:120px 1fr 1fr 190px 1.3fr;gap:12px;align-items:center;padding:14px 18px;border-bottom:1px solid #2b2b2b}
+.row.h{color:#8f8a80;font-size:.74rem;text-transform:uppercase;letter-spacing:.07em;font-weight:800}
+.row:last-child{border-bottom:0}
+.st{display:inline-block;padding:6px 12px;border-radius:999px;font-weight:800;font-size:.8rem}
+.st.w{background:#363636;color:#ddd}.st.r{background:#3b2f0a;color:#f5b400}.st.g{background:#10243f;color:#93c5fd}.st.ok{background:#0f2e1b;color:#86efac}
+.act{display:flex;gap:6px;flex-wrap:wrap}
+.act span{display:inline-flex;align-items:center;gap:6px;border:1px solid #444;border-radius:10px;padding:7px 10px;font-weight:700;font-size:.8rem;color:#e5e5e5}
+.act svg{width:15px;height:15px}
+footer{background:var(--ink);color:#bdb8ad;padding:40px 0 110px;font-size:.95rem}
 footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 footer b{color:#fff}
-.wa{position:fixed;right:18px;bottom:18px;background:#25d366;color:#052e14;font-weight:900;text-decoration:none;padding:14px 20px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:30}
-@media(max-width:760px){nav a:not(.cta){display:none}.steps{grid-template-columns:1fr;gap:4px}.step{text-align:left;padding:6px 0 6px 56px;min-height:46px}.step:before{left:15px;right:auto;top:-50%;bottom:50%;width:6px;height:auto}.dot{left:0;top:6px;transform:none}.grid3,.photos{grid-template-columns:1fr}.search{flex-direction:column}.mock{overflow-x:auto}table{min-width:640px}}
-.act svg{width:15px;height:15px}.feat{position:relative}.fi{position:absolute;top:22px;right:22px;width:30px;height:30px;color:#111}.search button{display:inline-flex;align-items:center;gap:8px;justify-content:center}.search svg{width:20px;height:20px}.wa{display:inline-flex;align-items:center;gap:8px}.wa svg{width:20px;height:20px}
+.dock{display:none}
+
+/* celular */
+@media(max-width:900px){
+  .hero .wrap{grid-template-columns:1fr;padding:22px 0 80px;gap:18px}
+  .stage{height:250px;order:-1;border-radius:22px}
+  h1{font-size:2.5rem;margin:8px 0 10px}
+  .hero p.sub{font-size:1.02rem}
+  .search{flex-direction:column;padding:10px;margin-top:18px}
+  .search label{padding:4px 6px}
+  .search input{font-size:1.25rem;padding:12px 4px}
+  .search button{min-height:58px;font-size:1.1rem;width:100%}
+  nav a:not(.cta){display:none}
+  header .wrap{height:64px}header img{height:40px}
+  .grid3{grid-template-columns:1fr}
+  .track{grid-template-columns:1fr;gap:6px;margin-top:22px}
+  .tk{text-align:left;padding:8px 0 8px 66px;min-height:58px;font-size:1.05rem}
+  .tk:before{left:20px;right:auto;top:-60%;bottom:60%;width:6px;height:auto}
+  .tk .dot{left:0;top:4px;transform:none}
+  .photos{grid-template-columns:1fr}
+  .card{padding:20px;border-radius:22px}
+  .rhead h2{font-size:1.6rem}
+  section{padding:60px 0}
+  .row{grid-template-columns:1fr auto;gap:6px 10px;padding:14px 16px}
+  .row.h{display:none}
+  .row > :nth-child(2),.row > :nth-child(3){font-size:.85rem;color:#aaa}
+  .row > :nth-child(4){grid-column:2;grid-row:1}
+  .row > :nth-child(5){grid-column:1 / -1}
+  .ribbon{font-size:.68rem;padding:.3rem .6rem}
+  .dock{display:flex;position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:50;gap:8px}
+  .dock a{flex:1;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+  .dock .go{background:var(--ink);color:#fff}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div class="ribbon"><b>Vista previa</b> preparada por KstaStudio_ para Transportadora MAAK · Los datos son de ejemplo</div>
-<header><div class="wrap"><img src="logo.jpg" alt="Transportadora MAAK" /><nav><a href="#rastreo">Rastrear</a><a href="#como">Cómo funciona</a><a href="#panel">Panel MAAK</a><a class="cta" href="#rastreo">Rastrear envío</a></nav></div></header>
+<div class="ribbon"><b>Vista previa</b> preparada por KstaStudio_ para Transportadora MAAK · Datos de ejemplo</div>
+<header><div class="wrap"><a href="#"><img src="logo.jpg" alt="Transportadora MAAK" /></a><nav><a href="#como">Cómo funciona</a><a href="#panel">Panel MAAK</a><a class="cta" href="#rastreo"><i data-lucide="package-search"></i>Rastrear</a></nav></div></header>
 
 <div class="hero" id="rastreo"><div class="wrap">
-  <p class="kick">Transporte de encomiendas y mensajería</p>
-  <h1>¿Dónde va<br>tu envío?</h1>
-  <p>Escribe tu número de guía y mira en qué paso está tu mercancía. Cuando se entregue, verás las fotos de la entrega.</p>
-  <form class="search" id="f"><input id="q" placeholder="Número de guía, ej: MAAK-1024" aria-label="Número de guía" autocomplete="off" /><button><i data-lucide="search"></i>Rastrear</button></form>
-  <p class="hint">Prueba con: <button type="button" data-g="MAAK-1021">MAAK-1021</button><button type="button" data-g="MAAK-1022">MAAK-1022</button><button type="button" data-g="MAAK-1023">MAAK-1023</button><button type="button" data-g="MAAK-1024">MAAK-1024</button></p>
+  <div>
+    <span class="kick"><i data-lucide="truck"></i>Encomiendas y mensajería</span>
+    <h1>¿Dónde va<br>tu <em>envío?</em></h1>
+    <p class="sub">Escribe tu número de guía y mira en qué paso está tu mercancía. Cuando se entregue, verás las fotos de la entrega.</p>
+    <form class="search" id="f"><label><i data-lucide="scan-barcode"></i><input id="q" placeholder="Número de guía, ej: MAAK-1024" aria-label="Número de guía" autocomplete="off" inputmode="text" /></label><button><i data-lucide="search"></i>Rastrear</button></form>
+    <p class="hint">Prueba con:<button type="button" data-g="MAAK-1021">1021</button><button type="button" data-g="MAAK-1022">1022</button><button type="button" data-g="MAAK-1023">1023</button><button type="button" data-g="MAAK-1024">1024</button></p>
+  </div>
+  <div class="stage" aria-label="Camión de MAAK en 3D que muestra el estado del envío">
+    <div id="truck3d"></div>
+    <div class="say" id="say"><i></i><span id="sayT">Listo para rastrear tu envío</span></div>
+    <div class="lg">Toca y arrastra para girar</div>
+  </div>
 </div></div>
 
 <div class="wrap" id="result"></div>
@@ -95,47 +176,147 @@ footer b{color:#fff}
   <h3 class="t">Así de fácil.</h3>
   <p class="lead">Tus clientes ya no tienen que escribirte para preguntar por su mercancía. Lo consultan ellos mismos, a cualquier hora.</p>
   <div class="grid3">
-    <div class="feat"><i class="fi" data-lucide="package"></i><div class="n">1</div><b>Recibimos la mercancía</b>Registramos la guía y el cliente ya puede consultarla.</div>
-    <div class="feat"><i class="fi" data-lucide="truck"></i><div class="n">2</div><b>Sale a entrega</b>Con un toque cambiamos el estado a "en proceso de entrega".</div>
-    <div class="feat"><i class="fi" data-lucide="clipboard-check"></i><div class="n">3</div><b>Entregada, con pruebas</b>Subimos la foto de la guía firmada y del lugar de entrega.</div>
+    <div class="feat"><span class="n">1</span><div class="ic"><i data-lucide="package-check"></i></div><b>Recibimos la mercancía</b>Registramos la guía y el cliente ya puede consultarla.</div>
+    <div class="feat"><span class="n">2</span><div class="ic"><i data-lucide="truck"></i></div><b>Sale a entrega</b>Con un toque cambiamos el estado a "en proceso de entrega".</div>
+    <div class="feat"><span class="n">3</span><div class="ic"><i data-lucide="camera"></i></div><b>Entregada, con pruebas</b>Subimos la foto de la guía firmada y del lugar de entrega.</div>
   </div>
 </div></section>
 
 <section class="admin" id="panel"><div class="wrap">
   <h3 class="t">El panel privado de MAAK.</h3>
   <p class="lead">Solo para tu equipo. Desde el celular creas guías, cambias el estado con un toque y subes las fotos de entrega. Lo que cambias aquí, el cliente lo ve al instante.</p>
-  <div class="mock"><div class="bar"><i></i><i></i><i></i></div>
-  <table><thead><tr><th>Guía</th><th>Cliente</th><th>Destinatario</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
-    <tr><td><b>MAAK-1024</b></td><td>Tienda Ejemplo</td><td>Carlos R.</td><td><span class="st ok">Entregada</span></td><td class="act"><span><i data-lucide="image"></i>Ver fotos</span></td></tr>
-    <tr><td><b>MAAK-1023</b></td><td>Tienda Ejemplo</td><td>Ana M.</td><td><span class="st g">En proceso de entrega</span></td><td class="act"><span><i data-lucide="circle-check"></i>Marcar entregada</span><span><i data-lucide="camera"></i>Subir fotos</span></td></tr>
-    <tr><td><b>MAAK-1022</b></td><td>Comercial Demo</td><td>Luis P.</td><td><span class="st r">Recibida por MAAK</span></td><td class="act"><span><i data-lucide="truck"></i>Salió a entrega</span></td></tr>
-    <tr><td><b>MAAK-1021</b></td><td>Comercial Demo</td><td>Sofía G.</td><td><span class="st w">Pendiente de recibir</span></td><td class="act"><span><i data-lucide="package-check"></i>Marcar recibida</span></td></tr>
-  </tbody></table></div>
+  <div class="mock"><div class="bar"><i></i><i></i><i></i><span>Panel MAAK · Envíos</span></div>
+  <div class="rows">
+    <div class="row h"><div>Guía</div><div>Cliente</div><div>Destinatario</div><div>Estado</div><div>Acciones</div></div>
+    <div class="row"><b>MAAK-1024</b><div>Tienda Ejemplo</div><div>Carlos R.</div><div><span class="st ok">Entregada</span></div><div class="act"><span><i data-lucide="image"></i>Ver fotos</span></div></div>
+    <div class="row"><b>MAAK-1023</b><div>Tienda Ejemplo</div><div>Ana M.</div><div><span class="st g">En proceso de entrega</span></div><div class="act"><span><i data-lucide="circle-check"></i>Marcar entregada</span><span><i data-lucide="camera"></i>Subir fotos</span></div></div>
+    <div class="row"><b>MAAK-1022</b><div>Comercial Demo</div><div>Luis P.</div><div><span class="st r">Recibida por MAAK</span></div><div class="act"><span><i data-lucide="truck"></i>Salió a entrega</span></div></div>
+    <div class="row"><b>MAAK-1021</b><div>Comercial Demo</div><div>Sofía G.</div><div><span class="st w">Pendiente de recibir</span></div><div class="act"><span><i data-lucide="package-check"></i>Marcar recibida</span></div></div>
+  </div></div>
 </div></section>
 
 <footer><div class="wrap"><div><b>Transportadora MAAK</b><br>Transporte de encomiendas y mensajería</div><div>Vista previa diseñada por <b>KstaStudio_</b> · kstastudio.com</div></div></footer>
-<a class="wa" href="#rastreo"><i data-lucide="package-search"></i>Rastrear envío</a>
+<div class="dock"><a class="btn go" href="#rastreo"><i data-lucide="package-search"></i>Rastrear</a><a class="btn wa" href="#rastreo"><i data-lucide="message-circle"></i>WhatsApp</a></div>
 
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
 <script>
 const STEPS=['Pendiente de recibir','Recibida por MAAK','En proceso de entrega','Entregada'];
-const COL=[['#e5e7eb','#374151'],['#fef3c7','#92400e'],['#dbeafe','#1e40af'],['#dcfce7','#166534']];
+const ICON=['clock','package-check','truck','house'];
+const COL=[['#eceef1','#374151'],['#fef3c7','#92400e'],['#dbeafe','#1e40af'],['#dcfce7','#166534']];
+const SAY=['Esperando la mercancía','¡Mercancía recibida!','En camino a entregar','¡Entregado con éxito!'];
 const DB={
- 'MAAK-1021':{s:0,c:'Comercial Demo',d:'Sofía G.',f:['—','—','—','—']},
+ 'MAAK-1021':{s:0,c:'Comercial Demo',d:'Sofía G.',f:['10 nov','—','—','—']},
  'MAAK-1022':{s:1,c:'Comercial Demo',d:'Luis P.',f:['10 nov','11 nov, 9:12 a. m.','—','—']},
  'MAAK-1023':{s:2,c:'Tienda Ejemplo',d:'Ana M.',f:['10 nov','11 nov, 8:40 a. m.','12 nov, 7:55 a. m.','—']},
  'MAAK-1024':{s:3,c:'Tienda Ejemplo',d:'Carlos R.',f:['9 nov','10 nov, 10:02 a. m.','11 nov, 8:15 a. m.','11 nov, 2:47 p. m.']}};
-const out=document.getElementById('result');
+const out=document.getElementById('result'),sayT=document.getElementById('sayT');
+const say=t=>{sayT.textContent=t};
+const truck=(fn,...a)=>window.TRUCK&&window.TRUCK[fn](...a);
 function show(g){g=g.trim().toUpperCase();if(/^\d+$/.test(g))g='MAAK-'+g;const x=DB[g];
- if(!x){out.innerHTML=`<div class="card notfound"><h2>No encontramos la guía ${g||''}</h2><p class="lead" style="margin:8px auto 0">Revisa el número o escríbenos por WhatsApp.</p></div>`;return}
+ if(!x){truck('nope');say('No encontramos esa guía');
+  out.innerHTML=`<div class="card notfound"><i data-lucide="search-x"></i><h2>No encontramos la guía ${g||''}</h2><p class="lead" style="margin:8px auto 0">Revisa el número o escríbenos por WhatsApp.</p></div>`;lucide.createIcons();return}
+ truck('go',x.s);say(SAY[x.s]);
  const [bg,fg]=COL[x.s];
- out.innerHTML=`<div class="card"><div class="rhead"><div><small>Guía</small><h2>${g}</h2><p style="color:var(--muted)">Remitente: <b>${x.c}</b> · Para: <b>${x.d}</b></p></div><span class="badge" style="background:${bg};color:${fg}">${STEPS[x.s]}</span></div>
- <div class="steps">${STEPS.map((s,i)=>`<div class="step ${i<x.s?'done':''} ${i===x.s?'now done':''}"><i class="dot"></i>${s}<span>${x.f[i]}</span></div>`).join('')}</div>
- ${x.s===3?`<div class="photos"><div class="ph"><div class="img">Aquí va la foto<br>de la guía firmada</div><p>Guía firmada<small>Subida al entregar · ejemplo</small></p></div><div class="ph"><div class="img">Aquí va la foto<br>del lugar de entrega</div><p>Lugar de entrega<small>Subida al entregar · ejemplo</small></p></div></div>`:''}</div>`;
- out.scrollIntoView({behavior:'smooth',block:'center'});}
+ out.innerHTML=`<div class="card"><div class="rhead"><div><small>Número de guía</small><h2>${g}</h2><p class="who">De <b>${x.c}</b> para <b>${x.d}</b></p></div><span class="badge" style="background:${bg};color:${fg}"><i data-lucide="${ICON[x.s]}"></i>${STEPS[x.s]}</span></div>
+ <div class="track">${STEPS.map((s,i)=>`<div class="tk ${i<=x.s?'done':''} ${i===x.s?'now':''}"><i class="dot"><i data-lucide="${ICON[i]}"></i></i>${s}<span>${x.f[i]}</span></div>`).join('')}</div>
+ ${x.s===3?`<div class="photos"><div class="ph"><div class="img"><i data-lucide="file-signature"></i>Foto de la guía firmada</div><p>Guía firmada<small>Subida al entregar · ejemplo</small></p></div><div class="ph"><div class="img"><i data-lucide="house"></i>Foto del lugar de entrega</div><p>Lugar de entrega<small>Subida al entregar · ejemplo</small></p></div></div>`:''}
+ <div class="ask"><span>¿Tienes dudas sobre tu envío?</span><a class="btn wa" href="#rastreo"><i data-lucide="message-circle"></i>Escríbenos</a></div></div>`;
+ lucide.createIcons();
+ if(innerWidth<900)setTimeout(()=>out.scrollIntoView({behavior:"smooth",block:"start"}),2600);}
 document.getElementById('f').addEventListener('submit',e=>{e.preventDefault();show(document.getElementById('q').value)});
+document.getElementById('q').addEventListener('input',()=>{truck('rev');say('Escribiendo tu guía…')});
+document.getElementById('q').addEventListener('focus',()=>truck('honk'));
 document.querySelectorAll('[data-g]').forEach(b=>b.addEventListener('click',()=>{document.getElementById('q').value=b.dataset.g;show(b.dataset.g)}));
+lucide.createIcons();
 </script>
-<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
-<script>lucide.createIcons();</script>
+
+<script type="module">
+import * as THREE from 'three';
+const el=document.getElementById('truck3d');
+const R=new THREE.WebGLRenderer({antialias:true,alpha:true});
+R.setPixelRatio(Math.min(devicePixelRatio,2));R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;R.outputColorSpace=THREE.SRGBColorSpace;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.05;
+el.appendChild(R.domElement);
+const S=new THREE.Scene();S.fog=new THREE.Fog(0x171612,30,70);
+const C=new THREE.PerspectiveCamera(38,1,.1,200);
+S.add(new THREE.HemisphereLight(0xfff4e0,0x2a261e,1.1));
+const sun=new THREE.DirectionalLight(0xffffff,2.2);sun.position.set(8,16,10);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-30,right:30,top:12,bottom:-12});S.add(sun);
+const M=(c,o={})=>new THREE.MeshStandardMaterial({color:c,roughness:.6,metalness:.1,...o});
+const box=(w,h,d,m)=>{const x=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);x.castShadow=x.receiveShadow=true;return x};
+
+// suelo y carretera
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(160,60),M(0x23211c,{roughness:1}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;S.add(ground);
+const road=new THREE.Mesh(new THREE.PlaneGeometry(120,5.2),M(0x34322c,{roughness:.95}));road.rotation.x=-Math.PI/2;road.position.y=.01;road.receiveShadow=true;S.add(road);
+for(let x=-58;x<60;x+=4){const d=new THREE.Mesh(new THREE.PlaneGeometry(2,.18),M(0xf5b400,{emissive:0x3a2a00}));d.rotation.x=-Math.PI/2;d.position.set(x,.02,0);S.add(d)}
+for(const z of[-2.75,2.75]){const e=new THREE.Mesh(new THREE.PlaneGeometry(120,.12),M(0xe8e4da));e.rotation.x=-Math.PI/2;e.position.set(0,.02,z);S.add(e)}
+
+// estaciones (una por estado)
+const ST=[-16,-5.5,5,16],LAB=['Por recibir','Recibida','En camino','Entregada'],SC=[0x9ca3af,0xf5b400,0x3b82f6,0x22c55e];
+const label=(t,c)=>{const cv=document.createElement('canvas');cv.width=512;cv.height=128;const g=cv.getContext('2d');g.fillStyle='rgba(13,13,13,.85)';g.beginPath();g.roundRect(8,14,496,100,50);g.fill();g.fillStyle='#'+c.toString(16).padStart(6,'0');g.beginPath();g.arc(70,64,20,0,7);g.fill();g.fillStyle='#fff';g.font='800 50px Archivo, sans-serif';g.textBaseline='middle';g.fillText(t,108,66);const tx=new THREE.CanvasTexture(cv);tx.colorSpace=THREE.SRGBColorSpace;const s=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,depthWrite:false}));s.scale.set(4,1,1);return s};
+const lamps=[];
+ST.forEach((x,i)=>{const g=new THREE.Group();g.position.set(x,0,-4.2);
+ const pole=box(.18,2.6,.18,M(0x111111));pole.position.y=1.3;g.add(pole);
+ const l=new THREE.Mesh(new THREE.SphereGeometry(.34,24,16),M(SC[i],{emissive:SC[i],emissiveIntensity:.15}));l.position.y=2.8;g.add(l);lamps.push(l);
+ const lb=label(LAB[i],SC[i]);lb.position.set(0,3.75,0);g.add(lb);S.add(g)});
+// bodega de MAAK al inicio y casa al final
+const ware=new THREE.Group();ware.position.set(-22,0,-6.5);const wb=box(7,3.2,4.5,M(0x3a3832));wb.position.y=1.6;ware.add(wb);const wr=box(7.4,.3,4.9,M(0xf5b400));wr.position.y=3.35;ware.add(wr);const wd=box(3,2.2,.1,M(0x1b1a17));wd.position.set(0,1.1,2.27);ware.add(wd);S.add(ware);
+const house=new THREE.Group();house.position.set(21.5,0,-6.2);const hb=box(4.2,2.6,3.6,M(0xf1ece0));hb.position.y=1.3;house.add(hb);
+const roof=new THREE.Mesh(new THREE.ConeGeometry(3.4,1.8,4),M(0xb45309));roof.position.y=3.5;roof.rotation.y=Math.PI/4;roof.castShadow=true;house.add(roof);
+const door=box(.9,1.6,.08,M(0x7c2d12));door.position.set(0,.8,1.82);house.add(door);S.add(house);
+for(let i=0;i<26;i++){const t=new THREE.Group();const x=-50+i*4+Math.sin(i*7)*1.5,z=(i%2?1:-1)*(9+Math.cos(i*3)*3);t.position.set(x,0,z);const tr=box(.25,1.2,.25,M(0x5b3a1e));tr.position.y=.6;t.add(tr);const cr=new THREE.Mesh(new THREE.IcosahedronGeometry(1+((i*37)%5)/8,0),M(0x3f6b34,{flatShading:true}));cr.position.y=1.8;cr.castShadow=true;t.add(cr);S.add(t)}
+
+// camión
+const logoTx=new THREE.TextureLoader().load('logo.jpg');logoTx.colorSpace=THREE.SRGBColorSpace;logoTx.anisotropy=8;
+const T=new THREE.Group(),body=new THREE.Group();T.add(body);S.add(T);
+const cargo=box(4.6,2.5,2.3,M(0xffffff,{roughness:.45}));cargo.position.set(-.7,2,0);body.add(cargo);
+for(const z of[1.152,-1.152]){const p=new THREE.Mesh(new THREE.PlaneGeometry(4.2,1.68),new THREE.MeshStandardMaterial({map:logoTx,roughness:.5}));p.position.set(-.7,2.05,z);if(z<0)p.rotation.y=Math.PI;body.add(p)}
+const stripe=box(4.62,.22,2.32,M(0xf5b400));stripe.position.set(-.7,.86,0);body.add(stripe);
+const cab=box(1.9,2,2.2,M(0x0f0f0f,{roughness:.35,metalness:.3}));cab.position.set(2.55,1.55,0);body.add(cab);
+const hood=box(.7,1.05,2.1,M(0x0f0f0f,{roughness:.35,metalness:.3}));hood.position.set(3.75,1.05,0);body.add(hood);
+const glass=M(0x9cc7e6,{roughness:.05,metalness:.6,transparent:true,opacity:.85});
+const ws=box(.06,.8,1.8,glass);ws.position.set(3.47,2.1,0);ws.rotation.z=-.12;body.add(ws);
+for(const z of[1.11,-1.11]){const sw=box(.9,.7,.04,glass);sw.position.set(2.7,2.1,z);body.add(sw)}
+const bump=box(.25,.35,2.25,M(0xf5b400));bump.position.set(4.12,.68,0);body.add(bump);
+const hl=[];for(const z of[.75,-.75]){const h=new THREE.Mesh(new THREE.CylinderGeometry(.16,.16,.08,16),M(0xffffe0,{emissive:0xfff2a8,emissiveIntensity:.6}));h.rotation.z=Math.PI/2;h.position.set(4.12,1.12,z);body.add(h);hl.push(h)}
+const chassis=box(6.6,.35,1.9,M(0x1b1b1b));chassis.position.set(.4,.72,0);body.add(chassis);
+const wheels=[];const wg=new THREE.CylinderGeometry(.52,.52,.42,24),wm=M(0x111111,{roughness:.9}),hm=M(0xbdbdbd,{metalness:.8,roughness:.3});
+for(const x of[-2,-.9,2.75])for(const z of[1.05,-1.05]){const w=new THREE.Group();const t=new THREE.Mesh(wg,wm);t.rotation.x=Math.PI/2;t.castShadow=true;w.add(t);const hub=new THREE.Mesh(new THREE.CylinderGeometry(.22,.22,.44,12),hm);hub.rotation.x=Math.PI/2;w.add(hub);w.position.set(x,.52,z);T.add(w);wheels.push(w)}
+const pkg=box(.8,.7,.8,M(0xc08a4b));pkg.visible=false;S.add(pkg);
+const tape=box(.82,.12,.82,M(0xf5b400));pkg.add(tape);
+
+// estado
+let tx=ST[0]-3,cur=tx,vel=0,shake=0,rev=0,honk=0,drop=-1,target=-1;T.position.x=cur;
+let yaw=-.55,pitch=.32,drag=null,auto=0;
+const pt=e=>e.touches?e.touches[0]:e;
+el.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,yaw,pitch};auto=4});
+addEventListener('pointerup',()=>drag=null);
+addEventListener('pointermove',e=>{if(!drag)return;yaw=drag.yaw-(e.clientX-drag.x)*.006;pitch=Math.max(.12,Math.min(.75,drag.pitch+(e.clientY-drag.y)*.004))});
+window.TRUCK={
+ go(s){target=s;tx=ST[s];drop=-1;pkg.visible=false;lamps.forEach((l,i)=>l.material.emissiveIntensity=i<=s?1.4:.15)},
+ nope(){shake=1;honk=1},
+ rev(){rev=Math.min(1,rev+.5)},
+ honk(){honk=1}
+};
+function size(){const r=el.getBoundingClientRect();R.setSize(r.width,r.height,false);C.aspect=r.width/r.height;C.fov=r.width<600?46:38;C.updateProjectionMatrix()}
+new ResizeObserver(size).observe(el);size();
+const clock=new THREE.Clock();let camX=cur;
+function loop(){const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
+ const d=tx-cur;const acc=Math.sign(d)*Math.min(Math.abs(d)*3,14);vel+=(acc-vel*2.2)*dt;if(Math.abs(d)<.02&&Math.abs(vel)<.05){vel=0;cur=tx}cur+=vel*dt;
+ T.position.x=cur;wheels.forEach(w=>{w.rotation.z-=vel*dt/.52});
+ const moving=Math.abs(vel)>.2;
+ body.position.y=(moving?Math.sin(t*22)*.035:Math.sin(t*3)*.012)+rev*Math.sin(t*60)*.03;
+ body.rotation.z=-vel*.006+(shake?Math.sin(t*50)*.04*shake:0);
+ T.position.z=shake?Math.sin(t*45)*.15*shake:0;
+ shake=Math.max(0,shake-dt*1.4);rev=Math.max(0,rev-dt*2);
+ hl.forEach(h=>h.material.emissiveIntensity=.6+honk*3*(Math.sin(t*30)>0?1:0));honk=Math.max(0,honk-dt*1.2);
+ if(target===3&&!moving&&Math.abs(d)<.05&&drop<0){drop=0;pkg.visible=true}
+ if(drop>=0&&drop<1){drop=Math.min(1,drop+dt*1.3);const q=drop;pkg.position.set(cur+(-3)+(-0.2)*q,1+Math.sin(q*Math.PI)*2.2-(q)*.65+.35,-1.5-q*2.6);pkg.rotation.y=q*3}
+ lamps.forEach((l,i)=>{if(i===target)l.scale.setScalar(1+Math.sin(t*5)*.12)});
+ if(!drag&&auto<=0)yaw+=Math.sin(t*.25)*.0006;auto=Math.max(0,auto-dt);
+ camX+=(cur+.5-camX)*Math.min(1,dt*2.5);
+ const dist=innerWidth<600?17:14;C.position.set(camX+Math.sin(yaw)*dist*Math.cos(pitch),2+Math.sin(pitch)*dist,Math.cos(yaw)*dist*Math.cos(pitch));C.lookAt(camX,1.4,-.5);
+ R.render(S,C);requestAnimationFrame(loop)}
+loop();
+setTimeout(()=>{if(target<0){tx=ST[0];}},600);
+</script>
 </body>
 </html>
