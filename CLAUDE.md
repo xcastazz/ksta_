@@ -119,16 +119,16 @@ Se le entrega una guía en PDF con capturas.
 
 | Carpeta | Cliente | En vivo | Notas |
 |---|---|---|---|
-| `solucioneslegales` | Compañía Soluciones Legales (abogados, Bogotá) | soluciones-legales.jc-casta00.workers.dev | Varias páginas generadas por `tools/build-pages.mjs` (`node tools/build-pages.mjs` y luego deploy). Paleta "papel y bronce", fuentes Newsreader + Hanken Grotesk. D1 + R2 + correo + panel `/admin/`. Material del cliente en `_cliente/` (ignorado). Reels en `public/video/reels/`. |
-| `laura` | Laura Trespalacios (ilustradora, portafolio) | laura-trespalacios.jc-casta00.workers.dev | Buzón privado `/buzon/`. Fuente propia "Laura Mano" (`public/fonts/laura-mano.otf`) hecha con `tools/mkfont.mjs` desde su alfabeto dibujado. Versión de css/js con `?v=N`. |
-| `csl-video` | Videos y reels (Remotion) | — | Ver §6. |
-| `elsilencio` | El Silencio (lotes campestres, Urabá) | el-silencio.jc-casta00.workers.dev | Lotes vendidos marcados, videos y sección Urabá. |
+| `solucioneslegales` | Compañía Soluciones Legales (abogados, Bogotá) | soluciones-legales.jc-casta00.workers.dev | Repo privado `xcastazz/soluciones-legales`. Varias páginas generadas por `tools/build-pages.mjs` (`node tools/build-pages.mjs` y luego deploy). Paleta "papel y bronce", fuentes Newsreader + Hanken Grotesk. D1 + R2 + correo + panel `/admin/`. Material del cliente en `_cliente/` (ignorado). Reels en `public/video/reels/`. |
+| `laura` | Laura Trespalacios (ilustradora, portafolio) | laura-trespalacios.jc-casta00.workers.dev | Repo privado `xcastazz/laura-trespalacios`. Buzón privado `/buzon/`. Fuente propia "Laura Mano" (`public/fonts/laura-mano.otf`) hecha con `tools/mkfont.mjs` desde su alfabeto dibujado. Versión de css/js con `?v=N`. |
+| `csl-video` | Videos y reels (Remotion) | — | Repo privado `xcastazz/csl-video`. Ver §6. |
+| `elsilencio` | El Silencio (lotes campestres, Urabá) | el-silencio.jc-casta00.workers.dev | Repo privado `xcastazz/el-silencio`. Lotes vendidos marcados, videos y sección Urabá. |
 | `ivbags` | IV Bags | ivbagss.com | Repo `xcastazz/ivbags`. Usa Supabase Storage. |
 | `catalogotec` | Catálogo | catalogo.jc-casta00.workers.dev | Repo `xcastazz/catalogo`. |
 | MAAK | Transportadora MAAK | kstastudio.com/propuestas/maak | Vista previa con camión 3D. Precio acordado: $600.000. |
 | ASISST | Software (posible sociedad) | — | Solo documento de requerimientos en PDF. |
 
-> **Importante:** varias carpetas (`solucioneslegales`, `laura`, `csl-video`, `elsilencio`) **no tienen repositorio en GitHub**. Para trabajar en otro computador hay que subirlas (como repos privados) o copiarlas. Las contraseñas de los paneles de clientes **no van en git**: están en archivos locales `Proyectos/.csl-admin-pass.txt` y `Proyectos/.laura-buzon-pass.txt`, y como *secrets* en Cloudflare.
+> **Repositorios:** todos los proyectos están en GitHub (`xcastazz`); los de clientes son **privados**. En otro computador: `git clone https://github.com/xcastazz/<repo>.git` dentro de `Documents/Proyectos/`. No van en git: `node_modules`, `.wrangler`, el material de clientes (`_cliente/`, `material/`, `original.mp4`), los clips y renders de `csl-video` (`public/clips`, `out`, `tmp`, `whisper.cpp`) ni las contraseñas de los paneles (archivos locales `Proyectos/.csl-admin-pass.txt` y `Proyectos/.laura-buzon-pass.txt`, y *secrets* en Cloudflare). Para volver a generar los clips de los reels hace falta el material original del cliente.
 
 ---
 
@@ -214,4 +214,3 @@ Proyecto Remotion (React) para reels verticales 1080×1920 a 30 fps.
 - **Laura:** imágenes en alta calidad, revisar textos en inglés y dominio propio.
 - **MAAK:** corregir en el panel el precio del cliente a $600.000 y añadir el nombre y teléfono del contacto.
 - **KstaStudio:** testimonios reales (nunca inventados) y más proyectos en el portafolio.
-- **Subir a GitHub** (privados) los proyectos de clientes que aún no tienen repositorio.
